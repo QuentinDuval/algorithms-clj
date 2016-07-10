@@ -50,9 +50,9 @@
 
 (defn ^:private get-bits
   [huffman-tree val]
-  (defn get-bits-impl [{:keys [lhs rhs] :as huffman-tree} dirs]
+  (defn get-bits-impl [{:keys [values lhs rhs]} dirs]
     (cond
-      (= 1 (count huffman-tree)) dirs
+      (= 1 (count values)) dirs
       (-> lhs :values val) (recur lhs (conj dirs 0))
       (-> rhs :values val) (recur rhs (conj dirs 1))
       ))
@@ -81,6 +81,12 @@
 ;; Decoding
 ;; -----------------------------------------------------------
 
+#_(defn decode-bits
+   [huffman-tree bits]
+   (cond
+     (= 1 (count huffman-tree)) []
+     )
+   )
 
 
 ;; -----------------------------------------------------------
