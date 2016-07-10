@@ -4,28 +4,31 @@
     ))
 
 
-(defn- make-leaf
+;; -----------------------------------------------------------
+;; Build the Huffman tree
+;; -----------------------------------------------------------
+
+(defn ^:private make-leaf
   "Create a leaf for the huffman code tree"
   [[value freq]]
   [{:values #{value}} freq])
 
-(defn- make-node
+(defn ^:private make-node
   "Build an intermediary node from two sub-trees"
-  [[c1 w1 :as lhs]
-   [c2 w2 :as rhs]]
-  [{:values (into (:values c1) (:values c2))
-    :childs [c1 c2]}
-   (+ w1 w2)])
+  [[c1 w1] [c2 w2]]
+  (let [vals (into (:values c1) (:values c2))]
+    [{:values vals :lhs c1 :rhs c2} (+ w1 w2)]
+    ))
 
-(defn- merge-lowest
+(defn ^:private merge-lowest
   "Merge the two lowest priority elements"
   [heap]
-  (let [x (peek heap)
-        r (pop heap)
-        y (peek r)]
-    (conj (pop r) (make-node x y))))
+  (let [rest (pop heap)]
+    (conj (pop rest)
+      (make-node (peek heap) (peek rest))
+      )))
 
-(defn- make-tree-impl
+(defn ^:private make-tree-impl
   "Build the huffman tree from the priority map"
   [heap]
   (if (< 1 (count heap))
@@ -34,7 +37,29 @@
 
 (defn make-tree
   "Build the huffman tree from a list of (value, frequence) pairs"
-  [inputs] 
-  (let [heap (into (priority-map) (map make-leaf) inputs)]
-    (first (make-tree-impl heap))
-    ))
+  [inputs]
+  (-> (into (priority-map) (map make-leaf) inputs)
+      (make-tree-impl) (first)))
+
+
+;; -----------------------------------------------------------
+;; Encoding
+;; -----------------------------------------------------------
+
+
+
+
+;; -----------------------------------------------------------
+;; Decoding
+;; -----------------------------------------------------------
+
+
+
+;; -----------------------------------------------------------
+;; Test data
+;; -----------------------------------------------------------
+
+(def m (sorted-map :a 1 :b 2 :c 3 :d 3 :e 5))
+
+
+
