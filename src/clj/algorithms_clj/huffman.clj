@@ -7,12 +7,15 @@
 (defn- make-leaf
   "Create a leaf for the huffman code tree"
   [[value freq]]
-  [#{value} freq])
+  [{:values #{value}} freq])
 
 (defn- make-node
   "Build an intermediary node from two sub-trees"
-  [[vs1 w1] [vs2 w2]]
-  [(merge vs1 vs2) (+ w1 w2)])
+  [[c1 w1 :as lhs]
+   [c2 w2 :as rhs]]
+  [{:values (into (:values c1) (:values c2))
+    :childs [c1 c2]}
+   (+ w1 w2)])
 
 (defn- merge-lowest
   "Merge the two lowest priority elements"
@@ -26,10 +29,12 @@
   "Build the huffman tree from the priority map"
   [heap]
   (if (< 1 (count heap))
-    (recur (merge-lowest heap)) heap))
+    (recur (merge-lowest heap))
+    (first heap)))
 
 (defn make-tree
   "Build the huffman tree from a list of (value, frequence) pairs"
   [inputs] 
   (let [heap (into (priority-map) (map make-leaf) inputs)]
-    (make-tree-impl heap)))
+    (first (make-tree-impl heap))
+    ))
