@@ -84,9 +84,7 @@
         ([] (xf))
         ([result] (xf result))
         ([result input]
-          (let [{:keys [lhs rhs]} @curr-branch
-                next-branch (if (= 0 input) lhs rhs)
-                values (:values next-branch)]
+          (let [{:keys [values] :as next-branch} (if (= 0 input) (:lhs @curr-branch) (:rhs @curr-branch))]
             (vreset! curr-branch next-branch)
             (if (= 1 (count values))
               (do (vreset! curr-branch huffman-tree)
