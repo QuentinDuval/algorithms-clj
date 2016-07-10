@@ -62,7 +62,7 @@
   "Encode a stream of values with the decoder provided as first parameter"
   [huffman-tree values]
   (let [encoder (memoize #(get-bits huffman-tree %))]
-    (transduce (mapcat encoder) conj [] values)))
+    (into [] (mapcat encoder) values)))
 
 (defn encode
   "Encode a stream, using the stream frequences to build the huffman tree"
@@ -95,7 +95,7 @@
 (defn decode ;; TODO - The transducer could be used to do pipe-line parallelism
   "Decode a stream of inputs, provided the huffman tree as first parameter"
   [huffman-tree inputs]
-  (transduce (huffman-xf huffman-tree) conj [] inputs))
+  (into [] (huffman-xf huffman-tree) inputs))
 
 
 ;; -----------------------------------------------------------
