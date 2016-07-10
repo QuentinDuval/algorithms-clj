@@ -61,9 +61,10 @@
   [huffman-tree values]
   (reduce #(get-bits huffman-tree %2 %1) [] values))
 
-#_(defn encode
-   [values]
-   (encode-with (make-tree values) values))
+(defn encode
+  "Encode a stream, using the stream frequences to build the huffman tree"
+  [values]
+  (encode-with (make-tree (frequencies values)) values))
 
 
 ;; -----------------------------------------------------------
