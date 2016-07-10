@@ -92,7 +92,8 @@
               result)))
         ))))
 
-(defn decode
+(defn decode ;; TODO - The transducer could be used to do pipe-line parallelism
+  "Decode a stream of inputs, provided the huffman tree as first parameter"
   [huffman-tree inputs]
   (transduce (huffman-xf huffman-tree) conj [] inputs))
 
