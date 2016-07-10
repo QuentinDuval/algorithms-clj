@@ -71,7 +71,10 @@
 (defn encode
   "Encode a stream, using the stream frequences to build the huffman tree"
   [values]
-  (encode-with (tree->decoder (make-tree (frequencies values))) values))
+  (-> (frequencies values)
+      (make-tree)
+      (tree->decoder)
+      (encode-with values)))
 
 
 ;; -----------------------------------------------------------
