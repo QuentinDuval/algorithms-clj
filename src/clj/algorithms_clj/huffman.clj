@@ -48,23 +48,30 @@
 ;; Encoding
 ;; -----------------------------------------------------------
 
-(defn get-bits
-  [{:keys [lhs rhs] :as huffman-tree} val dirs]
-  (cond
-    (= 1 (count huffman-tree)) dirs
-    (-> lhs :values val) (recur lhs val (conj dirs 0))
-    (-> rhs :values val) (recur rhs val (conj dirs 1))
-    ))
+(defn ^:private get-bits
+  [huffman-tree val]
+  (defn get-bits-impl [{:keys [lhs rhs] :as huffman-tree} dirs]
+    (cond
+      (= 1 (count huffman-tree)) dirs
+      (-> lhs :values val) (recur lhs (conj dirs 0))
+      (-> rhs :values val) (recur rhs (conj dirs 1))
+      ))
+  (get-bits-impl huffman-tree []))
+
+(defn tree->decoder
+  "Build a decoder with memoization"
+  [huffman-tree]
+  (memoize #(get-bits huffman-tree %)))
 
 (defn encode-with
-  "Encode a stream of values with the tree provided as first parameter"
-  [huffman-tree values]
-  (reduce #(get-bits huffman-tree %2 %1) [] values))
+  "Encode a stream of values with the decoder provided as first parameter"
+  [decoder values]
+  (transduce (mapcat decoder) conj [] values))
 
 (defn encode
   "Encode a stream, using the stream frequences to build the huffman tree"
   [values]
-  (encode-with (make-tree (frequencies values)) values))
+  (encode-with (tree->decoder (make-tree (frequencies values))) values))
 
 
 ;; -----------------------------------------------------------
@@ -78,6 +85,11 @@
 ;; -----------------------------------------------------------
 
 (def m (sorted-map :a 1 :b 2 :c 3 :d 3 :e 5))
+(def t (make-tree m))
+
+(defn tests []
+  (prn (encode-with (tree->decoder t) [:a :b]))
+  (prn (encode [:a :b])))
 
 
 
