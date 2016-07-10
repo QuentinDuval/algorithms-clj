@@ -75,6 +75,39 @@
 ;; Decoding
 ;; -----------------------------------------------------------
 
+(defn huffman-decoder
+  "Transducer step function to decode a huffman stream of values"
+  [huffman-tree]
+  (fn [xf]
+    (let [curr-branch (volatile! huffman-tree)
+          is-leaf #(= 1 (-> % :values count))
+          leaf-val #(-> % :values first)]
+      
+      (fn step-fn
+        ([] (xf))
+        ([result]
+          (if (is-leaf @curr-branch)
+            (xf result (leaf-val @curr-branch))
+            (xf result)))
+        
+        ([result input]
+          (let [prev-branch @curr-branch
+                {:keys [lhs rhs]} (if (is-leaf prev-branch) huffman-tree @curr-branch)]
+            (vreset! curr-branch
+              (cond
+                (= 0 input) lhs
+                (= 1 input) rhs))
+            (if (is-leaf prev-branch)
+              (xf result (leaf-val prev-branch))
+              result)
+            ))
+        ))))
+
+(defn decode-with-xf
+  [huffman-tree inputs]
+  (transduce (huffman-decoder huffman-tree) conj [] inputs))
+
+
 (defn ^:private decode-one ;; TODO - Could be made a step function of a transducer
   [{:keys [values lhs rhs]} bits]
   (cond
@@ -108,6 +141,7 @@
   (prn (encode-with t [:a :b]))
   (prn (encode [:a :b]))
   (prn (decode t [0 1 0 0 1 1]))
+  (prn (decode-with-xf t [0 1 0 0 1 1]))
   )
 
 
