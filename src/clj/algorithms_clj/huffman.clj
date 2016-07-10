@@ -81,12 +81,24 @@
 ;; Decoding
 ;; -----------------------------------------------------------
 
-#_(defn decode-bits
-   [huffman-tree bits]
-   (cond
-     (= 1 (count huffman-tree)) []
-     )
-   )
+(defn ^:private decode-one
+  [{:keys [values lhs rhs]} bits]
+  (cond
+    (= 1 (count values)) [(first values) bits]
+    (= 0 (first bits)) (recur lhs (rest bits))
+    (= 1 (first bits)) (recur rhs (rest bits))
+    ))
+
+(defn ^:private decode-bits
+  [huffman-tree inputs]
+  (loop [bits inputs
+         result []]
+    (if (empty? bits)
+      result
+      (let [[c tail-bits] (decode-one huffman-tree bits)]
+        (recur tail-bits (conj result c))
+        ))
+    ))
 
 
 ;; -----------------------------------------------------------
@@ -98,7 +110,9 @@
 
 (defn tests []
   (prn (encode-with (tree->decoder t) [:a :b]))
-  (prn (encode [:a :b])))
+  (prn (encode [:a :b]))
+  (prn (decode-bits t [0 1 0 0 1 1]))
+  )
 
 
 
