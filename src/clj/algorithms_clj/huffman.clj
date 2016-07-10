@@ -38,15 +38,32 @@
 (defn make-tree
   "Build the huffman tree from a list of (value, frequence) pairs"
   [inputs]
-  (-> (into (priority-map) (map make-leaf) inputs)
-      (make-tree-impl) (first)))
+  (->
+    (priority-map)
+    (into (map make-leaf) inputs)
+    (make-tree-impl) (first)))
 
 
 ;; -----------------------------------------------------------
 ;; Encoding
 ;; -----------------------------------------------------------
 
+(defn get-bits
+  [{:keys [lhs rhs] :as huffman-tree} val dirs]
+  (cond
+    (= 1 (count huffman-tree)) dirs
+    (-> lhs :values val) (recur lhs val (conj dirs 0))
+    (-> rhs :values val) (recur rhs val (conj dirs 1))
+    ))
 
+(defn encode-with
+  "Encode a stream of values with the tree provided as first parameter"
+  [huffman-tree values]
+  (reduce #(get-bits huffman-tree %2 %1) [] values))
+
+#_(defn encode
+   [values]
+   (encode-with (make-tree values) values))
 
 
 ;; -----------------------------------------------------------
