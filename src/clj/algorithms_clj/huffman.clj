@@ -75,51 +75,28 @@
 ;; Decoding
 ;; -----------------------------------------------------------
 
-(defn huffman-decoder
+(defn ^:private huffman-xf
   "Transducer step function to decode a huffman stream of values"
   [huffman-tree]
   (fn [xf]
-    (let [curr-branch (volatile! huffman-tree)
-          is-leaf #(= 1 (-> % :values count))
-          leaf-val #(-> % :values first)]
+    (let [curr-branch (volatile! huffman-tree)]
       (fn step-fn
         ([] (xf))
         ([result] (xf result))
         ([result input]
-          (let [{:keys [lhs rhs]} @curr-branch]
-            (vreset! curr-branch (if (= 0 input) lhs rhs))
-            (if (is-leaf @curr-branch)
-              (let [val (leaf-val @curr-branch)]
-                (do
-                 (vreset! curr-branch huffman-tree)
-                 (xf result val)))
+          (let [{:keys [lhs rhs]} @curr-branch
+                next-branch (if (= 0 input) lhs rhs)
+                values (:values next-branch)]
+            (vreset! curr-branch next-branch)
+            (if (= 1 (count values))
+              (do (vreset! curr-branch huffman-tree)
+                  (xf result (first values)))
               result)))
         ))))
 
-(defn decode-with-xf
-  [huffman-tree inputs]
-  (transduce (huffman-decoder huffman-tree) conj [] inputs))
-
-
-(defn ^:private decode-one ;; TODO - Could be made a step function of a transducer
-  [{:keys [values lhs rhs]} bits]
-  (cond
-    (= 1 (count values)) [(first values) bits]
-    (= 0 (first bits)) (recur lhs (rest bits))
-    (= 1 (first bits)) (recur rhs (rest bits))
-    ))
-
 (defn decode
-  "Encode a stream of values with the huffman tree provided as first parameter"
   [huffman-tree inputs]
-  (loop [bits inputs
-         result []]
-    (if (empty? bits)
-      result
-      (let [[c tail-bits] (decode-one huffman-tree bits)]
-        (recur tail-bits (conj result c))
-        ))
-    ))
+  (transduce (huffman-xf huffman-tree) conj [] inputs))
 
 
 ;; -----------------------------------------------------------
@@ -132,9 +109,8 @@
 (defn tests []
   ;; TODO - Symetric testings with test.checks
   (prn (encode-with t [:a :b]))
-  (prn (encode [:a :b]))
+  (prn (second (encode [:a :b])))
   (prn (decode t [0 1 0 0 1 1]))
-  (prn (decode-with-xf t [0 1 0 0 1 1]))
   )
 
 
