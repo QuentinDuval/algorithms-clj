@@ -58,22 +58,17 @@
       ))
   (get-bits-impl huffman-tree []))
 
-(defn tree->encoder
-  "Create a decoder with memoization"
-  [huffman-tree]
-  (memoize #(get-bits huffman-tree %)))
-
 (defn encode-with
   "Encode a stream of values with the decoder provided as first parameter"
-  [encoder values]
-  (transduce (mapcat encoder) conj [] values))
+  [huffman-tree values]
+  (let [encoder (memoize #(get-bits huffman-tree %))]
+    (transduce (mapcat encoder) conj [] values)))
 
 (defn encode
   "Encode a stream, using the stream frequences to build the huffman tree"
   [values]
   (-> (frequencies values)
       (make-tree)
-      (tree->encoder)
       (encode-with values)))
 
 
@@ -111,7 +106,7 @@
 
 (defn tests []
   ;; TODO - Symetric testings with test.checks
-  (prn (encode-with (tree->encoder t) [:a :b]))
+  (prn (encode-with t [:a :b]))
   (prn (encode [:a :b]))
   (prn (decode t [0 1 0 0 1 1]))
   )
