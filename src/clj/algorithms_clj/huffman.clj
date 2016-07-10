@@ -79,15 +79,15 @@
   "Transducer step function to decode a huffman stream of values"
   [huffman-tree]
   (fn [xf]
-    (let [curr-branch (volatile! huffman-tree)]
+    (let [branch (volatile! huffman-tree)]
       (fn step-fn
         ([] (xf))
         ([result] (xf result))
         ([result input]
-          (let [{:keys [values] :as next-branch} (if (= 0 input) (:lhs @curr-branch) (:rhs @curr-branch))]
-            (vreset! curr-branch next-branch)
+          (let [{:keys [values] :as next-branch} ((if (zero? input) :lhs :rhs) @branch)]
+            (vreset! branch next-branch)
             (if (= 1 (count values))
-              (do (vreset! curr-branch huffman-tree)
+              (do (vreset! branch huffman-tree)
                   (xf result (first values)))
               result)))
         ))))
