@@ -82,25 +82,18 @@
     (let [curr-branch (volatile! huffman-tree)
           is-leaf #(= 1 (-> % :values count))
           leaf-val #(-> % :values first)]
-      
       (fn step-fn
         ([] (xf))
-        ([result]
-          (if (is-leaf @curr-branch)
-            (xf result (leaf-val @curr-branch))
-            (xf result)))
-        
+        ([result] (xf result))
         ([result input]
-          (let [prev-branch @curr-branch
-                {:keys [lhs rhs]} (if (is-leaf prev-branch) huffman-tree @curr-branch)]
-            (vreset! curr-branch
-              (cond
-                (= 0 input) lhs
-                (= 1 input) rhs))
-            (if (is-leaf prev-branch)
-              (xf result (leaf-val prev-branch))
-              result)
-            ))
+          (let [{:keys [lhs rhs]} @curr-branch]
+            (vreset! curr-branch (if (= 0 input) lhs rhs))
+            (if (is-leaf @curr-branch)
+              (let [val (leaf-val @curr-branch)]
+                (do
+                 (vreset! curr-branch huffman-tree)
+                 (xf result val)))
+              result)))
         ))))
 
 (defn decode-with-xf
