@@ -59,7 +59,7 @@
   (get-bits-impl huffman-tree []))
 
 (defn tree->encoder
-  "Build a decoder with memoization"
+  "Create a decoder with memoization"
   [huffman-tree]
   (memoize #(get-bits huffman-tree %)))
 
@@ -81,7 +81,7 @@
 ;; Decoding
 ;; -----------------------------------------------------------
 
-(defn ^:private decode-one
+(defn ^:private decode-one ;; TODO - Could be made a step function of a transducer
   [{:keys [values lhs rhs]} bits]
   (cond
     (= 1 (count values)) [(first values) bits]
@@ -89,7 +89,8 @@
     (= 1 (first bits)) (recur rhs (rest bits))
     ))
 
-(defn ^:private decode-bits
+(defn decode
+  "Encode a stream of values with the huffman tree provided as first parameter"
   [huffman-tree inputs]
   (loop [bits inputs
          result []]
@@ -112,7 +113,7 @@
   ;; TODO - Symetric testings with test.checks
   (prn (encode-with (tree->encoder t) [:a :b]))
   (prn (encode [:a :b]))
-  (prn (decode-bits t [0 1 0 0 1 1]))
+  (prn (decode t [0 1 0 0 1 1]))
   )
 
 
