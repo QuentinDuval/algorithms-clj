@@ -15,6 +15,8 @@
 
 ;; ---------------------------------------------------------------
 
+;; TODO - Represent the data with keyword? At least translate it (offer helpers)
+
 (defn prod?
   [expr]
   (or
