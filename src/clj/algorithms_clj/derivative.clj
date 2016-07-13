@@ -62,5 +62,7 @@
   (prn (derivative (list '+ 'x 1) 'x))
   (prn (derivative `(+ x 1) `x))
   (prn (derivative `(* x 2) `x))
+  
+  (prn (derivative `(+ x (* x x y)) `x))
   )
 
