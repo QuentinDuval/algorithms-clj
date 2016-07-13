@@ -35,7 +35,7 @@
   (let [parts (group-by number? terms)
         number-sum (reduce + (parts true))]
     (cond
-      (empty? (parts true)) (list* '+ (parts false))
+      (zero? number-sum) (list* '+ (parts false))
       (empty? (parts false)) number-sum
       :else (list* '+ number-sum (parts false))
       )))
@@ -46,7 +46,7 @@
   (let [parts (group-by number? terms)
         product (reduce * (parts true))]
     (cond
-      (empty? (parts true)) (list* '* (parts false))
+      (= 1 product) (list* '* (parts false))
       (empty? (parts false)) product
       (zero? product) 0
       :else (list* '* product (parts false))
