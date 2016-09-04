@@ -26,6 +26,10 @@
 ;; Build the Huffman tree
 ;; -----------------------------------------------------------
 
+(defn- build-leaf-priority-queue
+  [value-frequency-pairs]
+  (into (prio/priority-map) (utils/map-first make-leaf) value-frequency-pairs))
+
 (defn- merge-nodes-by-lowest-frequency
   "Build the huffman tree from the priority map"
   [heap]
@@ -37,13 +41,20 @@
         (assoc tail (make-node a b) (+ prio-a prio-b)))
       )))
 
+(defn- adapt-root-leaf-tree
+  [huffman-tree]
+  (if (is-leaf? huffman-tree)
+    (make-node huffman-tree nil)
+    huffman-tree))
+
 (defn make-huffman-tree
   "Build the huffman tree from a list of (value, frequence) pairs"
   [value-frequency-pairs]
   (->>
-    value-frequency-pairs
-    (into (prio/priority-map) (utils/map-first make-leaf))
-    merge-nodes-by-lowest-frequency))
+    (build-leaf-priority-queue value-frequency-pairs)
+    (merge-nodes-by-lowest-frequency)
+    (adapt-root-leaf-tree)
+    ))
 
 
 ;; -----------------------------------------------------------
@@ -60,10 +71,7 @@
                         (go (conj path 0) (lhs-node node))
                         (go (conj path 1) (rhs-node node)))
       ))
-  (if (is-leaf? tree)
-    {(leaf-val tree) [0]} ;; Signal with no information in it
-    (apply hash-map (go [] tree))
-    )) ;; TODO - Test check: verify that there are no code prefix of another
+  (apply hash-map (go [] tree))) ;; TODO - Test check: verify that there are no code prefix of another
 
 (defn encode-with
   "Encode a stream of values with the decoder provided as first parameter"
@@ -111,11 +119,7 @@
 (defn decode
   "Decode a stream of inputs, provided the huffman tree as first parameter"
   [huffman-tree inputs]
-  (into []
-    (if (is-leaf? huffman-tree)
-      (repeat (count inputs) (leaf-val huffman-tree))
-      (eduction (huffman-xf huffman-tree) inputs))
-    ))
+  (into [] (huffman-xf huffman-tree) inputs))
 
 
 ;; -----------------------------------------------------------

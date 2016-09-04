@@ -18,9 +18,10 @@
       (is (= nil r))
       ))
   
-  (testing "one input"
+  (testing "one input should not generate a leaf" ;; TODO => make this a property
     (let [r (make-huffman-tree [["a" 1]])]
-      (is (is-leaf? r))
+      (is (is-node? r))
+      (is (is-leaf? (lhs-node r)))
       ))
   
   (testing "two inputs"
