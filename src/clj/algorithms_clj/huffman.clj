@@ -20,6 +20,10 @@
 (defn leaf-val [node] {:pre (is-leaf? node)} (second node))
 (defn lhs-node [node] {:pre (is-node? node)} (nth node 1))
 (defn rhs-node [node] {:pre (is-node? node)} (nth node 2))
+;; TODO
+;; Better use of data abstraction: return children as "(rest node)"
+;; It would allow to use the (nth children input) as decoding
+;; !!! Make the distinction between the need for get/set and absence of std data structure
 
 
 ;; -----------------------------------------------------------
