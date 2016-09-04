@@ -28,7 +28,7 @@
       (make-node (peek heap) (peek rest))
       )))
 
-(defn- make-tree-impl
+(defn- merge-lowest-recursively
   "Build the huffman tree from the priority map"
   [heap]
   (if (< 1 (count heap))
@@ -37,11 +37,11 @@
 
 (defn make-tree
   "Build the huffman tree from a list of (value, frequence) pairs"
-  [inputs]
-  (->
-    (priority-map)
-    (into (map make-leaf) inputs)
-    make-tree-impl
+  [value-frequency-pairs]
+  (->>
+    value-frequency-pairs
+    (into (priority-map) (map make-leaf))
+    merge-lowest-recursively
     first))
 
 
@@ -51,11 +51,11 @@
 
 (defn- get-bits
   [huffman-tree val]
-  (defn get-bits-impl [{:keys [values lhs rhs]} dirs]
+  (defn get-bits-impl [{:keys [values lhs rhs]} directions]
     (cond
-      (= 1 (count values)) dirs
-      (-> lhs :values val) (recur lhs (conj dirs 0))
-      (-> rhs :values val) (recur rhs (conj dirs 1))
+      (= 1 (count values)) directions
+      (-> lhs :values val) (recur lhs (conj directions 0))
+      (-> rhs :values val) (recur rhs (conj directions 1))
       ))
   (get-bits-impl huffman-tree []))
 
