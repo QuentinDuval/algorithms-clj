@@ -2,8 +2,13 @@
   (:require
     [algorithms-clj.huffman :refer :all]
     [clojure.test :refer :all]
+    [clojure.test.check :as tc]
+    [clojure.test.check.generators :as gen]
+    [clojure.test.check.properties :as prop]
     ))
 
+
+;; -------------------------------------------------------
 
 (deftest make-huffman-tree-test
   "Tests on the encoding of the huffman tree"
@@ -35,4 +40,14 @@
       ))
   )
 
+;; -------------------------------------------------------
+
+(def decode-code-cycle
+  (prop/for-all [original (gen/vector gen/int 1 100)]
+    (let [[code encoded] (encode original)
+          decoded (decode code encoded)]
+      (= original decoded))
+    ))
+
+(tc/quick-check 100 decode-code-cycle)
 (run-tests)

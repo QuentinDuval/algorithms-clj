@@ -8,6 +8,7 @@
                  [org.clojure/clojurescript "1.9.89" :scope "provided"]
                  [com.cognitect/transit-clj "0.8.285"]
                  [org.clojure/data.priority-map "0.0.7"]
+                 [org.clojure/test.check "0.9.0"]
                  [ring "1.4.0"]
                  [ring/ring-defaults "0.2.0"]
                  [bk/ring-gzip "0.1.1"]
