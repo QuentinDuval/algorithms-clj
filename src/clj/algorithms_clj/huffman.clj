@@ -75,6 +75,10 @@
 ;; Decoding
 ;; -----------------------------------------------------------
 
+(defn- next-node
+  [node input]
+  ((if (zero? input) lhs-node rhs-node) node))
+
 (defn- huffman-xf
   "Transducer step function to decode a huffman stream of values"
   [huffman-tree] ;; TODO - Try to replace this by a prefix tree - or search in map?
@@ -84,12 +88,15 @@
         ([] (xf))
         ([result] (xf result))
         ([result input]
-          (let [{:keys [values] :as next-branch} ((if (zero? input) lhs-node rhs-node) @branch)]
-            (vreset! branch next-branch)
+          (let [next-branch (next-node @branch input)]
             (if (is-leaf? next-branch)
-              (do (vreset! branch huffman-tree)
-                  (xf result (leaf-val next-branch)))
-              result)))
+              (do
+                (vreset! branch huffman-tree)
+                (xf result (leaf-val next-branch)))
+              (do
+                (vreset! branch next-branch)
+                result))
+            ))
         ))))
 
 (defn decode
