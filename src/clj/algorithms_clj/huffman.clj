@@ -1,8 +1,9 @@
 (ns algorithms-clj.huffman
   (:require
     [algorithms-clj.priority-map-utils :as prio-utils]
+    [algorithms-clj.utils :as utils] 
     [clojure.data.priority-map :as prio]
-    [clojure.set :as set] 
+    [clojure.set :as set]
     ))
 
 
@@ -26,21 +27,20 @@
     :rhs c2}
    (+ w1 w2)])
 
-(defn- merge-node-by-lowest-frequency
+(defn- merge-nodes-by-lowest-frequency
   "Build the huffman tree from the priority map"
   [heap]
-  (if (= 1 (count heap))
-    (first heap)
-    (let [[[a b] rest] (prio-utils/pop-n heap 2)]
-      (recur (conj rest (merge-nodes a b)))
-      )))
+  (utils/reduce-to-single-value [heap]
+    (let [[[a b] tail] (prio-utils/pop-n heap 2)]
+      (conj tail (merge-nodes a b)))
+    ))
 
 (defn make-tree
   "Build the huffman tree from a list of (value, frequence) pairs"
   [value-frequency-pairs]
   (->>
     (into (prio/priority-map) (map make-leaf) value-frequency-pairs)
-    merge-node-by-lowest-frequency
+    merge-nodes-by-lowest-frequency
     node-value))
 
 
