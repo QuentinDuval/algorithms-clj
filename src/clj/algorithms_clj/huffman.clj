@@ -1,6 +1,7 @@
 (ns algorithms-clj.huffman
   (:require
-    [clojure.data.priority-map :as prio :refer [priority-map]]
+    [clojure.data.priority-map :as prio]
+    [clojure.set :as set] 
     ))
 
 
@@ -16,17 +17,23 @@
 (defn- make-node
   "Build an intermediary node from two sub-trees"
   [[c1 w1] [c2 w2]]
-  (let [vals (into (:values c1) (:values c2))]
-    [{:values vals :lhs c1 :rhs c2} (+ w1 w2)]
+  [{:values (set/union (:values c1) (:values c2))
+    :lhs c1
+    :rhs c2}
+   (+ w1 w2)])
+
+(defn- pop-two
+  "Pop two elements from the priority queue"
+  [heap]
+  (let [rest (pop heap)]
+    [(peek heap) (peek rest) (pop rest)]
     ))
 
 (defn- merge-lowest
   "Merge the two lowest priority elements"
   [heap]
-  (let [rest (pop heap)]
-    (conj (pop rest)
-      (make-node (peek heap) (peek rest))
-      )))
+  (let [[a b rest] (pop-two heap)]
+    (conj rest (make-node a b))))
 
 (defn- merge-lowest-recursively
   "Build the huffman tree from the priority map"
@@ -40,9 +47,10 @@
   [value-frequency-pairs]
   (->>
     value-frequency-pairs
-    (into (priority-map) (map make-leaf))
+    (into (prio/priority-map) (map make-leaf))
     merge-lowest-recursively
-    first))
+    first ;; First element of the leaf
+    ))
 
 
 ;; -----------------------------------------------------------
