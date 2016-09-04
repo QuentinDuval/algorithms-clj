@@ -7,8 +7,9 @@
     ))
 
 
+
 ;; -----------------------------------------------------------
-;; Build the Huffman tree
+;; Helpers to build a binary tree 
 ;; -----------------------------------------------------------
 
 (defn make-leaf [value] [::leaf value])
@@ -19,6 +20,11 @@
 (defn leaf-val [node] {:pre (is-leaf? node)} (second node))
 (defn lhs-node [node] {:pre (is-node? node)} (nth node 1))
 (defn rhs-node [node] {:pre (is-node? node)} (nth node 2))
+
+
+;; -----------------------------------------------------------
+;; Build the Huffman tree
+;; -----------------------------------------------------------
 
 (defn- merge-nodes-by-lowest-frequency
   "Build the huffman tree from the priority map"
@@ -118,6 +124,4 @@
   (prn (second (encode [:a :b :c :d :e])))
   (prn (decode t [0 0 0 0 0 1 0 1 1 0 1 1]))
   )
-
-
 
