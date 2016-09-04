@@ -39,33 +39,27 @@
     (into (prio/priority-map) (utils/map-first make-leaf))
     merge-nodes-by-lowest-frequency))
 
-#_(defn huffman-tree->code-map
-   "Traverse the tree to get the symbol to code map"
-   [huffman-tree]
-   (loop []
-    
-     ))
-
 
 ;; -----------------------------------------------------------
 ;; Encoding
 ;; -----------------------------------------------------------
 
-(defn- get-bits
-  "Encode the 'value' with the huffman-tree provided as parameter" 
-  [huffman-tree value]
-  (defn get-bits-impl [{:keys [lhs rhs] :as node} directions]
+(defn- huffman-tree->encoding-map
+  "Traverse the tree to get the symbol to code map"
+  [tree]
+  (defn go [path node] ;; TODO - optimize this by removing the recursion
     (cond
-      (is-leaf? node) directions
-      (-> lhs :values value) (recur lhs (conj directions 0))
-      (-> rhs :values value) (recur rhs (conj directions 1))
+      (is-leaf? node) [(leaf-val node) path]
+      (is-node? node) (into
+                        (go (conj path 0) (lhs-node node))
+                        (go (conj path 1) (rhs-node node)))
       ))
-  (get-bits-impl huffman-tree []))
+  (apply hash-map (go [] tree))) ;; TODO - Test check: verify that there are no code prefix of another
 
 (defn encode-with
   "Encode a stream of values with the decoder provided as first parameter"
   [huffman-tree values]
-  (let [encoder (memoize #(get-bits huffman-tree %))]
+  (let [encoder (huffman-tree->encoding-map huffman-tree)]
     (into [] (mapcat encoder) values)))
 
 (defn encode
@@ -113,9 +107,9 @@
 
 (defn tests []
   ;; TODO - Symetric testings with test.checks
-  (prn (encode-with t [:a :b]))
-  (prn (second (encode [:a :b])))
-  (prn (decode t [0 1 0 0 1 1]))
+  (prn (encode-with t [:a :b :c :d :e]))
+  (prn (second (encode [:a :b :c :d :e])))
+  (prn (decode t [0 0 0 0 0 1 0 1 1 0 1 1]))
   )
 
 
