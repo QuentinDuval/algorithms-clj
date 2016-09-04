@@ -5,6 +5,10 @@
     ))
 
 
+(defn peek-pop
+  [priority-map]
+  [(peek priority-map) (pop priority-map)])
+
 (defn pop-n
   "Pop N elements from the priority queue"
   [heap n]

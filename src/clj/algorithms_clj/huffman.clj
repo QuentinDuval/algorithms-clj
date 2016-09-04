@@ -18,28 +18,32 @@
 
 (def ^:private node-value first)
 (def ^:private node-frequency second)
+(defn- is-leaf [node] (= 1 (-> node :values count)))
 
 (defn- merge-nodes
   "Build an intermediary node from two sub-trees"
-  [[c1 w1] [c2 w2]]
-  [{:values (set/union (:values c1) (:values c2))
-    :lhs c1
-    :rhs c2}
-   (+ w1 w2)])
+  [lhs rhs]
+  {:values (set/union (:values lhs) (:values rhs))
+   ;; TODO - We do not need these values in intermediate nodes => just traverse tree for encoding
+   :lhs lhs
+   :rhs rhs})
 
 (defn- merge-nodes-by-lowest-frequency
   "Build the huffman tree from the priority map"
   [heap]
   (utils/reduce-to-single-value [heap]
-    (let [[[a b] tail] (prio-utils/pop-n heap 2)]
-      (conj tail (merge-nodes a b)))
+    (let [[poped tail] (prio-utils/pop-n heap 2)
+          [a prio-a] (poped 0)
+          [b prio-b] (poped 1)]
+      (assoc tail (merge-nodes a b) (+ prio-a prio-b)))
     ))
 
-(defn make-tree
+(defn make-huffman-tree
   "Build the huffman tree from a list of (value, frequence) pairs"
   [value-frequency-pairs]
   (->>
-    (into (prio/priority-map) (map make-leaf) value-frequency-pairs)
+    value-frequency-pairs
+    (into (prio/priority-map) (map make-leaf)) ;; TODO - Instead of a priority map, you can use two queues
     merge-nodes-by-lowest-frequency
     node-value))
 
@@ -49,12 +53,13 @@
 ;; -----------------------------------------------------------
 
 (defn- get-bits
-  [huffman-tree val]
-  (defn get-bits-impl [{:keys [values lhs rhs]} directions]
+  "Encode the 'value' with the huffman-tree provided as parameter" 
+  [huffman-tree value]
+  (defn get-bits-impl [{:keys [lhs rhs] :as node} directions]
     (cond
-      (= 1 (count values)) directions
-      (-> lhs :values val) (recur lhs (conj directions 0))
-      (-> rhs :values val) (recur rhs (conj directions 1))
+      (is-leaf node) directions
+      (-> lhs :values value) (recur lhs (conj directions 0))
+      (-> rhs :values value) (recur rhs (conj directions 1))
       ))
   (get-bits-impl huffman-tree []))
 
@@ -68,7 +73,7 @@
   "Encode a stream, using the stream frequences to build the huffman tree"
    ;; TODO - Encode the tree as well
   [values]
-  (let [t (-> values frequencies make-tree)]
+  (let [t (-> values frequencies make-huffman-tree)]
     [t (encode-with t values)]
     ))
 
@@ -105,7 +110,7 @@
 ;; -----------------------------------------------------------
 
 (def m (sorted-map :a 1 :b 2 :c 3 :d 3 :e 5))
-(def t (make-tree m))
+(def t (make-huffman-tree m))
 
 (defn tests []
   ;; TODO - Symetric testings with test.checks
