@@ -77,18 +77,18 @@
 
 (defn- huffman-xf
   "Transducer step function to decode a huffman stream of values"
-  [huffman-tree]
+  [huffman-tree] ;; TODO - Try to replace this by a prefix tree - or search in map?
   (fn [xf]
     (let [branch (volatile! huffman-tree)]
       (fn step-fn
         ([] (xf))
         ([result] (xf result))
         ([result input]
-          (let [{:keys [values] :as next-branch} ((if (zero? input) :lhs :rhs) @branch)]
+          (let [{:keys [values] :as next-branch} ((if (zero? input) lhs-node rhs-node) @branch)]
             (vreset! branch next-branch)
-            (if (= 1 (count values))
+            (if (is-leaf? next-branch)
               (do (vreset! branch huffman-tree)
-                  (xf result (first values)))
+                  (xf result (leaf-val next-branch)))
               result)))
         ))))
 
