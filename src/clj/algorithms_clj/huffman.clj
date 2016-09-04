@@ -15,7 +15,10 @@
   [[value freq]]
   [{:values #{value}} freq])
 
-(defn- make-node
+(def ^:private node-value first)
+(def ^:private node-frequency second)
+
+(defn- merge-nodes
   "Build an intermediary node from two sub-trees"
   [[c1 w1] [c2 w2]]
   [{:values (set/union (:values c1) (:values c2))
@@ -23,28 +26,22 @@
     :rhs c2}
    (+ w1 w2)])
 
-(defn- merge-lowest
-  "Merge the two lowest priority elements"
-  [heap]
-  (let [[[a b] rest] (prio-utils/pop-n heap 2)]
-    (conj rest (make-node a b))))
-
-(defn- merge-lowest-recursively
+(defn- merge-node-by-lowest-frequency
   "Build the huffman tree from the priority map"
   [heap]
-  (if (< 1 (count heap))
-    (recur (merge-lowest heap))
-    (first heap)))
+  (if (= 1 (count heap))
+    (first heap)
+    (let [[[a b] rest] (prio-utils/pop-n heap 2)]
+      (recur (conj rest (merge-nodes a b)))
+      )))
 
 (defn make-tree
   "Build the huffman tree from a list of (value, frequence) pairs"
   [value-frequency-pairs]
   (->>
-    value-frequency-pairs
-    (into (prio/priority-map) (map make-leaf))
-    merge-lowest-recursively
-    first ;; First element of the leaf
-    ))
+    (into (prio/priority-map) (map make-leaf) value-frequency-pairs)
+    merge-node-by-lowest-frequency
+    node-value))
 
 
 ;; -----------------------------------------------------------
