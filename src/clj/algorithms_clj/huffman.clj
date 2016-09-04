@@ -86,10 +86,7 @@
 
 (defn- next-node
   [node input]
-  (cond
-    (is-leaf? node) node ;; TODO - Case of the tree with only one leaf - should be discarded before
-    (zero? input) (lhs-node node)
-    :else (rhs-node node)))
+  (if (zero? input) (lhs-node node) (rhs-node node)))
 
 (defn- huffman-xf
   "Transducer step function to decode a huffman stream of values"
@@ -114,7 +111,11 @@
 (defn decode
   "Decode a stream of inputs, provided the huffman tree as first parameter"
   [huffman-tree inputs]
-  (into [] (huffman-xf huffman-tree) inputs))
+  (into []
+    (if (is-leaf? huffman-tree)
+      (repeat (count inputs) (leaf-val huffman-tree))
+      (eduction (huffman-xf huffman-tree) inputs))
+    ))
 
 
 ;; -----------------------------------------------------------
