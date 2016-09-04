@@ -40,6 +40,11 @@
       ))
   )
 
+;;(huffman-tree->encoding-map
+;;  (make-huffman-tree [[:a 1] [:b 2] [:c 3]]))
+;;{:c [1], :b [0 1], :a [0 0]}
+
+
 ;; -------------------------------------------------------
 
 (def decode-code-cycle

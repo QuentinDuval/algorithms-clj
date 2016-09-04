@@ -60,7 +60,10 @@
                         (go (conj path 0) (lhs-node node))
                         (go (conj path 1) (rhs-node node)))
       ))
-  (apply hash-map (go [] tree))) ;; TODO - Test check: verify that there are no code prefix of another
+  (if (is-leaf? tree)
+    {(leaf-val tree) [0]} ;; Signal with no information in it
+    (apply hash-map (go [] tree))
+    )) ;; TODO - Test check: verify that there are no code prefix of another
 
 (defn encode-with
   "Encode a stream of values with the decoder provided as first parameter"
@@ -83,7 +86,10 @@
 
 (defn- next-node
   [node input]
-  ((if (zero? input) lhs-node rhs-node) node))
+  (cond
+    (is-leaf? node) node ;; TODO - Case of the tree with only one leaf - should be discarded before
+    (zero? input) (lhs-node node)
+    :else (rhs-node node)))
 
 (defn- huffman-xf
   "Transducer step function to decode a huffman stream of values"
@@ -123,5 +129,7 @@
   (prn (encode-with t [:a :b :c :d :e]))
   (prn (second (encode [:a :b :c :d :e])))
   (prn (decode t [0 0 0 0 0 1 0 1 1 0 1 1]))
+  (let [[t r] (encode [:a :a :a :a])]
+    (println r " " (decode t r)))
   )
 
