@@ -11,41 +11,40 @@
 ;; Build the Huffman tree
 ;; -----------------------------------------------------------
 
-(defn- make-leaf
-  "Create a leaf for the huffman code tree"
-  [[value freq]]
-  [{:values #{value}} freq])
+(defn make-leaf [value] [::leaf value])
+(defn make-node [lh rh] [::node lh rh])
+(defn is-leaf? [node] (= (first node) ::leaf))
+(defn is-node? [node] (= (first node) ::node))
 
-(def ^:private node-value first)
-(def ^:private node-frequency second)
-(defn- is-leaf [node] (= 1 (-> node :values count)))
-
-(defn- merge-nodes
-  "Build an intermediary node from two sub-trees"
-  [lhs rhs]
-  {:values (set/union (:values lhs) (:values rhs))
-   ;; TODO - We do not need these values in intermediate nodes => just traverse tree for encoding
-   :lhs lhs
-   :rhs rhs})
+(defn leaf-val [node] {:pre (is-leaf? node)} (second node))
+(defn lhs-node [node] {:pre (is-node? node)} (nth node 1))
+(defn rhs-node [node] {:pre (is-node? node)} (nth node 2))
 
 (defn- merge-nodes-by-lowest-frequency
   "Build the huffman tree from the priority map"
   [heap]
-  (utils/reduce-to-single-value [heap]
-    (let [[poped tail] (prio-utils/pop-n heap 2)
-          [a prio-a] (poped 0)
-          [b prio-b] (poped 1)]
-      (assoc tail (merge-nodes a b) (+ prio-a prio-b)))
-    ))
+  (first
+    (utils/reduce-to-single-value [heap]
+      (let [[poped tail] (prio-utils/pop-n heap 2)
+            [a prio-a] (poped 0)
+            [b prio-b] (poped 1)]
+        (assoc tail (make-node a b) (+ prio-a prio-b)))
+      )))
 
 (defn make-huffman-tree
   "Build the huffman tree from a list of (value, frequence) pairs"
   [value-frequency-pairs]
   (->>
     value-frequency-pairs
-    (into (prio/priority-map) (map make-leaf)) ;; TODO - Instead of a priority map, you can use two queues
-    merge-nodes-by-lowest-frequency
-    node-value))
+    (into (prio/priority-map) (utils/map-first make-leaf))
+    merge-nodes-by-lowest-frequency))
+
+#_(defn huffman-tree->code-map
+   "Traverse the tree to get the symbol to code map"
+   [huffman-tree]
+   (loop []
+    
+     ))
 
 
 ;; -----------------------------------------------------------
@@ -57,7 +56,7 @@
   [huffman-tree value]
   (defn get-bits-impl [{:keys [lhs rhs] :as node} directions]
     (cond
-      (is-leaf node) directions
+      (is-leaf? node) directions
       (-> lhs :values value) (recur lhs (conj directions 0))
       (-> rhs :values value) (recur rhs (conj directions 1))
       ))
