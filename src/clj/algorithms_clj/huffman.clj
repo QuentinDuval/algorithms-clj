@@ -1,5 +1,6 @@
 (ns algorithms-clj.huffman
   (:require
+    [algorithms-clj.priority-map-utils :as prio-utils]
     [clojure.data.priority-map :as prio]
     [clojure.set :as set] 
     ))
@@ -22,17 +23,10 @@
     :rhs c2}
    (+ w1 w2)])
 
-(defn- pop-two
-  "Pop two elements from the priority queue"
-  [heap]
-  (let [rest (pop heap)]
-    [(peek heap) (peek rest) (pop rest)]
-    ))
-
 (defn- merge-lowest
   "Merge the two lowest priority elements"
   [heap]
-  (let [[a b rest] (pop-two heap)]
+  (let [[[a b] rest] (prio-utils/pop-n heap 2)]
     (conj rest (make-node a b))))
 
 (defn- merge-lowest-recursively
