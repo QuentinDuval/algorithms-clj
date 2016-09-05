@@ -18,12 +18,8 @@
 (defn is-node? [node] (= (first node) ::node))
 
 (defn leaf-val [node] {:pre (is-leaf? node)} (second node))
-(defn lhs-node [node] {:pre (is-node? node)} (nth node 1))
-(defn rhs-node [node] {:pre (is-node? node)} (nth node 2))
-;; TODO
-;; Better use of data abstraction: return children as "(rest node)"
-;; It would allow to use the (nth children input) as decoding
-;; !!! Make the distinction between the need for get/set and absence of std data structure
+(defn children [node] {:pre (is-node? node)} (rest node))
+(defn child-at [node n] {:pre (is-node? node)} (nth node (inc n)))
 
 
 ;; -----------------------------------------------------------
@@ -71,9 +67,7 @@
   (defn go [path node] ;; TODO - optimize this by removing the recursion
     (cond
       (is-leaf? node) [(leaf-val node) path]
-      (is-node? node) (into
-                        (go (conj path 0) (lhs-node node))
-                        (go (conj path 1) (rhs-node node)))
+      (is-node? node) (mapcat #(go (conj path %) (child-at node %)) [0 1])
       ))
   (apply hash-map (go [] tree))) ;; TODO - Test check: verify that there are no code prefix of another
 
@@ -96,10 +90,6 @@
 ;; Decoding
 ;; -----------------------------------------------------------
 
-(defn- next-node
-  [node input]
-  (if (zero? input) (lhs-node node) (rhs-node node)))
-
 (defn- huffman-xf
   "Transducer step function to decode a huffman stream of values"
   [huffman-tree] ;; TODO - Try to replace this by a prefix tree - or search in map?
@@ -109,7 +99,7 @@
         ([] (xf))
         ([result] (xf result))
         ([result input]
-          (let [next-branch (next-node @branch input)]
+          (let [next-branch (child-at @branch input)]
             (if (is-leaf? next-branch)
               (do
                 (vreset! branch huffman-tree)
@@ -134,7 +124,6 @@
 (def t (make-huffman-tree m))
 
 (defn tests []
-  ;; TODO - Symetric testings with test.checks
   (prn (encode-with t [:a :b :c :d :e]))
   (prn (second (encode [:a :b :c :d :e])))
   (prn (decode t [0 0 0 0 0 1 0 1 1 0 1 1]))
