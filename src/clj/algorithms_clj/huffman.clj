@@ -61,10 +61,10 @@
 ;; Encoding
 ;; -----------------------------------------------------------
 
-(defn- huffman-tree->encoding-map
+(defn huffman-tree->encoding-map
   "Traverse the tree to get the symbol to code map"
   [tree]
-  (defn go [path node] ;; TODO - optimize this by removing the recursion
+  (defn go [path node]
     (cond
       (is-leaf? node) [(leaf-val node) path]
       (is-node? node) (mapcat #(go (conj path %) (child-at node %)) [0 1])

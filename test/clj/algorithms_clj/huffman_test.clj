@@ -10,41 +10,33 @@
 
 ;; -------------------------------------------------------
 
+(defn- to-encoding-map
+  [value-frequency-pairs]
+  (huffman-tree->encoding-map (make-huffman-tree value-frequency-pairs)))
+
 (deftest make-huffman-tree-test
   "Tests on the encoding of the huffman tree"
   
-  (testing "empty input"
-    (let [r (make-huffman-tree [])]
-      (is (= nil r))
+  (testing "Empty input leads to empty huffman tree"
+    (is (= nil (make-huffman-tree [])))
+    (is (= {} (to-encoding-map []))))
+  
+  (testing "Single generate a one symbol alphabet"
+    (let [inputs [["a" 1]]]
+      (is (= {"a" [0]} (to-encoding-map inputs)))
       ))
   
-  (testing "one input should not generate a leaf" ;; TODO => make this a property
-    (let [r (make-huffman-tree [["a" 1]])]
-      (is (is-node? r))
-      (is (is-leaf? (lhs-node r)))
+  (testing "Two inputs generate two one digit symbols"
+    (let [inputs [["a" 1] ["b" 2]]]
+      (is (= {"a" [0] "b" [1]} (to-encoding-map inputs)))
       ))
-  
-  (testing "two inputs"
-    (let [r (make-huffman-tree [["a" 1] ["b" 2]])]
-      (is (= "a" (-> r lhs-node leaf-val)))
-      (is (= "b" (-> r rhs-node leaf-val)))
-      ))
-  
-  (testing "three inputs"
-    (let [r (make-huffman-tree [["a" 1] ["b" 4] ["c" 2]])
-          w (flatten r)]
-      (is (= [:algorithms-clj.huffman/node
-              :algorithms-clj.huffman/node
-              :algorithms-clj.huffman/leaf "a"
-              :algorithms-clj.huffman/leaf "c"
-              :algorithms-clj.huffman/leaf "b"] w))
+   
+  (testing "three inputs - coding map"
+    (let [inputs [["a" 1] ["b" 4] ["c" 2]]
+          expected {"a" [0 0], "b" [1], "c" [0 1]}]
+      (is (= expected (to-encoding-map inputs)))
       ))
   )
-
-;;(huffman-tree->encoding-map
-;;  (make-huffman-tree [[:a 1] [:b 2] [:c 3]]))
-;;{:c [1], :b [0 1], :a [0 0]}
-
 
 ;; -------------------------------------------------------
 
