@@ -1,35 +1,13 @@
-(ns algorithms-clj.derivative)
-
+(ns algorithms-clj.derivative
+  (:require
+    [algorithms-clj.utils :as utils]
+    ))
 
 
 ;; ---------------------------------------------------------------
 
-(defn rotations
-  "Generates all the rotations of an input sequence"
-  [inputs]
-  (let [n (count inputs)
-        xf (comp (map #(take n %)) (take n))]
-    (eduction xf
-      (iterate #(drop 1 %) (concat inputs inputs)))
-    ))
-
-;; ---------------------------------------------------------------
-
-(defn prod?
-  [expr]
-  (or
-    (= (first expr) *) 
-    (= (first expr) '*) ;; Works with simple quote
-    (= (first expr) `*) ;; Works with syntax quote
-    ))
-
-(defn sum?
-  [expr]
-  (or
-    (= (first expr) +)
-    (= (first expr) '+) ;; Works with simple quote
-    (= (first expr) `+) ;; Works with syntax quote
-    ))
+(defn prod? [expr] (contains? #{* '* `*} (first expr)))
+(defn sum?  [expr] (contains? #{+ '+ `+} (first expr)))
 
 (defn make-sum
   "Simplify the sum, adding the constants together"
@@ -62,7 +40,7 @@
 
 (defn derivative-prod
   [terms var]
-  (for [r (rotations terms)]
+  (for [r (utils/rotations terms)]
     (make-product (conj (rest r) (derivative (first r) var)))
     ))
 

@@ -1,7 +1,6 @@
 (ns algorithms-clj.utils)
 
 
-
 (defn map-first
   ([f] (map (fn [[a b]] [(f a) b])))
   ([f c] (eduction (map-first f) c)))
@@ -19,3 +18,13 @@
   [[collection] & body]
   `(iterate-until-single-value
      (fn [~collection] ~@body) ~collection))
+
+(defn rotations
+  "Generates all the rotations of an input sequence"
+  [inputs]
+  (let [n (count inputs)
+        xf (comp (map #(take n %)) (take n))]
+    (eduction xf
+      (iterate #(drop 1 %) (concat inputs inputs)))
+    ))
+
