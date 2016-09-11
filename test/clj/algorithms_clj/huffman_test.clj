@@ -23,6 +23,7 @@
       (to-encoding-map []) => {}
       )
     (fact "Signal with no information still generates a encoding map"
+      (make-huffman-tree [["a" 1]]) => is-node?
       (to-encoding-map [["a" 1]]) => {"a" [0]}
       )
     (fact "Two symbols always leads to a map with single digit codes"
