@@ -15,8 +15,6 @@
 
 ;; ---------------------------------------------------------------
 
-;; TODO - Represent the data with keyword? At least translate it (offer helpers)
-
 (defn prod?
   [expr]
   (or
@@ -78,31 +76,4 @@
     (sum? expr) (make-sum (map  #(derivative % var) (rest expr)))
     (prod? expr) (make-sum (derivative-prod (rest expr) var))
     ))
-
-;; ---------------------------------------------------------------
-
-(def x 5)
-(def y 2)
-
-(defn tests
-  "Some basics tests (for the REPL)"
-  []
-  (prn (derivative 'x 'x))
-  (prn (derivative 'x 'y))
-  (prn (derivative `x `x))
-  (println "------------------")
-  (prn (make-sum ['x 'y]))
-  (prn (make-sum [1 2 3]))
-  (prn (make-sum [1 0 'x 5 'y]))
-  (println "------------------")
-  (prn (make-product ['x 'y]))
-  (prn (make-product [1 'x 0]))
-  (prn (make-product [2 'y 'x 5]))
-  (println "------------------")
-  (prn (derivative (list '+ 'x 1) 'x))
-  (prn (derivative `(+ x 1) `x))
-  (prn (derivative `(* x 2) `x))
-  (println "------------------")
-  (prn (derivative `(+ x (* x x y)) `x))
-  )
 
