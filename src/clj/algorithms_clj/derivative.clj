@@ -40,7 +40,7 @@
         number-sum (reduce + (parts true))]
     (cond
       (empty? (parts false)) number-sum
-      (zero? number-sum) (if-not (= 1 (count (parts true)))
+      (zero? number-sum) (if-not (= 1 (count (parts false)))
                            (into [+] (parts false))
                            (first (parts false)))
       :else (into [+ number-sum] (parts false))
@@ -53,9 +53,9 @@
         product (reduce * (parts true))]
     (cond
       (empty? (parts false)) product
-      (= 1 product) (if-not (= 1 (count (parts true)))
-                      (into [*] (parts false))
-                      (first (parts false)))
+      (= 1 product) (if-not (= 1 (count (parts false)))
+       (into [*] (parts false))
+       (first (parts false)))
       (zero? product) 0
       :else (into [* product] (parts false))
       )))

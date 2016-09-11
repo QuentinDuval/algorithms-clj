@@ -44,8 +44,8 @@
     )
   (fact "Product of multiple variables"
     (derivative [* :x :y] :x) => :y
-    ;;(derivative [* :x :y :z] :x) => [* :y :z] ;; FIX
-    (derivative [* :x :x :x] :x) => [+ :x :x :x] ;; TODO: Perfect
+    (derivative [* :x :y :z] :x) => [* :y :z]
+    (derivative [* :x :x :x] :x) => [+ [* :x :x] [* :x :x] [* :x :x]] ;; TODO: Perfect
     )
   )
 
