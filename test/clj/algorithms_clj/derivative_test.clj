@@ -46,13 +46,14 @@
     (derivative [* :x :y] :x) => :y
     (derivative [* :x :y :z] :x) => [* :y :z]
     (derivative [* :x :x :x] :x) => [+ [* :x :x] [* :x :x] [* :x :x]] ;; TODO: Perfect
-    )
-  )
+    ))
 
 (deftest test-product-sum-composites
   (fact "Sum of product"
-    ;;(derivative [+ [* :x :y] [:x :x]] :x) => [+ :y [+ :x :x]] ;; FIX
+    (derivative [+ [* :x :y] [* :x :x]] :x) => [+ :y [+ :x :x]] ;; TODO: Perfect
     )
-  )
+  (fact "Product of sum"
+    (derivative [* [+ :x :y] [+ :x :x]] :x) => [+ [+ :x :x] [* 2 [+ :x :y]]] ;; TODO: Perfect
+    ))
 
 (run-tests)
