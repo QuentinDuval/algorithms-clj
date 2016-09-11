@@ -7,7 +7,6 @@
     ))
 
 
-
 ;; -----------------------------------------------------------
 ;; Helpers to build a binary tree 
 ;; -----------------------------------------------------------
@@ -88,7 +87,6 @@
 
 (defn encode
   "Encode a stream, using the stream frequences to build the huffman tree"
-   ;; TODO - Encode the tree as well
   [values]
   (let [t (-> values frequencies make-huffman-tree)]
     [t (encode-with t values)]
