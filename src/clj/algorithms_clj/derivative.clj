@@ -20,6 +20,7 @@
 (defn prod?
   [expr]
   (or
+    (= (first expr) *) 
     (= (first expr) '*) ;; Works with simple quote
     (= (first expr) `*) ;; Works with syntax quote
     ))
@@ -27,6 +28,7 @@
 (defn sum?
   [expr]
   (or
+    (= (first expr) +)
     (= (first expr) '+) ;; Works with simple quote
     (= (first expr) `+) ;; Works with syntax quote
     ))
@@ -37,9 +39,11 @@
   (let [parts (group-by number? terms)
         number-sum (reduce + (parts true))]
     (cond
-      (zero? number-sum) (list* '+ (parts false))
       (empty? (parts false)) number-sum
-      :else (list* '+ number-sum (parts false))
+      (zero? number-sum) (if-not (= 1 (count (parts true)))
+                           (into [+] (parts false))
+                           (first (parts false)))
+      :else (into [+ number-sum] (parts false))
       )))
 
 (defn make-product
@@ -48,10 +52,12 @@
   (let [parts (group-by number? terms)
         product (reduce * (parts true))]
     (cond
-      (= 1 product) (list* '* (parts false))
       (empty? (parts false)) product
+      (= 1 product) (if-not (= 1 (count (parts true)))
+                      (into [*] (parts false))
+                      (first (parts false)))
       (zero? product) 0
-      :else (list* '* product (parts false))
+      :else (into [* product] (parts false))
       )))
 
 (declare derivative)
@@ -68,6 +74,7 @@
   (cond
     (number? expr) 0
     (symbol? expr) (if (= expr var) 1 0)
+    (keyword? expr) (if (= expr var) 1 0)
     (sum? expr) (make-sum (map  #(derivative % var) (rest expr)))
     (prod? expr) (make-sum (derivative-prod (rest expr) var))
     ))
