@@ -101,7 +101,7 @@
 
 (defn- huffman-xf
   "Transducer step function to decode a huffman stream of values"
-  [huffman-tree] ;; TODO - Try to replace this by a prefix tree - or search in map?
+  [huffman-tree]
   (fn [xf]
     (let [branch (volatile! huffman-tree)]
       (fn step-fn
