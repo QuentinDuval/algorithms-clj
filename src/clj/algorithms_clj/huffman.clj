@@ -64,12 +64,21 @@
 (defn huffman-tree->encoding-map
   "Traverse the tree to get the symbol to code map"
   [tree]
-  (defn go [path node]
+  (defn go [path node continue] ;; Use continuation to avoid recursion
     (cond
-      (is-leaf? node) [(leaf-val node) path]
-      (is-node? node) (mapcat #(go (conj path %) (child-at node %)) [0 1])
+      (is-leaf? node) (continue [(leaf-val node) path])
+      (is-node? node) 
+      (go (conj path 0) (child-at node 0)
+        (fn [lhs]
+          (if (child-at node 1)
+            (go (conj path 1) (child-at node 1)
+              (fn [rhs]
+                (continue (concat lhs rhs))
+                ))
+            (continue lhs))
+          ))
       ))
-  (apply hash-map (go [] tree))) ;; TODO - Test check: verify that there are no code prefix of another
+  (apply hash-map (go [] tree identity)))
 
 (defn encode-with
   "Encode a stream of values with the decoder provided as first parameter"
