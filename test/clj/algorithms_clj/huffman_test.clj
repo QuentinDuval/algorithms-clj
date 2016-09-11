@@ -16,7 +16,7 @@
   [value-frequency-pairs]
   (huffman-tree->encoding-map (make-huffman-tree value-frequency-pairs)))
 
-(deftest huffman-code-generation
+(deftest test-huffman-encoding-map
   (facts "About the generation of huffman encoding map"
     (fact "No inputs leads to a nil tree and no encoding"
       (make-huffman-tree []) => nil
@@ -31,7 +31,27 @@
     (fact "With 3 inputs, the most common symbol has the least number of digit"
       (to-encoding-map [["a" 1] ["b" 4] ["c" 2]]) => {"a" [0 0], "b" [1], "c" [0 1]}
       )
+    (fact "In general, the least frequent symbol get the more digit"
+      (to-encoding-map (hash-map :a 1 :b 2 :c 3 :d 3 :e 5))
+      => {:a [0 0 0], :b [0 0 1], :c [0 1], :d [1 0], :e [1 1]}
+      )
     ))
+
+(deftest encoding-with-provided-tree
+  (fact "Using an external huffman tree takes precedence of signal frequency" 
+    (let [freqs (hash-map :a 1 :b 2 :c 3 :d 3 :e 5)
+          htree (make-huffman-tree freqs)]
+      (encode-with htree [:a :b :c :d :e]) => [0 0 0 0 0 1 0 1 1 0 1 1]
+      (decode htree [0 0 0 0 0 1 0 1 1 0 1 1]) => [:a :b :c :d :e]
+      ))
+  (fact "Providing no huffman tree will use the signal frequency"
+    (let [freqs (frequencies [:a :b :c :d :e])
+          htree (make-huffman-tree freqs)]
+      (first (encode [:a :b :c :d :e])) => htree
+      (second (encode [:a :b :c :d :e])) => (encode-with htree [:a :b :c :d :e])
+      ))
+  )
+
 
 ;; -------------------------------------------------------
 
