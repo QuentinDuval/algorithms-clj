@@ -9,31 +9,34 @@
 (defn prod? [expr] (contains? #{* '* `*} (first expr)))
 (defn sum?  [expr] (contains? #{+ '+ `+} (first expr)))
 
+(defn simplify-if-unary-op
+  [expr]
+  (cond
+    (= 1 (count expr)) (apply (first expr))
+    (= 2 (count expr)) (second expr)
+    :else expr))
+
 (defn make-sum
   "Simplify the sum, adding the constants together"
   [terms]
-  (let [parts (group-by number? terms)
-        number-sum (reduce + (parts true))]
+  (let [exprs (filter (complement number?) terms)
+        number-sum (reduce + (filter number? terms))]
     (cond
-      (empty? (parts false)) number-sum
-      (zero? number-sum) (if-not (= 1 (count (parts false)))
-                           (into [+] (parts false))
-                           (first (parts false)))
-      :else (into [+ number-sum] (parts false))
+      (empty? exprs) number-sum
+      (zero? number-sum) (simplify-if-unary-op (into [+] exprs))
+      :else (into [+ number-sum] exprs)
       )))
 
 (defn make-product
   "Simplify the product, multiplying the constants together"
   [terms]
-  (let [parts (group-by number? terms)
-        product (reduce * (parts true))]
+  (let [exprs (filter (complement number?) terms)
+        product (reduce * (filter number? terms))]
     (cond
-      (empty? (parts false)) product
-      (= 1 product) (if-not (= 1 (count (parts false)))
-       (into [*] (parts false))
-       (first (parts false)))
+      (empty? exprs) product
+      (= 1 product) (simplify-if-unary-op (into [*] exprs))
       (zero? product) 0
-      :else (into [* product] (parts false))
+      :else (into [* product] exprs)
       )))
 
 (declare derivative)
