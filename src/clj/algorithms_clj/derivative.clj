@@ -56,10 +56,12 @@
     :else (derivate-expr (first expr) (rest expr) var)
     ))
 
+;; TODO: this is not a dispatch on symbol nor var, but on the content of the var
 (defmethod derivate-expr +
   [_ terms var]
   (make-sum (map #(derivative % var) terms)))
 
+;; TODO: this is not a dispatch on symbol nor var, but on the content of the var
 (defmethod derivate-expr *
   [_ terms var]
   (make-sum
