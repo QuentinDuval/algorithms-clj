@@ -115,19 +115,3 @@
   [huffman-tree inputs]
   (into [] (huffman-xf huffman-tree) inputs))
 
-
-;; -----------------------------------------------------------
-;; Test data
-;; -----------------------------------------------------------
-
-(def m (sorted-map :a 1 :b 2 :c 3 :d 3 :e 5))
-(def t (make-huffman-tree m))
-
-(defn tests []
-  (prn (encode-with t [:a :b :c :d :e]))
-  (prn (second (encode [:a :b :c :d :e])))
-  (prn (decode t [0 0 0 0 0 1 0 1 1 0 1 1]))
-  (let [[t r] (encode [:a :a :a :a])]
-    (println r " " (decode t r)))
-  )
-

@@ -50,6 +50,9 @@
       (first (encode [:a :b :c :d :e])) => htree
       (second (encode [:a :b :c :d :e])) => (encode-with htree [:a :b :c :d :e])
       ))
+  (fact "Encoding an empty signal should give back an empty signal"
+    (second (encode [:a :a :a :a])) => [0 0 0 0]
+    )
   )
 
 
