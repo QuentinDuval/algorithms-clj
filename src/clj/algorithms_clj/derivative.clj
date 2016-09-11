@@ -5,11 +5,10 @@
 
 
 ;; ---------------------------------------------------------------
+;; Constructors
+;; ---------------------------------------------------------------
 
-(defn prod? [expr] (contains? #{* '* `*} (first expr)))
-(defn sum?  [expr] (contains? #{+ '+ `+} (first expr)))
-
-(defn simplify-if-unary-op
+(defn- simplify-if-unary-op
   [expr]
   (cond
     (= 1 (count expr)) (apply (first expr))
@@ -34,10 +33,18 @@
         product (reduce * (filter number? terms))]
     (cond
       (empty? exprs) product
-      (= 1 product) (simplify-if-unary-op (into [*] exprs))
       (zero? product) 0
+      (= 1 product) (simplify-if-unary-op (into [*] exprs))
       :else (into [* product] exprs)
       )))
+
+
+;; ---------------------------------------------------------------
+;; Derivative of expression 
+;; ---------------------------------------------------------------
+
+(defn prod? [expr] (contains? #{* '* `*} (first expr)))
+(defn sum?  [expr] (contains? #{+ '+ `+} (first expr)))
 
 (declare derivative)
 
