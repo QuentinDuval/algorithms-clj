@@ -48,11 +48,22 @@
 
 (declare derivative)
 
+(defmulti derivate-expr
+  (fn [operand terms var] operand))
+
+(defmethod derivate-expr +
+  [_ terms var]
+  (make-sum (map #(derivative % var) terms)))
+
 (defn derivative-prod
   [terms var]
   (for [r (utils/rotations terms)]
     (make-product (conj (rest r) (derivative (first r) var)))
     ))
+
+(defmethod derivate-expr *
+  [_ terms var]
+  (make-sum (derivative-prod terms var)))
 
 (defn derivative
   "Compute the partial derivative of the provided expression"
@@ -61,7 +72,6 @@
     (number? expr) 0
     (symbol? expr) (if (= expr var) 1 0)
     (keyword? expr) (if (= expr var) 1 0)
-    (sum? expr) (make-sum (map  #(derivative % var) (rest expr)))
-    (prod? expr) (make-sum (derivative-prod (rest expr) var))
+    :else (derivate-expr (first expr) (rest expr) var)
     ))
 
