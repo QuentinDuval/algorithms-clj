@@ -70,3 +70,29 @@
       (utils/rotations terms))
     ))
 
+
+;; ---------------------------------------------------------------
+;; Experiments: automatic quote of an expression
+;; ---------------------------------------------------------------
+
+(defn qualified-name [x]
+  (symbol (str (.. (resolve x) -ns -name)) (name x)))
+
+(defn var->symbol [x]
+  (list 'quote (qualified-name x)))
+
+(defn eq* [expr]
+  (cond
+    (vector? expr) (mapv eq* expr)
+    (symbol? expr) (var->symbol expr)
+    :else expr))
+
+(defmacro eq [& expr]
+  (first (eq* (vec expr))))
+
+;; (derivative (eq [* 'x 'y]) 'x)
+
+(defmacro eq2 [x]
+  (list 'quote x))
+
+;; (derivative (eq2 [* x y]) 'x)
