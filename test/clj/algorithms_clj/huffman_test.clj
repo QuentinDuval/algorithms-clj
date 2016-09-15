@@ -38,6 +38,30 @@
       )
     ))
 
+;; -------------------------------------------------------
+
+(defn starts-with
+  [lhs rhs]
+  (every? true? (map = lhs rhs)))
+
+(defn no-prefix
+  [codes]
+  (let [pair-sorted-codes (partition 2 1 (sort codes))]
+    (nil? (some #(apply starts-with %) pair-sorted-codes))
+    ))
+
+(def no-code-is-prefix-of-other
+  (prop/for-all [original (gen/vector gen/int 1 100)]
+    (let [code (to-encoding-map (frequencies original))]
+      (no-prefix (map second code))
+      )))
+
+(defspec test-no-code-is-prefix-of-other
+  100 ;; Will call (tc/quick-check 100 decode-code-cycle)
+  no-code-is-prefix-of-other)
+
+;; -------------------------------------------------------
+
 (deftest encoding-with-provided-tree
   (fact "Using an external huffman tree takes precedence of signal frequency" 
     (let [freqs (hash-map :a 1 :b 2 :c 3 :d 3 :e 5)
@@ -53,19 +77,17 @@
       ))
   (fact "Encoding an empty signal should give back an empty signal"
     (second (encode [:a :a :a :a])) => [0 0 0 0]
-    )
-  )
-
+    ))
 
 ;; -------------------------------------------------------
 
-(def decode-code-cycle
+(def decoding-encoded-message-should-return-the-orginal
   (prop/for-all [original (gen/vector gen/int 1 100)]
     (let [[code encoded] (encode original)
           decoded (decode code encoded)]
       (= original decoded))))
 
-(defspec decoding-encoded-message-should-return-the-orginal
+(defspec test-decoding-encoded-message-should-return-the-orginal
   100 ;; Will call (tc/quick-check 100 decode-code-cycle)
   decode-code-cycle)
 
