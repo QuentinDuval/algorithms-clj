@@ -88,7 +88,7 @@
       (= original decoded))))
 
 (defspec test-decoding-encoded-message-should-return-the-orginal
-  100 ;; Will call (tc/quick-check 100 decode-code-cycle)
-  decode-code-cycle)
+  100 ;; Will call (tc/quick-check 100 decoding-encoded-message-should-return-the-orginal)
+  decoding-encoded-message-should-return-the-orginal)
 
 (run-tests)
