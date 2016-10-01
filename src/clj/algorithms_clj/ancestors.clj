@@ -7,6 +7,34 @@
 
 
 ;; ---------------------------------------------------------
+;; DEBUG - TRY TO HAVE "EXISTS"
+;; ---------------------------------------------------------
+
+(defn test-dbg
+  []
+  (pldb/db-rel link src dst)
+  
+  (def dbg-facts
+    (pldb/db
+      [link 'a 'b]
+      [link 'a 'c]
+      [link 'b 'c]
+      [link 'b 'd]
+      ))
+  
+  (defn has-parent?
+    [x]
+    (all
+      (fresh [z] (link z x))
+      ))
+  
+  (pldb/with-db dbg-facts
+    (run* [childs]
+      (has-parent? childs))
+    ))
+
+
+;; ---------------------------------------------------------
 ;; Classic ancestor prolog demonstration program
 ;; ---------------------------------------------------------
 
@@ -39,8 +67,8 @@
     [parent 'Alice 'Lisa]
     ))
 
-(defne father [x y] ([x y] (parent x y) (male x)))
-(defne mother [x y] ([x y] (parent x y) (female x)))
+(defn father [x y] (all (parent x y) (male x)))
+(defn mother [x y] (all (parent x y) (female x)))
 
 (defn is-grand-parent?
   "Indicates whether x is a grand-parent of y"
