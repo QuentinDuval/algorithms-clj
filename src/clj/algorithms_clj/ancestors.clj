@@ -19,15 +19,23 @@
     [male 'John]
     [male 'Herb]
     [male 'Mike]
+    [male 'Philip] 
     [female 'Alice]
     [female 'Jessy]
+    [female 'Lisa]
     [female 'Nicola]
+    
     [parent 'John 'Alice]
     [parent 'John 'Mike]
     [parent 'John 'Nicola]
+    [parent 'John 'Philip]
+    
     [parent 'Jessy 'Alice]
     [parent 'Jessy 'Mike]
+    [parent 'Jessy 'Nicola]
+    
     [parent 'Alice 'Herb]
+    [parent 'Alice 'Lisa]
     ))
 
 (defne father [x y] ([x y] (parent x y) (male x)))
@@ -60,6 +68,7 @@
   [x y]
   (fresh [z]
     ;; TODO - CUT: one child is enough but it keeps exploring and reporting the same couple
+    ;; defna does not work - defnu cut at the first finding, for all siblings!
     (father x z) (mother y z)
     ))
 
