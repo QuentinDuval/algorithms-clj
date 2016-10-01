@@ -24,6 +24,8 @@
 ;; is_child(C):-parent(_,C),!.
 ;; => is_child(X) => returns only one result => it becomes the query "there exists a child"
 
+;; http://kti.ms.mff.cuni.cz/~bartak/prolog/how.html
+
 (defn test-dbg
   []
   (pldb/db-rel link src dst)
@@ -38,9 +40,7 @@
   
   (defn has-parent?
     [x]
-    (all
-      (fresh [z] (link z x))
-      ))
+    (fresh [z] (link z x)))
   
   (pldb/with-db dbg-facts
     (run* [childs]
