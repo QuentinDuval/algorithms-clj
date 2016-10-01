@@ -10,6 +10,20 @@
 ;; DEBUG - TRY TO HAVE "EXISTS"
 ;; ---------------------------------------------------------
 
+;; Equivalent to:
+;;
+;; parent(a,b).
+;; parent(a,c).
+;; parent(b,c).
+;; parent(b,d).
+;; is_child(C):-parent(_,C).
+;; 
+;; is_child(X) => returns the duplicate for c
+
+;; If you modify with a cut:
+;; is_child(C):-parent(_,C),!.
+;; => is_child(X) => returns only one result => it becomes the query "there exists a child"
+
 (defn test-dbg
   []
   (pldb/db-rel link src dst)
