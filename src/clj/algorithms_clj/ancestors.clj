@@ -107,7 +107,7 @@
     (println (get-grand-parents 'Herb))
     (println (get-couples))
     (println (get-all-siblings))
-    ;;(println (check-full-siblings? 'Alice 'Mike))
-    ;;(println (check-full-siblings? 'Alice 'Nicola))
+    (println (check-full-siblings? 'Alice 'Mike))
+    (println (check-full-siblings? 'Alice 'Philip))
     ))
 
