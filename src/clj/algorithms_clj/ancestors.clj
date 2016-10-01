@@ -6,20 +6,8 @@
     ))
 
 
-(defn first-test
-  "Show how you can bind values to the logic expression from the outside"
-  [values target-sum]
-  (run* [a]
-   (fresh [b]
-     (membero a values)
-     (membero b values)
-     (fd/<= b a)
-     (fd/+ a b target-sum)
-     )))
-
-
 ;; ---------------------------------------------------------
-;; Classic ancestor prolog
+;; Classic ancestor prolog demonstration program
 ;; ---------------------------------------------------------
 
 (pldb/db-rel male h)
@@ -63,9 +51,8 @@
   "Indicates whether x and y had a child together"
   [x y]
   (fresh [z]
-    (project [x y]
-      (compare x y))
-    ;;(!= x y)
+    (male x)
+    (female y)
     (parent x z)
     (parent y z)
     ))
