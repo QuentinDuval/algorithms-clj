@@ -63,7 +63,9 @@
   "Indicates whether x and y had a child together"
   [x y]
   (fresh [z]
-    (!= x y)
+    (project [x y]
+      (compare x y))
+    ;;(!= x y)
     (parent x z)
     (parent y z)
     ))
