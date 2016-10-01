@@ -58,7 +58,10 @@
 (defn have-child?
   "Indicates whether x and y had a child together"
   [x y]
-  (fresh [z] (father x z) (mother y z)))
+  (fresh [z]
+    ;; TODO - CUT: one child is enough but it keeps exploring and reporting the same couple
+    (father x z) (mother y z)
+    ))
 
 (defn get-couples []
   (run* [parents]
