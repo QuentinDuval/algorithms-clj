@@ -34,6 +34,7 @@
     [parent 'Jessy 'Mike]
     [parent 'Jessy 'Nicola]
     
+    [parent 'Mike 'Herb]
     [parent 'Alice 'Herb]
     [parent 'Alice 'Lisa]
     ))
@@ -69,6 +70,7 @@
   (fresh [z]
     ;; TODO - CUT: one child is enough but it keeps exploring and reporting the same couple
     ;; defna does not work - defnu cut at the first finding, for all siblings!
+    ;; The notion to express is "there exists" instead of "for all": HOW?
     (father x z) (mother y z)
     ))
 
