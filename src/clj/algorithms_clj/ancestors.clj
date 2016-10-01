@@ -37,37 +37,48 @@
     [parent 'Alice 'Herb]
     ))
 
-(defn is-grand-parent
+(defn is-grand-parent?
+  "Indicates whether x is a grand-parent of y"
   [x y]
   (fresh [z]
     (parent x z)
     (parent z y)
     ))
 
-(defn get-grand-parents
-  "Find all grand-parents of a given individual"
-  [person]
-  (run* [ancestor]
-    (is-grand-parent ancestor person)
-    ))
+(defn get-grand-parents [person]
+  (run* [ancestor] (is-grand-parent? ancestor person)))
 
-(defn is-ancestor
+(defn is-ancestor?
+  "Indicates whether x is an ancestor of y"
   [x y]
   (conde
     [(parent x y)]
-    [(fresh [z] (parent x z) (is-ancestor z y))]
+    [(fresh [z] (parent x z) (is-ancestor? z y))]
     ))
 
-(defn get-ancestors
-  "Find all ancestor of a given individual"
-  [person]
-  (run* [ancestor]
-    (is-ancestor ancestor person)
+(defn get-ancestors [person]
+  (run* [ancestor] (is-ancestor? ancestor person)))
+
+(defn have-child?
+  "Indicates whether x and y had a child together"
+  [x y]
+  (fresh [z]
+    (!= x y)
+    (parent x z)
+    (parent y z)
+    ))
+
+(defn get-couples []
+  (run* [parents]
+    (fresh [x y]
+      (have-child? x y)
+      (=== parents [x y]))
     ))
 
 (defn tests []
   (pldb/with-db family-facts-db
     (println (get-ancestors 'Herb))
     (println (get-grand-parents 'Herb))
+    (println (get-couples))
     ))
 
