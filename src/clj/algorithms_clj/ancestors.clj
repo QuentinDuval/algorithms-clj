@@ -3,6 +3,8 @@
     [clojure.core.logic :rename {== ===} :refer :all]
     [clojure.core.logic.fd :as fd]
     [clojure.core.logic.pldb :as pldb]
+    [clojure.core.unify :as uni] 
+    [clojure.set :as set] 
     ))
 
 
@@ -39,13 +41,13 @@
       [link 'b 'd]
       ))
   
-  (defn has-parent?
+  (defn childo
     [x]
     (fresh [z] (link z x)))
   
   (pldb/with-db dbg-facts
     (run* [childs]
-      (has-parent? childs))
+      (childo childs))
     ))
 
 
@@ -58,9 +60,11 @@
     (pldb/db
       [link 'a ['b 'c]] ;; Sets would be nicer, but seems not supported in core.logic
       [link 'b ['c 'd]]
+      ;;[link 'a #{'b 'c}] ;; Stack overflow with anything like (project and contains?)
+      ;;[link 'b #{'c 'd}]
       ))
   
-  (defn has-parent?
+  (defn childo
     [x]
     (fresh [parent childs]
       (link parent childs)
@@ -68,8 +72,8 @@
       ))
   
   (pldb/with-db dbg-facts
-    (run* [childs]
-      (has-parent? childs))
+    (run* [child]
+      (childo child))
     ))
 
 
@@ -83,12 +87,43 @@
   
   (def parent-view (into {} (:parent-rels db)))
   (def childs-view (into {} (map (comp vec reverse)) (:parent-rels db)))
-  
-  (defn has-parent? [c]
-    (contains? childs-view c))
-  
+  (defn has-parent? [c] (contains? childs-view c))
   (keys childs-view))
 
+
+
+(defn test-dbg-4
+  "Different modelization: using unify and clojure.set/join"
+  []
+  
+  ;;Based on the amazing API:
+  ;;(uni/unify '((?a * ?x ** 2) + (?b * ?x) + ?c) '(?z + (4 * 5) + 3))
+  
+  (def parent-rel '[::parent ?parent ?child])
+  (def parent-db
+    [[::parent 'a 'b]
+     [::parent 'a 'c]
+     [::parent 'b 'c]
+     [::parent 'b 'd]])
+
+  (def sex-rel '[?sex ?person])
+  (def sex-db
+    [[::male 'a]
+     [::female 'b]
+     [::male 'c]
+     [::female 'd]])
+  
+  (defn bind-relation [rel values]
+    (map #(uni/unify rel %) values))
+   
+  (defn get-children-sex
+    []
+    (let [children (bind-relation parent-rel parent-db)
+          sexes (bind-relation '[?sex ?child] sex-db)]
+      (map (juxt '?child '?sex) (set/join children sexes))
+      ))
+  
+  (get-children-sex))
 
 
 ;; ---------------------------------------------------------
