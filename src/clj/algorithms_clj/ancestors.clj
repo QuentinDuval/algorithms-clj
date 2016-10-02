@@ -119,7 +119,11 @@
   (defn get-children-sex
     []
     (let [children (bind-relation parent-rel parent-db)
-          sexes (bind-relation '[?sex ?child] sex-db)]
+          ;;sexes (bind-relation '[?sex ?child] sex-db)
+          sexes (map
+                  #(set/rename-keys % {'?person '?child})
+                  (bind-relation sex-rel sex-db))
+          ]
       (map (juxt '?child '?sex) (set/join children sexes))
       ))
   
