@@ -73,6 +73,24 @@
     ))
 
 
+(defn test-dbg-3
+  "Emulation of logic program requires to create 'views' to store each side of a relation"
+  []
+  (def db
+    {:people #{:a :b :c :d}
+     :parent-rels #{[:a :b] [:a :c] [:b :c] [:b :d]}
+     })
+  
+  (def parent-view (into {} (:parent-rels db)))
+  (def childs-view (into {} (map (comp vec reverse)) (:parent-rels db)))
+  
+  (defn has-parent? [c]
+    (contains? childs-view c))
+  
+  (keys childs-view))
+
+
+
 ;; ---------------------------------------------------------
 ;; Classic ancestor prolog demonstration program
 ;; ---------------------------------------------------------
