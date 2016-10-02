@@ -26,7 +26,8 @@
 
 ;; http://kti.ms.mff.cuni.cz/~bartak/prolog/how.html
 
-(defn test-dbg
+(defn test-dbg-1
+  "First modelization: parent several times"
   []
   (pldb/db-rel link src dst)
   
@@ -41,6 +42,30 @@
   (defn has-parent?
     [x]
     (fresh [z] (link z x)))
+  
+  (pldb/with-db dbg-facts
+    (run* [childs]
+      (has-parent? childs))
+    ))
+
+
+(defn test-dbg-2
+  "Different modelization: parent of a bunch of childs" 
+  []
+  (pldb/db-rel link src dst)
+  
+  (def dbg-facts
+    (pldb/db
+      [link 'a ['b 'c]] ;; Sets would be nicer, but seems not supported in core.logic
+      [link 'b ['c 'd]]
+      ))
+  
+  (defn has-parent?
+    [x]
+    (fresh [parent childs]
+      (link parent childs)
+      (member1o x childs)
+      ))
   
   (pldb/with-db dbg-facts
     (run* [childs]
