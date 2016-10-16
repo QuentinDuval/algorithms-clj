@@ -29,15 +29,23 @@
              (iterate #(drop 1 %) (concat inputs inputs)))
            ))
 
-(defmacro simple-step-fct
+(defmacro make-transducer
+          "Build a transducer, based on
+          - a list of bindings (inner state)
+          - all the bodies of the step function"
+          [[xf] bindings & step-fn]
+          `(fn [~xf]
+               (let ~bindings
+                    (fn ~@step-fn))))
+
+(defmacro make-simple-transducer
           "Build a simple step function for a transducer, based on
           - a list of bindings (inner state)
           - the body of a step function taking two arguments"
           [[xf] bindings & step-fn]
-          `(fn [~xf]
-               (let ~bindings
-                    (fn
-                      ([] (~xf))
-                      ([result#] (~xf result#))
-                      ~@step-fn))))
+          `(make-transducer
+             [~xf] ~bindings
+             ([] (~xf))
+             ([result#] (~xf result#))
+             ~@step-fn))
 

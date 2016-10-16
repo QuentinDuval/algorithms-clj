@@ -98,7 +98,8 @@
   huffman-xf
   "Transducer step function to decode a huffman stream of values"
   [huffman-tree]
-  (utils/simple-step-fct [xf]
+  (utils/make-simple-transducer
+    [xf]
     [branch (volatile! huffman-tree)]
     ([result input]
       (let [next-branch (child-at @branch input)]
