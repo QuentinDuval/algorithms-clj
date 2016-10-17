@@ -33,10 +33,10 @@
   "Build a transducer, based on
   - a list of bindings (inner state)
   - all the bodies of the step function"
-  [[xf] bindings & step-fn]
+  [[xf] bindings & step-fns]
   `(fn [~xf]
      (let ~bindings
-       (fn ~@step-fn))))
+       (fn ~@step-fns))))
 
 (defmacro make-simple-transducer
   "Build a simple step function for a transducer, based on
@@ -49,3 +49,10 @@
      ([result#] (~xf result#))
      ~@step-fn))
 
+(defmacro make-stateless-transducer
+  "Helper function to make a stateless transducer,
+  based on the body of the step functions"
+  [[xf] & step-fns]
+  `(make-transducer
+     [~xf] []                                               ;; No bindings needed
+     ~@step-fns))
