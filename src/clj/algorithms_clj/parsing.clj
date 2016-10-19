@@ -36,3 +36,62 @@
   (let [p (word-parser (terminal))]                         ;; TODO - A runParser method would be much nicer
     (println (on-success p [] "my first sentence"))
     ))
+
+
+;; -------------------------------------------------------
+;; Another attempt of design
+;; -------------------------------------------------------
+
+(defrecord ParseFailure [^String explanation])
+
+(defrecord ParseInput [^String str ^int cursor])
+
+(defrecord ParseSuccess [^ParseInput input result])
+
+;; A parser is a function of type Input -> Failure | Success Input Result
+
+(defprotocol ParseMonad
+  (bind [mvalue mfunction] "The bind operator of Haskell"))
+
+(defn run-parser [parser input]
+  (parser input))
+
+(extend-type ParseFailure
+  ParseMonad
+  (bind [mvalue _] mvalue))
+
+(extend-type ParseSuccess
+  ParseMonad
+  (bind [{:keys [input result]} mfunction]
+    (run-parser (mfunction result) input)
+    ))
+
+;; Trying the example out
+
+(defn pure [a]
+  (fn [input]
+    (ParseSuccess. input a)
+    ))
+
+(defn parse-word
+  [{:keys [str cursor]}]
+  (let [next-cursor (str/index-of str " " cursor)]
+    (ParseSuccess.
+      (ParseInput. str (inc next-cursor))
+      (subs str cursor next-cursor))
+    ))
+
+(defn mparsing-test []
+  (bind
+    (run-parser parse-word (ParseInput. "my first sentence" 0))
+    (fn [lhs]
+      (fn [input]
+        (bind (parse-word input)
+          (fn [rhs]
+            (pure (str/join "," [lhs rhs]))
+            ))
+        ))
+    ))
+
+
+
