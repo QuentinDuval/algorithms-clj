@@ -68,7 +68,7 @@
     (cond
       (is-leaf? node) (continue [(leaf-val node) path])
       (is-node? node)
-      (go (conj path 0) (child-at node 0)
+      (recur (conj path 0) (child-at node 0)
         (fn [lhs]
           (if (child-at node 1)
             (go (conj path 1) (child-at node 1)
