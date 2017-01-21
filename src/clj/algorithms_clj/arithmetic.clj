@@ -15,13 +15,14 @@
 (defn add [& args] (into [:add] args))
 (defn mul [& args] (into [:mul] args))
 
+(defn rator [e] (first e))
+(defn rands [e] (rest e))
+
 (defn cst? [n] (number? n))
 (defn sym? [v] (string? v))
 (defn op? [e] (vector? e))
-(defn add? [e] (and (op? e) (= (first e) :add)))
-(defn mul? [e] (and (op? e) (= (first e) :mul)))
-
-(defn rands [e] (rest e))
+(defn add? [e] (and (op? e) (= (rator e) :add)))
+(defn mul? [e] (and (op? e) (= (rator e) :mul)))
 
 
 ;; ----------------------------------------------------------------------------
@@ -34,12 +35,6 @@
     (mul (cst 0) (sym "x") (sym "y"))
     (mul (cst 1) (sym "y") (cst 2))
     (add (cst 0) (sym "x"))))
-
-(def expr-2
-  (add 1 2
-    (mul 0 "x" "y")
-    (mul 1 "y" 2)
-    (add 0 "y")))
 
 ;; ----------------------------------------------------------------------------
 
@@ -66,16 +61,14 @@
     :else e))
 
 (defn evaluate
-  [env expr]
-  (walk/postwalk (partial eval-cata env) expr))
+  [env e]
+  (walk/postwalk #(eval-cata env %) e))
 
 ;; ----------------------------------------------------------------------------
 
 (defn- optimize-op
   [[rator & rands] binary-op neutral]
-  (let [groups (group-by cst? rands)
-        csts (get groups true)
-        vars (get groups false)
+  (let [{csts true vars false} (group-by cst? rands)
         sum-cst (reduce binary-op neutral csts)]
     (cond
       (empty? vars) (cst sum-cst)
@@ -85,20 +78,19 @@
       )))
 
 (defn- optimize-add [e]
-  (cond
-    (add? e) (optimize-op e + 0)
-    :else e))
+  (if (add? e)
+    (optimize-op e + 0)
+    e))
 
 (defn- optimize-mul [e]
-  (cond
-    (mul? e) (if (some #{0} e) (cst 0) (optimize-op e * 1))
-    :else e))
-
-(defn optimize
-  [e]
-  (walk/postwalk
-    (comp optimize-mul optimize-add)
+  (if (mul? e)
+    (if (some #{0} e)
+      (cst 0)
+      (optimize-op e * 1))
     e))
+
+(defn optimize [e]
+  (walk/postwalk (comp optimize-mul optimize-add) e))
 
 
 ;; ----------------------------------------------------------------------------
@@ -108,10 +100,10 @@
   (if (string? x) (get env x x) x))
 
 (defn partial-eval
-  [env expr]
+  [env e]
   (walk/postwalk
-    (comp optimize-mul optimize-add (partial replace-var env))
-    expr))
+    (comp optimize-mul optimize-add #(replace-var env %))
+    e))
 
 ;; ----------------------------------------------------------------------------
 
