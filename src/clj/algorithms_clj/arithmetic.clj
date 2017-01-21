@@ -1,6 +1,7 @@
 (ns algorithms-clj.arithmetic
   (:require
     [clojure.string :as string]
+    [clojure.set :as set]
     [clojure.walk :as walk]
     ))
 
@@ -90,9 +91,7 @@
 
 (defn- optimize-mul [e]
   (cond
-    (mul? e) (if (some #{0} e)
-               (cst 0)
-               (optimize-op e * 1))
+    (mul? e) (if (some #{0} e) (cst 0) (optimize-op e * 1))
     :else e))
 
 (defn optimize
@@ -116,6 +115,18 @@
 
 ;; ----------------------------------------------------------------------------
 
+(defn dependencies [e]
+  (walk/postwalk
+    (fn [e]
+      (cond
+        (cst? e) #{}
+        (sym? e) #{e}
+        (op? e) (apply set/union (rands e))
+        :else e))
+    e))
+
+;; ----------------------------------------------------------------------------
+
 (defn test-walk
   []
   (let [e expr-1
@@ -125,6 +136,8 @@
     (println (print-expr e))
     (println (print-expr o))
     (println (print-expr f))
+    (println (dependencies e))
+    (println (dependencies f))
     (println (evaluate env e))
     (println (evaluate env o))
     ))
