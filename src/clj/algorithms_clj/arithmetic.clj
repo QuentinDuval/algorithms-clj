@@ -1,77 +1,129 @@
 (ns algorithms-clj.arithmetic
   (:require
+    [clojure.string :as string]
     [clojure.walk :as walk]
     ))
 
 
 ;; ----------------------------------------------------------------------------
+;; DSL constructors
+;; ----------------------------------------------------------------------------
 
-(defn- optimize-form
-  [form]
-  (let [[rator & rands] form]
-    (case rator
-      :add
-      (let [new-rands (filter (complement #{0}) rands)]
-        (cond
-          (= 1 (count new-rands)) (first new-rands)
-          :else (into [:add] new-rands)))
-      :mul
-      (let [new-rands (filter (complement #{1}) rands)]
-        (cond
-          (some #{0} rands) 0
-          (= 1 (count new-rands)) (first new-rands)
-          :else (into [:mul] new-rands)))
-      form)))
+(defn cst [n] n)
+(defn sym [s] s)
+(defn add [& args] (into [:add] args))
+(defn mul [& args] (into [:mul] args))
 
-(defn optimize-cata
-  [form]
-  (cond
-    (vector? form) (optimize-form form)
-    :else form))
+(defn cst? [n] (number? n))
+(defn sym? [v] (string? v))
+(defn op? [e] (vector? e))
+(defn add? [e] (and (op? e) (= (first e) :add)))
+(defn mul? [e] (and (op? e) (= (first e) :mul)))
+
+(defn rands [e] (rest e))
+
+
+;; ----------------------------------------------------------------------------
+;; Test expression
+;; ----------------------------------------------------------------------------
+
+(def expr-1
+  (add
+    (cst 1) (cst 2)
+    (mul (cst 0) (sym "x") (sym "y"))
+    (mul (cst 1) (sym "y") (cst 2))
+    (add (cst 0) (sym "x"))))
+
+(def expr-2
+  (add 1 2
+    (mul 0 "x" "y")
+    (mul 1 "y" 2)
+    (add 0 "y")))
 
 ;; ----------------------------------------------------------------------------
 
-(defn eval-op
-  [env [rator & rands]]
-  (case rator
-    :add (reduce + rands)
-    :mul (reduce * rands)
-    ))
+(defn print-expr
+  [expr]
+  (walk/postwalk
+    (fn [e]
+      (cond
+        (cst? e) (str e)
+        (sym? e) e
+        (add? e) (str "(+ " (string/join " " (rest e)) ")")
+        (mul? e) (str "(* " (string/join " " (rest e)) ")")
+        :else e))
+    expr))
+
+;; ----------------------------------------------------------------------------
 
 (defn eval-cata
-  [env x]
+  [env e]
   (cond
-    (string? x) (get env x)
-    (vector? x) (eval-op env x)
-    :else x))
+    (sym? e) (get env e)
+    (add? e) (reduce + (rest e))
+    (mul? e) (reduce * (rest e))
+    :else e))
 
-(defn eval-expr
+(defn evaluate
   [env expr]
   (walk/postwalk (partial eval-cata env) expr))
 
 ;; ----------------------------------------------------------------------------
 
-(defn fixing-cata
+(defn- optimize-op
+  [[rator & rands] binary-op neutral]
+  (let [groups (group-by cst? rands)
+        csts (get groups true)
+        vars (get groups false)
+        sum-cst (reduce binary-op neutral csts)]
+    (cond
+      (empty? vars) (cst sum-cst)
+      (and (= 1 (count vars)) (= sum-cst neutral)) (sym (first vars))
+      :else (into [rator sum-cst] vars)
+      )))
+
+(defn- optimize-add [e]
+  (cond
+    (add? e) (optimize-op e + 0)
+    :else e))
+
+(defn- optimize-mul [e]
+  (cond
+    (mul? e) (if (some #{0} e)
+               (cst 0)
+               (optimize-op e * 1))
+    :else e))
+
+(defn optimize
+  [e]
+  (walk/postwalk
+    (comp optimize-mul optimize-add)
+    e))
+
+
+;; ----------------------------------------------------------------------------
+
+(defn replace-var
   [env x]
   (if (string? x) (get env x x) x))
 
-(defn fixing
+(defn partial-eval
   [env expr]
   (walk/postwalk
-    (comp optimize-cata (partial fixing-cata env))               ;; Cata-morphism composition
+    (comp optimize-mul optimize-add (partial fixing-cata env))
     expr))
 
 ;; ----------------------------------------------------------------------------
 
 (defn test-walk
   []
-  (let [expr [:add 1 2 [:mul "x" 0] [:mul 1 "y"] 0]
-        opt (walk/postwalk (fn [x] (optimize-cata x)) expr)
-        env {"x" 1 "y" 2}]
-    (prn expr)
-    (prn opt)
-    (println "-------------")
-    (prn (eval-expr env expr))
-    (prn (eval-expr env opt))
-    (prn (fixing {"y" 2} expr))
+  (let [e expr-1
+        env {"x" 1 "y" 2}
+        o (optimize e)
+        f (partial-eval {"y" 0} e)]
+    (println (print-expr e))
+    (println (print-expr o))
+    (println (print-expr f))
+    (println (evaluate env e))
+    (println (evaluate env o))
     ))
