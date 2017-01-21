@@ -79,6 +79,7 @@
     (cond
       (empty? vars) (cst sum-cst)
       (and (= 1 (count vars)) (= sum-cst neutral)) (sym (first vars))
+      (= sum-cst neutral) (into [rator] vars)
       :else (into [rator sum-cst] vars)
       )))
 
@@ -110,7 +111,7 @@
 (defn partial-eval
   [env expr]
   (walk/postwalk
-    (comp optimize-mul optimize-add (partial fixing-cata env))
+    (comp optimize-mul optimize-add (partial replace-var env))
     expr))
 
 ;; ----------------------------------------------------------------------------
