@@ -12,6 +12,7 @@
 /resources/public/js/compiled/**
 /target/
 figwheel_server.log
+.idea/
 pom.xml
 pom.xml.asc
 .settings/ccw.repl.cmdhistory.prefs
