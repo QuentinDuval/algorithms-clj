@@ -52,17 +52,16 @@
 
 ;; ----------------------------------------------------------------------------
 
-(defn eval-cata
-  [env e]
-  (cond
-    (sym? e) (get env e)
-    (add? e) (reduce + (rest e))
-    (mul? e) (reduce * (rest e))
-    :else e))
-
 (defn evaluate
   [env e]
-  (walk/postwalk #(eval-cata env %) e))
+  (walk/postwalk
+    (fn [e]
+      (cond
+        (sym? e) (get env e)
+        (add? e) (reduce + (rest e))
+        (mul? e) (reduce * (rest e))
+        :else e))
+    e))
 
 ;; ----------------------------------------------------------------------------
 
