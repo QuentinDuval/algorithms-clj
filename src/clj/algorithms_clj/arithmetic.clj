@@ -65,16 +65,20 @@
 
 ;; ----------------------------------------------------------------------------
 
+(defn- make-op
+  [rator rands]
+  (if (< 1 (count rands))
+    (into [rator] rands)
+    (first rands)))
+
 (defn- optimize-op
   [[rator & rands] binary-op neutral]
   (let [{csts true vars false} (group-by cst? rands)
-        sum-cst (reduce binary-op neutral csts)
-        one? #(= 1 (count %))]
+        sum-cst (reduce binary-op neutral csts)]
     (cond
       (empty? vars) (cst sum-cst)
-      (and (one? vars) (= neutral sum-cst)) (sym (first vars))
-      (= neutral sum-cst) (into [rator] vars)
-      :else (into [rator (cst sum-cst)] vars)
+      (= neutral sum-cst) (make-op rator vars)
+      :else (make-op rator (into [(cst sum-cst)] vars))
       )))
 
 (defn- optimize-add [e]
