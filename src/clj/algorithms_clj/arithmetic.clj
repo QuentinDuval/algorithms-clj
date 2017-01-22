@@ -68,12 +68,13 @@
 (defn- optimize-op
   [[rator & rands] binary-op neutral]
   (let [{csts true vars false} (group-by cst? rands)
-        sum-cst (reduce binary-op neutral csts)]
+        sum-cst (reduce binary-op neutral csts)
+        one? #(= 1 (count %))]
     (cond
       (empty? vars) (cst sum-cst)
-      (and (= 1 (count vars)) (= sum-cst neutral)) (sym (first vars))
-      (= sum-cst neutral) (into [rator] vars)
-      :else (into [rator sum-cst] vars)
+      (and (one? vars) (= neutral sum-cst)) (sym (first vars))
+      (= neutral sum-cst) (into [rator] vars)
+      :else (into [rator (cst sum-cst)] vars)
       )))
 
 (defn- optimize-add [e]

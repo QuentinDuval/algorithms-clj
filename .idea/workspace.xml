@@ -2,8 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4b74b5df-d89b-4545-815b-103b1f7de7b2" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/clj/algorithms_clj/huffman.clj" afterPath="$PROJECT_DIR$/src/clj/algorithms_clj/huffman.clj" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/clj/algorithms_clj/utils.clj" afterPath="$PROJECT_DIR$/src/clj/algorithms_clj/utils.clj" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/codeStyleSettings.xml" afterPath="$PROJECT_DIR$/.idea/codeStyleSettings.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/replstate.xml" afterPath="$PROJECT_DIR$/.idea/replstate.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/clj/algorithms_clj/arithmetic.clj" afterPath="$PROJECT_DIR$/src/clj/algorithms_clj/arithmetic.clj" />
     </list>
     <ignored path="algorithms-clj.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -24,31 +27,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="huffman.clj" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/clj/algorithms_clj/huffman.clj">
+      <file leaf-file-name="arithmetic.clj" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/clj/algorithms_clj/arithmetic.clj">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="78">
-              <caret line="100" column="9" selection-start-line="100" selection-start-column="9" selection-end-line="100" selection-end-column="9" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="utils.clj" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/clj/algorithms_clj/utils.clj">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="288">
-              <caret line="37" column="29" selection-start-line="37" selection-start-column="29" selection-end-line="37" selection-end-column="29" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="huffman_test.clj" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/test/clj/algorithms_clj/huffman_test.clj">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="303">
-              <caret line="91" column="53" selection-start-line="91" selection-start-column="53" selection-end-line="91" selection-end-column="53" />
+            <state relative-caret-position="495">
+              <caret line="73" column="33" selection-start-line="73" selection-start-column="33" selection-end-line="73" selection-end-column="33" />
               <folding />
             </state>
           </provider>
@@ -68,7 +51,10 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/src/clj/algorithms_clj/utils.clj" />
+        <option value="$PROJECT_DIR$/src/clj/algorithms_clj/parsing.clj" />
         <option value="$PROJECT_DIR$/src/clj/algorithms_clj/huffman.clj" />
+        <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/src/clj/algorithms_clj/arithmetic.clj" />
       </list>
     </option>
   </component>
@@ -80,10 +66,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="21" />
-    <option name="y" value="38" />
-    <option name="width" value="1400" />
-    <option name="height" value="769" />
+    <option name="width" value="1440" />
+    <option name="height" value="900" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -110,7 +94,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -215,19 +198,21 @@
       </pane>
       <pane id="Scope" />
       <pane id="PackagesPane" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.Clojure" />
+    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file:///Users/duvalquentin/IdeaProjects/algorithms-clj/test/clj/algorithms_clj/huffman_test.clj&#10;huff&#9;FILE&#9;file:///Users/duvalquentin/IdeaProjects/algorithms-clj/test/clj/algorithms_clj/huffman_test.clj&#10;huffman&#9;FILE&#9;file:///Users/duvalquentin/IdeaProjects/algorithms-clj/src/clj/algorithms_clj/huffman.clj" />
+    <property name="FullScreen" value="true" />
   </component>
-  <component name="ReplState" timestamp="1476641195736">{:repl-history {:ide [], :local [], :remote []}}</component>
-  <component name="RunManager" selected="Clojure REPL.AlgorithmRepl">
+  <component name="ReplState" timestamp="1485097445481">{:repl-history {:ide [], :local [&quot;(run-all-tests)&quot; &quot;(defmacro simple-step-fct\n  \&quot;Build a simple step function for a transducer\&quot;\n  [bindings &amp; xf]\n  `(fn [xf]\n       (let ~bindings\n         (fn step-fn\n             ([] (xf))\n             ([result] (xf result))\n             ~xf))))&quot; &quot;(defn- huffman-xf\n  \&quot;Transducer step function to decode a huffman stream of values\&quot;\n  [huffman-tree]\n   (simple-step-fct\n     [branch (volatile! huffman-tree)]\n     ([result input]\n       (let [next-branch (child-at @branch input)]\n            (if (is-leaf? next-branch)\n              (do\n                (vreset! branch huffman-tree)\n                (xf result (leaf-val next-branch)))\n              (do\n                (vreset! branch next-branch)\n                result))\n            )))\n\n  #_(fn [xf]\n    (let [branch (volatile! huffman-tree)]\n      (fn step-fn\n        ([] (xf))\n        ([result] (xf result))\n        ([result input]\n          (let [next-branch (child-at @branch input)]\n            (if (is-leaf? next-branch)\n              (do\n                (vreset! branch huffman-tree)\n                (xf result (leaf-val next-branch)))\n              (do\n                (vreset! branch next-branch)\n                result))\n            ))\n        ))))&quot; &quot;(defmacro simple-step-fct\n  \&quot;Build a simple step function for a transducer\&quot;\n  [bindings &amp; xf]\n  `(fn [xf]\n       (let ~bindings\n         (fn step-fn\n             ([] (xf))\n             ([result] (xf result))\n             ~@xf))))&quot; &quot;(defn- huffman-xf\n  \&quot;Transducer step function to decode a huffman stream of values\&quot;\n  [huffman-tree]\n   (simple-step-fct\n     [branch (volatile! huffman-tree)]\n     ([result input]\n       (let [next-branch (child-at @branch input)]\n            (if (is-leaf? next-branch)\n              (do\n                (vreset! branch huffman-tree)\n                (xf result (leaf-val next-branch)))\n              (do\n                (vreset! branch next-branch)\n                result))\n            ))))&quot; &quot;(macroexpand-1 huffman-xf)&quot; &quot;(defmacro simple-step-fct\n          \&quot;Build a simple step function for a transducer\&quot;\n          [bindings &amp; step-fn]\n          `(fn [xf#]\n               (let ~bindings\n                    (fn\n                        ([] (xf#))\n                        ([result] (xf# result))\n                        ~@step-fn))))&quot; &quot;(defn- huffman-xf\n       \&quot;Transducer step function to decode a huffman stream of values\&quot;\n       [huffman-tree]\n       (simple-step-fct\n         [branch (volatile! huffman-tree)]\n         ([result input]\n           (let [next-branch (child-at @branch input)]\n                (if (is-leaf? next-branch)\n                  (do\n                    (vreset! branch huffman-tree)\n                    (xf result (leaf-val next-branch)))\n                  (do\n                    (vreset! branch next-branch)\n                    result))\n                ))))&quot; &quot;(simple-test 1 2)&quot; &quot;(defprotocol Parser\n  \&quot;Defining a protocol for what is a Parser in Clojure\&quot;\n  (on-success [this result input] \&quot;Transmit the parsing result to the next parser in the chain\&quot;)\n  (on-failure [this ] \&quot;Transmit the error to the next parser on the chain\&quot;))&quot; &quot;(defn word-parser\n  \&quot;Parses a word, until the next non-word character\&quot;\n  [next-parser]\n  (reify Parser\n    (on-success [result input]\n      (let [idx (str/index-of idx \&quot; \&quot;)\n            res (subs input 0 idx)\n            next (subs input (inc idx))]\n        (on-success\n          next-parser (conj res result) next)\n        ))\n    (on-failure [] (on-failure next-parser))\n    ))&quot; &quot;(defn test\n  []\n  (let [p (word-parser identity)]\n    (println (p [] \&quot;my first sentence\&quot;))\n    ))&quot; &quot;(defn parrsing-test\n  []\n  (let [p (word-parser identity)]\n    (println (p [] \&quot;my first sentence\&quot;))\n    ))&quot; &quot;(defn parsing-test\n  []\n  (let [p (word-parser identity)]\n    (println (on-success p [] \&quot;my first sentence\&quot;))\n    ))&quot; &quot;(defn terminal\n  []\n  (reify Parser\n    (on-success [_ result _] result)\n    (on-failure [_] \&quot;Failed miserably\&quot;)\n    ))&quot; &quot;(parsing-test)&quot; &quot;(mparsing-test)&quot; &quot;(run-tests)&quot;], :remote []}}</component>
+  <component name="RunManager" selected="Clojure REPL.REPL for algorithms-clj">
     <configuration default="false" name="huffman_test" type="ClojureScriptRunConfiguration" factoryName="Clojure Script" temporary="true">
       <module name="algorithms-clj" />
       <setting name="path" value="$PROJECT_DIR$/test/clj/algorithms_clj/huffman_test.clj" />
@@ -235,15 +220,6 @@
       <setting name="params" value="" />
       <setting name="workDir" value="$PROJECT_DIR$/test/clj/algorithms_clj" />
       <setting name="repl" value="false" />
-      <method />
-    </configuration>
-    <configuration default="false" name="REPL for algorithms-clj" type="ClojureREPL" factoryName="Local" temporary="true">
-      <setting name="replType" value="1" />
-      <module name="algorithms-clj" />
-      <setting name="jvmArgs" value="" />
-      <setting name="parameters" value="" />
-      <setting name="workingDir" value="$PROJECT_DIR$" />
-      <setting name="profiles" value="" />
       <method />
     </configuration>
     <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
@@ -555,22 +531,30 @@
     </configuration>
     <configuration default="false" name="AlgorithmRepl" type="ClojureREPL" factoryName="Local">
       <setting name="replType" value="0" />
-      <module name="" />
+      <module name="algorithms-clj" />
       <setting name="jvmArgs" value="" />
       <setting name="parameters" value="" />
       <setting name="workingDir" value="" />
       <setting name="profiles" value="" />
       <method />
     </configuration>
+    <configuration default="false" name="REPL for algorithms-clj" type="ClojureREPL" factoryName="Local">
+      <setting name="replType" value="1" />
+      <module name="algorithms-clj" />
+      <setting name="jvmArgs" value="" />
+      <setting name="parameters" value="" />
+      <setting name="workingDir" value="$PROJECT_DIR$" />
+      <setting name="profiles" value="" />
+      <method />
+    </configuration>
     <list size="3">
       <item index="0" class="java.lang.String" itemvalue="Clojure REPL.AlgorithmRepl" />
-      <item index="1" class="java.lang.String" itemvalue="Clojure Application.huffman_test" />
-      <item index="2" class="java.lang.String" itemvalue="Clojure REPL.REPL for algorithms-clj" />
+      <item index="1" class="java.lang.String" itemvalue="Clojure REPL.REPL for algorithms-clj" />
+      <item index="2" class="java.lang.String" itemvalue="Clojure Application.huffman_test" />
     </list>
     <recent_temporary>
-      <list size="2">
-        <item index="0" class="java.lang.String" itemvalue="Clojure REPL.REPL for algorithms-clj" />
-        <item index="1" class="java.lang.String" itemvalue="Clojure Application.huffman_test" />
+      <list size="1">
+        <item index="0" class="java.lang.String" itemvalue="Clojure Application.huffman_test" />
       </list>
     </recent_temporary>
   </component>
@@ -596,7 +580,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="21" y="38" width="1400" height="769" extended-state="0" />
+    <frame x="0" y="0" width="1440" height="900" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -606,14 +590,14 @@
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="REPL" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3342857" sideWeight="0.5" order="11" side_tool="true" content_ui="tabs" />
+      <window_info id="REPL" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.31041667" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Leiningen" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19642857" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19097222" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -639,7 +623,9 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager />
+    <breakpoint-manager>
+      <option name="time" value="1" />
+    </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="antWorkspaceConfiguration">
@@ -647,6 +633,126 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/clj/algorithms_clj/huffman.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/clj/algorithms_clj/utils.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="855">
+          <caret line="57" column="17" selection-start-line="57" selection-start-column="17" selection-end-line="57" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/clj/algorithms_clj/parsing.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="720">
+          <caret line="48" column="45" selection-start-line="48" selection-start-column="45" selection-end-line="48" selection-end-column="45" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/clj/algorithms_clj/huffman_test.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1200">
+          <caret line="80" column="0" selection-start-line="80" selection-start-column="0" selection-end-line="80" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/clj/algorithms_clj/huffman.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1710">
+          <caret line="114" column="75" selection-start-line="114" selection-start-column="75" selection-end-line="114" selection-end-column="75" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/clj/algorithms_clj/utils.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="855">
+          <caret line="57" column="17" selection-start-line="57" selection-start-column="17" selection-end-line="57" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/clj/algorithms_clj/parsing.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/clj/algorithms_clj/huffman_test.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1365">
+          <caret line="91" column="20" selection-start-line="91" selection-start-column="20" selection-end-line="91" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/clj/algorithms_clj/huffman.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1710">
+          <caret line="114" column="75" selection-start-line="114" selection-start-column="75" selection-end-line="114" selection-end-column="75" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/clj/algorithms_clj/utils.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="855">
+          <caret line="57" column="17" selection-start-line="57" selection-start-column="17" selection-end-line="57" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/clj/algorithms_clj/parsing.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/clj/algorithms_clj/huffman_test.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1365">
+          <caret line="91" column="20" selection-start-line="91" selection-start-column="20" selection-end-line="91" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/clj/algorithms_clj/huffman.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1710">
+          <caret line="114" column="75" selection-start-line="114" selection-start-column="75" selection-end-line="114" selection-end-column="75" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/clj/algorithms_clj/utils.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/clj/algorithms_clj/huffman_test.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1365">
+          <caret line="91" column="20" selection-start-line="91" selection-start-column="20" selection-end-line="91" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/clj/algorithms_clj/huffman.clj">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="285">
@@ -667,7 +773,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-420">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -675,30 +780,61 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/clj/algorithms_clj/utils.clj">
+    <entry file="file://$PROJECT_DIR$/dev/user.clj">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="37" column="29" selection-start-line="37" selection-start-column="29" selection-end-line="37" selection-end-column="29" />
+        <state relative-caret-position="210">
+          <caret line="14" column="12" selection-start-line="14" selection-start-column="12" selection-end-line="14" selection-end-column="12" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/clj/algorithms_clj/huffman.clj">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="78">
-          <caret line="100" column="9" selection-start-line="100" selection-start-column="9" selection-end-line="100" selection-end-column="9" />
+        <state relative-caret-position="120">
+          <caret line="8" column="0" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/clj/algorithms_clj/utils.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="795">
+          <caret line="57" column="17" selection-start-line="57" selection-start-column="17" selection-end-line="57" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/clj/algorithms_clj/parsing.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="48" column="45" selection-start-line="48" selection-start-column="45" selection-end-line="48" selection-end-column="45" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test/clj/algorithms_clj/huffman_test.clj">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="303">
-          <caret line="91" column="53" selection-start-line="91" selection-start-column="53" selection-end-line="91" selection-end-column="53" />
+        <state relative-caret-position="525">
+          <caret line="80" column="0" selection-start-line="80" selection-start-column="0" selection-end-line="80" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="18" column="0" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/clj/algorithms_clj/arithmetic.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="495">
+          <caret line="73" column="33" selection-start-line="73" selection-start-column="33" selection-end-line="73" selection-end-column="33" />
           <folding />
         </state>
       </provider>
