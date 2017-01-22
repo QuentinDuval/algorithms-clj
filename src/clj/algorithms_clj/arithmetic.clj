@@ -88,7 +88,7 @@
 
 (defn- optimize-mul [e]
   (if (mul? e)
-    (if (some #{0} e)
+    (if (some #{(cst 0)} e)
       (cst 0)
       (optimize-op e * 1))
     e))
