@@ -146,10 +146,12 @@
 
 (defn apply-op
   "Stack transformer"
-  [op nb stack]
+  [[op nb] stack]
   (let [consumed (take nb stack)
         remaining (drop nb stack)]
-    (conj remaining (apply op consumed))))
+    (conj remaining
+      (apply (if (= op :mul) * +) consumed)
+      )))
 
 (defn eval-bytecode
   "Evaluate compiled byte code"
@@ -157,13 +159,12 @@
   (loop [stack '()
          instr b]
     (if-let [i (first instr)]
-      (cond
-        (cst? i) (recur (conj stack i) (rest instr))
-        (sym? i) (recur (conj stack (get env i)) (rest instr))
-        (vector? i)
-        (let [op (if (= (first i) :mul) * +)]
-          (recur (apply-op op (second i) stack) (rest instr))
-          ))
+      (recur
+        (cond
+          (cst? i) (conj stack i)
+          (sym? i) (conj stack (get env i))
+          (vector? i) (apply-op i stack))
+        (rest instr))
       (peek stack))))
 
 ;; ----------------------------------------------------------------------------
