@@ -122,6 +122,51 @@
     e))
 
 ;; ----------------------------------------------------------------------------
+;; A compiler (switch representation to lower level interpreter)
+;; ----------------------------------------------------------------------------
+
+(defn compile-op [e]
+  (let [args (rands e)
+        arg-count (count args)
+        next-args (vec (apply concat args))]
+    (conj next-args [(rator e) arg-count])))
+
+
+(defn compile-expr
+  "Compile an expression to a stack of instructions"
+  [e]
+  (walk/postwalk
+    (fn [e]
+      (cond
+        (cst? e) [e]
+        (sym? e) [e]
+        (op? e) (compile-op e)
+        :else e))
+    e))
+
+(defn apply-op
+  "Stack transformer"
+  [op nb stack]
+  (let [consumed (take nb stack)
+        remaining (drop nb stack)]
+    (conj remaining (apply op consumed))))
+
+(defn eval-bytecode
+  "Evaluate compiled byte code"
+  [env b]
+  (loop [stack '()
+         instr b]
+    (if-let [i (first instr)]
+      (cond
+        (cst? i) (recur (conj stack i) (rest instr))
+        (sym? i) (recur (conj stack (get env i)) (rest instr))
+        (vector? i)
+        (let [op (if (= (first i) :mul) * +)]
+          (recur (apply-op op (second i) stack) (rest instr))
+          ))
+      (peek stack))))
+
+;; ----------------------------------------------------------------------------
 
 (defn test-walk
   []
@@ -136,4 +181,8 @@
     (println (dependencies f))
     (println (evaluate env e))
     (println (evaluate env o))
+    (println (compile-expr e))
+    (println (compile-expr o))
+    (println (eval-bytecode env (compile-expr e)))
+    (println (eval-bytecode env (compile-expr o)))
     ))
