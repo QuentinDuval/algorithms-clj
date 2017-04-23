@@ -206,7 +206,8 @@
 ;; Example 4-b: Adding logs based on run time option (no overhead)
 ;; --------------------------------------------------------
 
-(def logger (atom println))
+(def default-logger (partial println "INFO:"))
+(def logger (atom default-logger))
 
 (defmacro defn-log-2
   [name bindings body]
@@ -222,11 +223,11 @@
 
 (defn test-add-log-2
   []
-  (reset! logger println)
+  (reset! logger default-logger)
   (println (add-log-2 1 2))
   (reset! logger nil)
   (println (add-log-2 1 2))
-  (reset! logger println))
+  (reset! logger default-logger))
 
 ;; --------------------------------------------------------
 ;; Example 4-b: Adding logs based on compile time option (no overhead)
