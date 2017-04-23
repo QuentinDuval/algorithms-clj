@@ -264,9 +264,24 @@
 ;; - Show the example of efficient loop generation
 ;; --------------------------------------------------------
 
+;; Phase 1
 #_(defmacro inline-reduce
     [reducer initial transforms coll]
     `(reduce ~reducer ~initial ~coll))
+
+;; Phase 2
+#_(defmacro inline-reduce
+    [reducer initial transforms coll]
+    `(loop [h# (first ~coll)
+            t# (rest ~coll)
+            r# ~initial]
+       (if h#
+         (recur (first t#) (rest t#) (~reducer r# h#))
+         r#)))
+
+(defmacro inline-reducer
+  [reducer transforms r h]
+  `(~reducer ~r ~h))
 
 (defmacro inline-reduce
   [reducer initial transforms coll]
@@ -274,7 +289,9 @@
           t# (rest ~coll)
           r# ~initial]
      (if h#
-       (recur (first t#) (rest t#) (~reducer r# h#))
+       (recur
+         (first t#) (rest t#)
+         (inline-reducer ~reducer ~transforms r# h#))
        r#)))
 
 #_(loop [h (first coll)
@@ -291,12 +308,12 @@
 (defn test-inline-reduce
   []
   (let [coll (into [] (range 10))]
+    (println (reduce + 0 (map #(* 2 %) (filter odd? coll))))
     (report (inline-reduce
-              +
-              0
-              [[:filter odd] [:map #(* 2 %)]]
-              coll
-              ))))
+              + 0
+              [[:filter odd?] [:map #(* 2 %)]]
+              coll))
+    ))
 
 
 ;; --------------------------------------------------------
