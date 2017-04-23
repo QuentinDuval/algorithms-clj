@@ -20,6 +20,11 @@
   [a b]
   `(+ ~a ~b))
 
+(defmacro add-m-3
+  "Summing two integers known at compile time"
+  [a b]
+  `(add ~a ~b))
+
 (defn test-add
   []
   (let [x 1
@@ -27,6 +32,7 @@
     (println (add x y))
     (println (add-m 1 2))
     (println (add-m-2 1 2))
+    (println (add-m-3 1 2))
 
     ;; Does not compile: cannot add symbols (explain this)
     ;; (println (add-m x y))
@@ -37,6 +43,7 @@
     (defmacro x2 [] 2)
     ;; (println (add-m (x1) (x2)))
     (println (add-m-2 (x1) (x2)))
+    (println (add-m-3 (x1) (x2)))
     ))
 
 
