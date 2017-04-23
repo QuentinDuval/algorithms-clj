@@ -12,8 +12,12 @@
 (defmacro report
   [body]
   `(let [result# ~body]
-     (println (expension-report ~body) "is" result#)
+     (println (expension-report ~body) "=>" result#)
      ))
+
+(defmacro constexpr
+  [fct & args]
+  (eval `(~fct ~@args)))
 
 ;; --------------------------------------------------------
 ;; Example 1: equivalent with constexpr
@@ -37,8 +41,12 @@
 (defmacro add-m-3
   "Summing two integers known at compile time"
   [a b]
-  ;; TODO - How to get rid of eval???
+  ;; TODO - How to get rid of eval??? constexpr
   (eval `(+ ~a ~b)))
+
+(defmacro add-m-4
+  [a b]
+  `(constexpr add ~a ~b))
 
 (defn test-add
   []
@@ -59,6 +67,7 @@
     ;; (println (add-m (x1) (x2)))
     (report (add-m-2 (x1) (x2)))
     (report (add-m-3 (x1) (x2)))
+    (report (add-m-4 (x1) (x2)))
     ))
 
 
@@ -75,18 +84,17 @@
 (defmacro average-m
   "Average of numbers known at compile time"
   [coll]
-  ;; TODO - How to get rid of eval???
-  (eval `(average ~coll)))
+  `(constexpr average ~coll))
 
 (defn test-average
   []
-  (let [coll [1 2 3]]
+  (let [coll [1 2 3 4]]
     (report (average coll))
     ;; (println (average-m coll)) ;; Would not compile
-    (report (average-m [1 2 3]))
+    (report (average-m [1 2 3 4]))
 
     ;; This however works
-    (defmacro coll-m [] [1 2 3])
+    (defmacro coll-m [] [1 2 3 4])
     (report (average-m (coll-m)))
     ))
 
@@ -107,8 +115,7 @@
 
 (defmacro freq-map-m
   [coll]
-  ;; TODO - How to get rid of eval???
-  (eval `(freq-map ~coll)))
+  `(constexpr freq-map ~coll))
 
 (defn test-freq-map
   []
@@ -143,6 +150,7 @@
 
 ;; --------------------------------------------------------
 ;; Example 3-b: repeat a side-effectful call N times
+;; - This time, we add the argument in the call
 ;; --------------------------------------------------------
 
 (defmacro times
@@ -179,6 +187,25 @@
 ;; Example 4-a: Adding logs around functions
 ;; --------------------------------------------------------
 
+(defmacro defn-log
+  [name bindings body]
+  `(defn ~name
+     ~bindings
+     (println "Entering the function with args:" ~@bindings)
+     ~body))
+
+(defn-log add-log
+  [a b]
+  (+ a b))
+
+(defn test-add-log
+  []
+  (add-log 1 2))
+
+;; --------------------------------------------------------
+;; Example 4-b: Adding logs based on run time option (no overhead)
+;; --------------------------------------------------------
+
 ;; TODO
 
 ;; --------------------------------------------------------
@@ -186,7 +213,6 @@
 ;; --------------------------------------------------------
 
 ;; TODO
-
 
 ;; --------------------------------------------------------
 ;; Example 5: Generating some code based on data structure
