@@ -13,7 +13,7 @@
   [body]
   `(let [result# ~body]
      (println (expension-report ~body) "=>" result#)
-     ))
+     result#))
 
 (defmacro constexpr
   [fct & args]
@@ -260,12 +260,22 @@
 
 ;; --------------------------------------------------------
 ;; Example 5: Generating some code based on data structure
+;; - Go iteratively?
 ;; - Show the example of efficient loop generation
 ;; --------------------------------------------------------
 
-#_(inline-reduce +
-    [[:map #(* % %)] [:filter #(> % 1)] [:map #(* % 2)]]
-    coll)
+#_(defmacro inline-reduce
+    [reducer initial transforms coll]
+    `(reduce ~reducer ~initial ~coll))
+
+(defmacro inline-reduce
+  [reducer initial transforms coll]
+  `(loop [h# (first ~coll)
+          t# (rest ~coll)
+          r# ~initial]
+     (if h#
+       (recur (first t#) (rest t#) (~reducer r# h#))
+       r#)))
 
 #_(loop [h (first coll)
          t (rest coll)
@@ -277,6 +287,16 @@
           (recur ...))                                      ;; with accumulatin
         (recur ...)                                         ;; no accumulation
         )))
+
+(defn test-inline-reduce
+  []
+  (let [coll (into [] (range 10))]
+    (report (inline-reduce
+              +
+              0
+              [[:filter odd] [:map #(* 2 %)]]
+              coll
+              ))))
 
 
 ;; --------------------------------------------------------
