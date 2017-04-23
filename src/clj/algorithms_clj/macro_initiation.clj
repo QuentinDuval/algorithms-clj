@@ -38,6 +38,7 @@
     ;; (println (add-m x y))
     ;; (println (add-m-2 x y))
 
+    ;; TODO - Does not do what I think it does
     ;; This however works, but only with add-m-2
     (defmacro x1 [] 1)
     (defmacro x2 [] 2)
@@ -69,6 +70,7 @@
     ;; (println (average-m coll)) ;; Would not compile
     (println (average-m [1 2 3]))
 
+    ;; TODO - Does not do what you think it does
     ;; This however works
     (defmacro coll-m [] [1 2 3])
     (println (average-m (coll-m)))
@@ -77,13 +79,28 @@
 
 ;; --------------------------------------------------------
 ;; Example 2-b: Compute frequency map at compile time
-;;
-;; TODO - Ok, collections, but also maps
-;; And there you are in troube with C++ constexpr
-;; And that's the thing: 1 language to learn, not 2
+;; - Ok, collections, but also maps
+;; - And there you are in troube with C++ constexpr
+;; - And that's the thing: 1 language to learn, not 2
 ;; --------------------------------------------------------
 
-;; TODO
+(defn freq-map
+  [coll]
+  (reduce
+    (fn [freqs val] (update freqs val (fnil + 0) 1))
+    {}
+    coll))
+
+(defmacro freq-map-m
+  [coll]
+  (freq-map coll))
+
+(defn test-freq-map
+  []
+  (let [inputs [1 2 1 4 1 3]]
+    (println (freq-map inputs))
+    (println (freq-map-m [1 2 1 4 1 3]))
+    ))
 
 
 ;; --------------------------------------------------------
