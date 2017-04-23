@@ -9,6 +9,12 @@
   [body]
   `(walk/macroexpand-all (quote ~body)))
 
+(defmacro report
+  [body]
+  `(let [result# ~body]
+     (println (expension-report ~body) "is" result#)
+     ))
+
 ;; --------------------------------------------------------
 ;; Example 1: equivalent with constexpr
 ;; --------------------------------------------------------
@@ -31,28 +37,28 @@
 (defmacro add-m-3
   "Summing two integers known at compile time"
   [a b]
-  `(add ~a ~b))
+  ;; TODO - How to get rid of eval???
+  (eval `(+ ~a ~b)))
 
 (defn test-add
   []
   (let [x 1
         y 2]
-    (println (add x y))
-    (println (add-m 1 2))
-    (println (add-m-2 1 2))
-    (println (add-m-3 1 2))
+    (report (add x y))
+    (report (add-m 1 2))
+    (report (add-m-2 1 2))
+    (report (add-m-3 1 2))
 
     ;; Does not compile: cannot add symbols (explain this)
     ;; (println (add-m x y))
     ;; (println (add-m-2 x y))
 
-    ;; TODO - Does not do what I think it does?
     ;; This however works, but only with add-m-2
     (defmacro x1 [] 1)
     (defmacro x2 [] 2)
     ;; (println (add-m (x1) (x2)))
-    (println (add-m-2 (x1) (x2)))
-    (println (add-m-3 (x1) (x2)))
+    (report (add-m-2 (x1) (x2)))
+    (report (add-m-3 (x1) (x2)))
     ))
 
 
@@ -69,19 +75,19 @@
 (defmacro average-m
   "Average of numbers known at compile time"
   [coll]
-  `(average ~coll))
+  ;; TODO - How to get rid of eval???
+  (eval `(average ~coll)))
 
 (defn test-average
   []
   (let [coll [1 2 3]]
-    (println (average coll))
+    (report (average coll))
     ;; (println (average-m coll)) ;; Would not compile
-    (println (average-m [1 2 3]))
+    (report (average-m [1 2 3]))
 
-    ;; TODO - Does not do what you think it does
     ;; This however works
     (defmacro coll-m [] [1 2 3])
-    (println (average-m (coll-m)))
+    (report (average-m (coll-m)))
     ))
 
 
@@ -101,16 +107,17 @@
 
 (defmacro freq-map-m
   [coll]
-  `(freq-map ~coll))
+  ;; TODO - How to get rid of eval???
+  (eval `(freq-map ~coll)))
 
 (defn test-freq-map
   []
   (let [inputs [1 2 1 4 1 3]]
-    (println (freq-map inputs))
-    (println (freq-map-m [1 2 1 4 1 3]))
+    (report (freq-map inputs))
+    (report (freq-map-m [1 2 1 4 1 3]))
 
     (defmacro inputs-m [] [1 2 1 4 1 3])
-    (println (freq-map-m (inputs-m)))
+    (report (freq-map-m (inputs-m)))
     ))
 
 
