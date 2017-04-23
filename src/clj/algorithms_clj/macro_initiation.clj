@@ -145,8 +145,30 @@
 
 ;; TODO
 
+
 ;; --------------------------------------------------------
-;; Example 5: DFS to do a topological sort
+;; Example 5: Generating some code based on data structure
+;; - Show the example of efficient loop generation
+;; --------------------------------------------------------
+
+#_(inline-reduce +
+    [[:map #(* % %)] [:filter #(> % 1)] [:map #(* % 2)]]
+    coll)
+
+#_(loop [h (first coll)
+         t (rest coll)
+         r result]
+    ;; Exit condition somewhere here
+    (let [r1 (* h h)]
+      (if (> r1 1)
+        (let [r2 (* r1 2)]
+          (recur ...)) ;; with accumulatin
+        (recur ...) ;; no accumulation
+        )))
+
+
+;; --------------------------------------------------------
+;; Example 6: DFS to do a topological sort
 ;; - You list a bunch of dependencies
 ;; - You get a list of tasks to run
 ;; Result:
@@ -156,8 +178,13 @@
 
 ;; TODO
 
+
 ;; --------------------------------------------------------
-;; Example 6: Generating some code based on data structure
+;; Example 7: Generating some code based on data structure
+;; Something based on description of data model
+;; - Generate the code to save it
+;; - Generate the classes
+;; - Find something else...
 ;; --------------------------------------------------------
 
 ;; TODO
