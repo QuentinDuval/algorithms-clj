@@ -206,7 +206,27 @@
 ;; Example 4-b: Adding logs based on run time option (no overhead)
 ;; --------------------------------------------------------
 
-;; TODO
+(def logger (atom println))
+
+(defmacro defn-log-2
+  [name bindings body]
+  `(defn ~name
+     ~bindings
+     (if-let [log-fct# @logger]
+       (log-fct# "Entering the function with args:" ~@bindings))
+     ~body))
+
+(defn-log-2 add-log-2
+  [a b]
+  (+ a b))
+
+(defn test-add-log-2
+  []
+  (reset! logger println)
+  (println (add-log-2 1 2))
+  (reset! logger nil)
+  (println (add-log-2 1 2))
+  (reset! logger println))
 
 ;; --------------------------------------------------------
 ;; Example 4-b: Adding logs based on compile time option (no overhead)
