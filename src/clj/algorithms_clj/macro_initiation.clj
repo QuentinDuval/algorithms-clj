@@ -1,5 +1,13 @@
-(ns algorithms-clj.macro-initiation)
+(ns algorithms-clj.macro-initiation
+  (:require
+    [clojure.walk :as walk]
+    ))
 
+
+(defmacro expension-report
+  "Debugging macro to show the result of the expension"
+  [body]
+  `(walk/macroexpand-all (quote ~body)))
 
 ;; --------------------------------------------------------
 ;; Example 1: equivalent with constexpr
