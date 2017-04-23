@@ -279,9 +279,25 @@
          (recur (first t#) (rest t#) (~reducer r# h#))
          r#)))
 
+;; Phase 3
+#_(defmacro inline-reducer
+    [reducer transforms r h]
+    `(~reducer ~r ~h))
+
+;; Phase 4 (finished!)
 (defmacro inline-reducer
   [reducer transforms r h]
-  `(~reducer ~r ~h))
+  (let [[op fct] (first transforms)
+        remaining (rest transforms)]
+    (case op
+      :map
+      `(let [h2# (~fct ~h)]
+         (inline-reducer ~reducer ~remaining ~r h2#))
+      :filter
+      `(if (~fct ~h)
+         (inline-reducer ~reducer ~remaining ~r ~h)
+         ~r)
+      `(~reducer ~r ~h))))
 
 (defmacro inline-reduce
   [reducer initial transforms coll]
@@ -294,21 +310,23 @@
          (inline-reducer ~reducer ~transforms r# h#))
        r#)))
 
-#_(loop [h (first coll)
-         t (rest coll)
-         r result]
-    ;; Exit condition somewhere here
-    (let [r1 (* h h)]
-      (if (> r1 1)
-        (let [r2 (* r1 2)]
-          (recur ...))                                      ;; with accumulatin
-        (recur ...)                                         ;; no accumulation
-        )))
-
 (defn test-inline-reduce
   []
   (let [coll (into [] (range 10))]
     (println (reduce + 0 (map #(* 2 %) (filter odd? coll))))
+
+    (report (inline-reducer
+              +
+              [[:map #(* 2 %)]]
+              5
+              1))
+
+    (report (inline-reducer
+              +
+              [[:filter odd?] [:map #(* 2 %)]]
+              5
+              1))
+
     (report (inline-reduce
               + 0
               [[:filter odd?] [:map #(* 2 %)]]
