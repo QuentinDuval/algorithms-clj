@@ -230,10 +230,33 @@
   (reset! logger default-logger))
 
 ;; --------------------------------------------------------
-;; Example 4-b: Adding logs based on compile time option (no overhead)
+;; Example 4-c: Adding logs based on compile time option (no overhead)
 ;; --------------------------------------------------------
 
-;; TODO
+(defn logger-on []
+  ;; The thing here, is that we could read a config file
+  false)
+
+(defmacro defn-log-3
+  [name bindings body]
+  (if (logger-on)
+    `(defn ~name
+       ~bindings
+       (if-let [log-fct# @logger]
+         (log-fct# "Entering the function with args:" ~@bindings))
+       ~body)
+    `(defn ~name
+       ~bindings
+       ~body)))
+
+(defn-log-3 add-log-3
+  [a b]
+  (+ a b))
+
+(defn test-add-log-3
+  []
+  (reset! logger default-logger)
+  (println (add-log-3 1 2)))
 
 ;; --------------------------------------------------------
 ;; Example 5: Generating some code based on data structure
@@ -251,8 +274,8 @@
     (let [r1 (* h h)]
       (if (> r1 1)
         (let [r2 (* r1 2)]
-          (recur ...)) ;; with accumulatin
-        (recur ...) ;; no accumulation
+          (recur ...))                                      ;; with accumulatin
+        (recur ...)                                         ;; no accumulation
         )))
 
 
