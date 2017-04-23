@@ -38,7 +38,7 @@
     ;; (println (add-m x y))
     ;; (println (add-m-2 x y))
 
-    ;; TODO - Does not do what I think it does
+    ;; TODO - Does not do what I think it does?
     ;; This however works, but only with add-m-2
     (defmacro x1 [] 1)
     (defmacro x2 [] 2)
@@ -93,13 +93,16 @@
 
 (defmacro freq-map-m
   [coll]
-  (freq-map coll))
+  `(freq-map ~coll))
 
 (defn test-freq-map
   []
   (let [inputs [1 2 1 4 1 3]]
     (println (freq-map inputs))
     (println (freq-map-m [1 2 1 4 1 3]))
+
+    (defmacro inputs-m [] [1 2 1 4 1 3])
+    (println (freq-map-m (inputs-m)))
     ))
 
 
