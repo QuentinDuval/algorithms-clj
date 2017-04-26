@@ -290,6 +290,7 @@
   (let [[op fct] (first transforms)
         remaining (rest transforms)]
     (case op
+      ;;TODO - Multimethod here for extensibility
       :map
       `(let [h2# (~fct ~h)]
          (inline-reducer ~reducer ~remaining ~r h2#))
