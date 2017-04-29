@@ -33,8 +33,8 @@
   [a b]
   (+ a b))
 
-(defmacro add-m-2
-  "Summing two integers known at compile time"
+(defmacro add-inline
+  "Inlining the sum of two integers"
   [a b]
   `(+ ~a ~b))
 
@@ -49,13 +49,16 @@
   ;; TODO - Does not work
   `(constexpr add ~a ~b))
 
+(defmacro x1 [] 1)
+(defmacro x2 [] 2)
+
 (defn test-add
   []
   (let [x 1
         y 2]
     (report (add x y))
     (report (add-m 1 2))
-    (report (add-m-2 1 2))
+    (report (add-inline 1 2))
     (report (add-m-3 1 2))
 
     ;; Does not compile: cannot add symbols (explain this)
@@ -63,12 +66,10 @@
     ;; (println (add-m-2 x y))
 
     ;; This however works, but only with add-m-2
-    (defmacro x1 [] 1)
-    (defmacro x2 [] 2)
     ;; (println (add-m (x1) (x2)))
-    (report (add-m-2 (x1) (x2)))
-    ;; (report (add-m-3 (x1) (x2)))
-    ;; (report (add-m-4 (x1) (x2)))
+    (report (add-inline x y))
+    (report (add-m-3 (x1) (x2)))
+    (report (add-m-4 (x1) (x2)))
     ))
 
 
