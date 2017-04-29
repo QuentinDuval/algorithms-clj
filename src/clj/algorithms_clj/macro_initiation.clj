@@ -46,6 +46,7 @@
 
 (defmacro add-m-4
   [a b]
+  ;; TODO - Does not work
   `(constexpr add ~a ~b))
 
 (defn test-add
@@ -66,8 +67,8 @@
     (defmacro x2 [] 2)
     ;; (println (add-m (x1) (x2)))
     (report (add-m-2 (x1) (x2)))
-    (report (add-m-3 (x1) (x2)))
-    (report (add-m-4 (x1) (x2)))
+    ;; (report (add-m-3 (x1) (x2)))
+    ;; (report (add-m-4 (x1) (x2)))
     ))
 
 
@@ -86,6 +87,8 @@
   [coll]
   `(constexpr average ~coll))
 
+(defmacro coll-m [] [1 2 3 4])
+
 (defn test-average
   []
   (let [coll [1 2 3 4]]
@@ -94,7 +97,6 @@
     (report (average-m [1 2 3 4]))
 
     ;; This however works
-    (defmacro coll-m [] [1 2 3 4])
     (report (average-m (coll-m)))
     ))
 
@@ -117,14 +119,17 @@
   [coll]
   `(constexpr freq-map ~coll))
 
+(defmacro inputs-m [] [1 2 1 4 1 3])
+(definline inputs-m2 [] [1 2 1 4 1 3])
+
 (defn test-freq-map
   []
   (let [inputs [1 2 1 4 1 3]]
     (report (freq-map inputs))
     (report (freq-map-m [1 2 1 4 1 3]))
 
-    (defmacro inputs-m [] [1 2 1 4 1 3])
     (report (freq-map-m (inputs-m)))
+    (report (freq-map-m (inputs-m2)))
     ))
 
 
