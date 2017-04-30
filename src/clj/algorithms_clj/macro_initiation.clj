@@ -374,9 +374,48 @@
 ;; 2. Explicit ordering (not implicit positioning)
 ;; --------------------------------------------------------
 
+(def modules
+  {:rest-api {:prerequisites [:trade-db :logger :monitor]
+              :init-sequence #(println "rest ai init")
+              :shut-sequence #(println "rest ai shut")}
+   :trade-db {:prerequisites [:monitor]
+              :init-sequence #(println "trade db init")
+              :shut-sequence #(println "trade db shut")}
+   :monitor {:prerequisites []
+             :init-sequence #(println "monitor init")
+             :shut-sequence #(println "monitor shut")}
+   :logger {:prerequisites [:monitor]
+            :init-sequence #(println "logger init")
+            :shut-sequence #(println "logger shut")}})
 
+(def module-dependencies
+  (reduce-kv
+    (fn [deps k v] (assoc deps k (:prerequisites v)))
+    {}
+    modules))
 
-;; TODO
+(defn visit
+  [{:keys [graph visited sorted] :as dfs} node]
+  (if-not (visited node)
+    (let [new-visited (conj visited node)
+          neighbors (get graph node [])]
+      (->
+        (reduce visit (assoc dfs :visited new-visited) neighbors)
+        (update :sorted conj node)))
+    dfs))
+
+(defn topological-sort
+  [graph]
+  (let [start (-> graph first first)]
+    (:sorted
+      (visit {:graph graph :visited #{} :sorted []} start)
+      )))
+
+(defn test-topological-sort
+  []
+  (println (topological-sort {:a [:b] :b [:c]}))
+  (println (topological-sort module-dependencies))
+  )
 
 
 ;; --------------------------------------------------------
