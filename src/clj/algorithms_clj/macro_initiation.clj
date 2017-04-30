@@ -297,6 +297,7 @@
         remaining (rest transforms)]
     (case op
       ;;TODO - Multimethod here for extensibility
+      ;;TODO - How to do mapcat (not nested loop-recur)
       :map
       `(let [h2# (~fct ~h)]
          (inline-reducer ~reducer ~remaining ~r h2#))
