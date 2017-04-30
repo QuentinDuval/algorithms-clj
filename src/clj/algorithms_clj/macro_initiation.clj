@@ -49,8 +49,8 @@
   ;; TODO - Does not work
   `(constexpr add ~a ~b))
 
-(defmacro x1 [] 1)
-(defmacro x2 [] 2)
+(def x1 1)
+(def x2 2)
 
 (defn test-add
   []
@@ -68,8 +68,8 @@
     ;; This however works, but only with add-m-2
     ;; (println (add-m (x1) (x2)))
     (report (add-inline x y))
-    (report (add-m-3 (x1) (x2)))
-    (report (add-m-4 (x1) (x2)))
+    (report (add-m-3 x1 x2))
+    (report (add-m-4 x1 x2))
     ))
 
 
@@ -373,6 +373,8 @@
 ;; 1. Simple (re-use topological sort runtime)
 ;; 2. Explicit ordering (not implicit positioning)
 ;; --------------------------------------------------------
+
+
 
 ;; TODO
 
