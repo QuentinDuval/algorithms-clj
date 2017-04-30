@@ -417,6 +417,16 @@
   (println (topological-sort module-dependencies))
   )
 
+(def global-init-shut-sequence
+  (let [init-sorted (topological-sort module-dependencies)
+        shut-sorted (reverse init-sorted)]
+    {:init-sequence (map #(get-in modules [% :init-sequence]) init-sorted)
+     :shut-sequence (map #(get-in modules [% :shut-sequence]) shut-sorted)}
+    ))
+
+(defn run-init-sequence
+  []
+  (map (fn [f] (f)) (:init-sequence global-init-shut-sequence)))
 
 ;; --------------------------------------------------------
 ;; Example 7: Generating some code based on data structure
