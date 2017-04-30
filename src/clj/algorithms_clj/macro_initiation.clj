@@ -270,6 +270,20 @@
 ;; - Show the example of efficient loop generation
 ;; --------------------------------------------------------
 
+;; Note: how to do recursive nested loops:
+#_(loop [i 5
+         r 0]
+    (if (pos? i)
+      (recur
+        (dec i)
+        (loop [j 5
+               r r]
+          (if (pos? j)
+            (recur (dec j) (inc r))
+            r)
+          ))
+      r))
+
 ;; Phase 1
 #_(defmacro inline-reduce
     [reducer initial transforms coll]
@@ -297,7 +311,6 @@
         remaining (rest transforms)]
     (case op
       ;;TODO - Multimethod here for extensibility
-      ;;TODO - How to do mapcat (not nested loop-recur)
       :map
       `(let [h2# (~fct ~h)]
          (inline-reducer ~reducer ~remaining ~r h2#))
@@ -305,6 +318,9 @@
       `(if (~fct ~h)
          (inline-reducer ~reducer ~remaining ~r ~h)
          ~r)
+      :mapcat
+      `(let [h2# (~fct ~h)]
+         (inline-reduce ~reducer ~r ~remaining h2#))
       `(~reducer ~r ~h))))
 
 (defmacro inline-reduce
@@ -338,6 +354,13 @@
     (report (inline-reduce
               + 0
               [[:filter odd?] [:map #(* 2 %)]]
+              coll))
+
+    (report (inline-reduce
+              + 0
+              [[:filter odd?]
+               [:map #(* 2 %)]
+               [:mapcat (fn [x] [x x])]]
               coll))
     ))
 
