@@ -395,25 +395,28 @@
     modules))
 
 (defn visit
-  [{:keys [graph visited sorted] :as dfs} node]
-  (if-not (visited node)
-    (let [new-visited (conj visited node)
-          neighbors (get graph node [])]
-      (->
-        (reduce visit (assoc dfs :visited new-visited) neighbors)
-        (update :sorted conj node)))
+  [{:keys [graph not-visited sorted] :as dfs} node]
+  (if (not-visited node)
+    (->
+      (reduce visit
+        (update dfs :not-visited disj node)
+        (get graph node []))
+      (update :sorted conj node))
     dfs))
 
 (defn topological-sort
   [graph]
-  (let [start (-> graph first first)]
-    (:sorted
-      (visit {:graph graph :visited #{} :sorted []} start)
-      )))
+  (some
+    #(if (-> % :not-visited empty?) (:sorted %))
+    (iterate
+      #(visit % (-> % :not-visited first))
+      {:graph graph
+       :not-visited (set (keys graph))
+       :sorted []})))
 
 (defn test-topological-sort
   []
-  (println (topological-sort {:a [:b] :b [:c]}))
+  (println (topological-sort {:a [:b] :b [:c] :c []}))
   (println (topological-sort module-dependencies))
   )
 
