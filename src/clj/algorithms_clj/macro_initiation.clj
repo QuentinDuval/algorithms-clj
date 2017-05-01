@@ -387,11 +387,14 @@
             :init-sequence [println "logger init"]
             :shut-sequence [println "logger shut"]}})
 
-(def module-dependencies
+(defn modules->dependency-graph
+  [modules]
   (reduce-kv
     (fn [deps k v] (assoc deps k (:prerequisites v)))
     {}
     modules))
+
+(def module-dependencies (modules->dependency-graph modules))
 
 (defn visit
   [{:keys [graph not-visited sorted] :as dfs} node]
@@ -420,15 +423,17 @@
   )
 
 (defmacro compile-init-sequence
-  [dependencies]
-  (let [ordered-seq (topological-sort (eval dependencies))
+  [uneval-modules]
+  (let [modules (eval uneval-modules)
+        dependencies (modules->dependency-graph modules)
+        ordered-seq (topological-sort dependencies)
         ordered-init (map #(get-in modules [% :init-sequence]) ordered-seq)
         ordered-calls (map (fn [[f & args]] `(~f ~@args)) ordered-init)]
     `(do ~@ordered-calls)))
 
 (defn run-init-sequence
   []
-  (compile-init-sequence module-dependencies))
+  (compile-init-sequence modules))
 
 ;; --------------------------------------------------------
 ;; Example 7: Generating some code based on data structure
