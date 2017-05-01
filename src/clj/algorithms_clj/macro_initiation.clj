@@ -419,18 +419,16 @@
   (println (topological-sort module-dependencies))
   )
 
-(def global-init-shut-sequence
-  (let [init-sorted (topological-sort module-dependencies)
-        shut-sorted (reverse init-sorted)]
-    {:init-sequence (map #(get-in modules [% :init-sequence]) init-sorted)
-     :shut-sequence (map #(get-in modules [% :shut-sequence]) shut-sorted)}
-    ))
+(defmacro compile-init-sequence
+  [dependencies]
+  (let [ordered-seq (topological-sort (eval dependencies))
+        ordered-init (map #(get-in modules [% :init-sequence]) ordered-seq)
+        ordered-calls (map (fn [[f & args]] `(~f ~@args)) ordered-init)]
+    `(do ~@ordered-calls)))
 
 (defn run-init-sequence
   []
-  (map
-    (fn [[f & args]] (apply f args))
-    (:init-sequence global-init-shut-sequence)))
+  (compile-init-sequence module-dependencies))
 
 ;; --------------------------------------------------------
 ;; Example 7: Generating some code based on data structure
