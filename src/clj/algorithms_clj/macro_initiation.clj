@@ -46,7 +46,6 @@
 
 (defmacro add-m-4
   [a b]
-  ;; TODO - Does not work
   `(constexpr add ~a ~b))
 
 (def x1 1)
@@ -376,17 +375,17 @@
 
 (def modules
   {:rest-api {:prerequisites [:trade-db :logger :monitor]
-              :init-sequence #(println "rest ai init")
-              :shut-sequence #(println "rest ai shut")}
+              :init-sequence [println "rest ai init"]
+              :shut-sequence [println "rest ai shut"]}
    :trade-db {:prerequisites [:monitor]
-              :init-sequence #(println "trade db init")
-              :shut-sequence #(println "trade db shut")}
+              :init-sequence [println "trade db init"]
+              :shut-sequence [println "trade db shut"]}
    :monitor {:prerequisites []
-             :init-sequence #(println "monitor init")
-             :shut-sequence #(println "monitor shut")}
+             :init-sequence [println "monitor init"]
+             :shut-sequence [println "monitor shut"]}
    :logger {:prerequisites [:monitor]
-            :init-sequence #(println "logger init")
-            :shut-sequence #(println "logger shut")}})
+            :init-sequence [println "logger init"]
+            :shut-sequence [println "logger shut"]}})
 
 (def module-dependencies
   (reduce-kv
@@ -429,7 +428,9 @@
 
 (defn run-init-sequence
   []
-  (map (fn [f] (f)) (:init-sequence global-init-shut-sequence)))
+  (map
+    (fn [[f & args]] (apply f args))
+    (:init-sequence global-init-shut-sequence)))
 
 ;; --------------------------------------------------------
 ;; Example 7: Generating some code based on data structure
