@@ -5,6 +5,10 @@
   (println "Compiling:" code)
   code)
 
+(defn add-two
+  [a b]
+  (print-macro (+ a b)))
+
 (defn test-print-macro
   []
-  (print-macro (+ 1 2)))
+  (add-two 1 2))
