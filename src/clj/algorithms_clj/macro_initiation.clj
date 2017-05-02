@@ -54,7 +54,8 @@
 
 (def ^:const c1 1)
 (def ^:const c2 2)
-(def ^:const c3 (add 1 2))
+(def ^:const c3 (add c1 c2))
+(def ^:const c4 (add-m 1 2))
 
 (def x1 1)
 (def x2 2)
@@ -79,7 +80,9 @@
     (report (sum-m))
 
     ;; Up to the JVM to optimize it
-    (report c3)))
+    (report c3)
+    (report c4)
+    ))
 
 
 ;; --------------------------------------------------------
