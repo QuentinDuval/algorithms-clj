@@ -41,12 +41,20 @@
 (defmacro add-m-3
   "Summing two integers known at compile time"
   [a b]
-  ;; TODO - How to get rid of eval??? constexpr
   (eval `(+ ~a ~b)))
 
 (defmacro add-m-4
+  "Summing two integers known at compile time"
   [a b]
   `(constexpr add ~a ~b))
+
+(defmacro sum-m
+  []
+  (add 1 2))
+
+(def ^:const c1 1)
+(def ^:const c2 2)
+(def ^:const c3 (add 1 2))
 
 (def x1 1)
 (def x2 2)
@@ -64,12 +72,14 @@
     ;; (println (add-m x y))
     ;; (println (add-m-2 x y))
 
-    ;; This however works, but only with add-m-2
-    ;; (println (add-m (x1) (x2)))
+    ;; This however works, thanks to eval or custom macro
     (report (add-inline x y))
     (report (add-m-3 x1 x2))
     (report (add-m-4 x1 x2))
-    ))
+    (report (sum-m))
+
+    ;; Up to the JVM to optimize it
+    (report c3)))
 
 
 ;; --------------------------------------------------------
@@ -87,7 +97,12 @@
   [coll]
   `(constexpr average ~coll))
 
-(defmacro coll-m [] [1 2 3 4])
+(defmacro my-average
+  []
+  (average-m [1 2 3 4]))
+
+(def ^:const my-average-2
+  (average-m [1 2 3 4]))
 
 (defn test-average
   []
@@ -95,9 +110,8 @@
     (report (average coll))
     ;; (println (average-m coll)) ;; Would not compile
     (report (average-m [1 2 3 4]))
-
-    ;; This however works
-    (report (average-m (coll-m)))
+    (report (my-average))
+    (report my-average-2)
     ))
 
 
