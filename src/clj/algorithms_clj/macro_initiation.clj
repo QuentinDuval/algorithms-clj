@@ -429,11 +429,19 @@
         ordered-seq (topological-sort dependencies)
         ordered-init (map #(get-in modules [% :init-sequence]) ordered-seq)
         ordered-calls (map (fn [[f & args]] `(~f ~@args)) ordered-init)]
-    `(do ~@ordered-calls)))
+    `{:init (fn [] (do ~@ordered-calls))
+      :shut (fn [] (do ~@(reverse ordered-calls)))
+      }))
+
+(def init-shut-sequence (compile-init-sequence modules))
 
 (defn run-init-sequence
   []
-  (compile-init-sequence modules))
+  ((:init init-shut-sequence)))
+
+(defn run-shut-sequence
+  []
+  ((:shut init-shut-sequence)))
 
 ;; --------------------------------------------------------
 ;; Example 7: Generating some code based on data structure
