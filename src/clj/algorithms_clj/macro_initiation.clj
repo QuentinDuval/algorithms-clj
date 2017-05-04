@@ -351,6 +351,7 @@
            r#)))))
 
 (defn test-inline-reduce
+  ;; TODO - We could do better and accept a form, not a lambda
   []
   (let [coll (into [] (range 10))]
     (println (reduce + 0 (map #(* 2 %) (filter odd? coll))))
