@@ -326,7 +326,6 @@
   (let [[op fct] (first transforms)
         remaining (rest transforms)]
     (case op
-      ;;TODO - Multimethod here for extensibility
       :map
       `(let [h2# (~fct ~h)]
          (inline-reducer ~reducer ~remaining ~r h2#))
@@ -335,20 +334,21 @@
          (inline-reducer ~reducer ~remaining ~r ~h)
          ~r)
       :mapcat
-      `(let [h2# (~fct ~h)]
-         (inline-reduce ~reducer ~r ~remaining h2#))
+      (let [h2 (with-meta (gensym "h2") {:tag 'java.lang.Iterable})]
+        `(let [~h2 (~fct ~h)]
+           (inline-reduce ~reducer ~r ~remaining ~h2)))
       `(~reducer ~r ~h))))
 
 (defmacro inline-reduce
   [reducer initial transforms coll]
-  `(loop [h# (first ~coll)
-          t# (rest ~coll)
-          r# ~initial]
-     (if h#
-       (recur
-         (first t#) (rest t#)
-         (inline-reducer ~reducer ~transforms r# h#))
-       r#)))
+  (let [iter (with-meta (gensym "iter") {:tag 'java.util.Iterator})]
+    `(let [~iter (.iterator ~coll)]
+       (loop [r# ~initial]
+         (if (.hasNext ~iter)
+           (let [h# (.next ~iter)
+                 r2# (inline-reducer ~reducer ~transforms r# h#)]
+             (recur r2#))
+           r#)))))
 
 (defn test-inline-reduce
   []
