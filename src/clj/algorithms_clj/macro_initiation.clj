@@ -380,6 +380,62 @@
               coll))
     ))
 
+;; Versus reducer API
+
+(defn filterer [pred next]
+  (fn [result val]
+    (if (pred val)
+      (next result val)
+      result)))
+
+(defn mapper [xf next]
+  (fn [result val]
+    (next result (xf val))))
+
+(defn map-catter [xf next]
+  (fn [result val]
+    (reduce next result (xf val))))
+
+(defn test-reducers
+  []
+  (let [coll (into [] (range 5000))
+        repeat-2 (fn [x] [x x])]
+
+    (println "Naive reduction: 10ms")
+    (time
+      (dotimes [i 10]
+        (reduce + 0
+          (mapcat repeat-2 (map #(* 2 %) (filter odd? coll)))
+          )))
+
+    (println "With reducers: 2ms")
+    (time
+      (dotimes [i 10]
+        (reduce
+          (filterer odd? (mapper #(* 2 %) (map-catter repeat-2 +)))
+          0 coll)))
+
+    (println "With transducers: 2ms")
+    (time
+      (dotimes [i 10]
+        (transduce
+          (comp
+            (filter odd?)
+            (map #(* 2 %))
+            (mapcat repeat-2))
+          + 0 coll)))
+
+    (println "With inline-reduce: 1.4ms")
+    (time
+      (dotimes [i 10]
+        (inline-reduce
+          + 0
+          [[:filter odd?]
+           [:map #(* 2 %)]
+           [:mapcat repeat-2]]
+          coll)))
+    ))
+
 
 ;; --------------------------------------------------------
 ;; Example 6: DFS to do a topological sort
