@@ -255,13 +255,18 @@
 ;; Example 4-c: Adding logs based on compile time option (no overhead)
 ;; --------------------------------------------------------
 
-(defn logger-on []
-  ;; The thing here, is that we could read a config file
-  false)
+(def ^:const log-config-file
+  "./src/clj/algorithms_clj/macro_initiation_resource.edn")
+
+(defn logger-enabled?
+  "Read whether the log should be enabled by reading config file"
+  []
+  (let [log-config (read-string (slurp log-config-file))]
+    (-> log-config :log :enabled?)))
 
 (defmacro defn-log-3
   [name bindings body]
-  (if (logger-on)
+  (if (logger-enabled?)
     `(defn ~name
        ~bindings
        (if-let [log-fct# @logger]
