@@ -559,6 +559,7 @@
 ;; - Everything is done at compile time (and can be tested)
 ;; --------------------------------------------------------
 
+;; TODO - factorize the walks
 ;; TODO - optimize the expression
 
 (def computation-tree [+ :a [* :b :c]])
