@@ -521,13 +521,16 @@
   (println (topological-sort module-dependencies))
   )
 
-(defmacro compile-init-sequence
-  [uneval-modules]
-  (let [modules (eval uneval-modules)
-        dependencies (modules->dependency-graph modules)
+(defn modules->init-calls
+  [modules]
+  (let [dependencies (modules->dependency-graph modules)
         ordered-seq (topological-sort dependencies)
-        ordered-init (map #(get-in modules [% :init-sequence]) ordered-seq)
-        ordered-calls (map (fn [[f & args]] `(~f ~@args)) ordered-init)]
+        ordered-init (map #(get-in modules [% :init-sequence]) ordered-seq)]
+    (map (fn [[f & args]] `(~f ~@args)) ordered-init)))
+
+(defmacro compile-init-sequence
+  [modules]
+  (let [ordered-calls (modules->init-calls (eval modules))]
     `{:init (fn [] (do ~@ordered-calls))
       :shut (fn [] (do ~@(reverse ordered-calls)))
       }))
