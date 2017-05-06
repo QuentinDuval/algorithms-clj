@@ -223,11 +223,10 @@
 
 (defmacro defn-log
   [name bindings body]
-  (let [log-stmt (compile-log-expression &form bindings)]
-    `(defn ~name
-       ~bindings
-       ~log-stmt
-       ~body)))
+  `(defn ~name
+     ~bindings
+     ~(compile-log-expression &form bindings)
+     ~body))
 
 (defn-log add-with-log
   [a b]
@@ -235,6 +234,9 @@
 
 (defn test-add-with-log
   []
+  (println
+    (walk/macroexpand-all
+      '(defn-log add-with-log [a b] (+ a b))))
   (add-with-log 1 2))
 
 ;; --------------------------------------------------------
