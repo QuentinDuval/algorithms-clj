@@ -282,23 +282,21 @@
 (defmacro defn-log-3
   [name bindings body]
   (if (logger-enabled?)
-    `(defn ~name
+    `(defn-log-2 ~name
        ~bindings
-       (if-let [log-fct# @logger]
-         (log-fct# "Entering the function with args:" ~@bindings))
        ~body)
     `(defn ~name
        ~bindings
        ~body)))
 
-(defn-log-3 add-log-3
+(defn-log-3 add-with-log-3
   [a b]
   (+ a b))
 
-(defn test-add-log-3
+(defn test-add-with-log-3
   []
   (reset! logger default-logger)
-  (println (add-log-3 1 2)))
+  (println (add-with-log-3 1 2)))
 
 ;; --------------------------------------------------------
 ;; Example 5: Generating some code based on data structure
