@@ -215,17 +215,17 @@
     "Entering the function " fct-name " with args "
     (vec (mapcat vector arg-list arg-values))))
 
-(defn compile-log-expression
+(defn compile-log-message
   [form bindings]
-  (let [fct-name (-> form first str)]
-    `(println (log-enter-message ~fct-name (quote ~bindings) ~bindings))
+  (let [fct-name (-> form second str)]
+    `(log-enter-message ~fct-name (quote ~bindings) ~bindings)
     ))
 
 (defmacro defn-log
   [name bindings body]
   `(defn ~name
      ~bindings
-     ~(compile-log-expression &form bindings)
+     (println ~(compile-log-message &form bindings))
      ~body))
 
 (defn-log add-with-log
@@ -251,19 +251,19 @@
   `(defn ~name
      ~bindings
      (if-let [log-fct# @logger]
-       (log-fct# "Entering the function with args:" ~@bindings))
+       (log-fct# ~(compile-log-message &form bindings)))
      ~body))
 
-(defn-log-2 add-log-2
+(defn-log-2 add-with-log-2
   [a b]
   (+ a b))
 
-(defn test-add-log-2
+(defn test-add-with-log-2
   []
   (reset! logger default-logger)
-  (println (add-log-2 1 2))
+  (println (add-with-log-2 1 2))
   (reset! logger nil)
-  (println (add-log-2 1 2))
+  (println (add-with-log-2 1 2))
   (reset! logger default-logger))
 
 ;; --------------------------------------------------------
