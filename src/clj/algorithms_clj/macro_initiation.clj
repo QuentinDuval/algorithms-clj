@@ -559,6 +559,8 @@
 ;; - Everything is done at compile time (and can be tested)
 ;; --------------------------------------------------------
 
+;; TODO - optimize the expression
+
 (def computation-tree [+ :a [* :b :c]])
 
 (defn keyword->symbol [k] (-> k name symbol))
