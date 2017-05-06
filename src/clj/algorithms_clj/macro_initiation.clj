@@ -554,6 +554,46 @@
 ;; - Find something else...
 ;;
 ;; Show that macros can be used at the business level as well
+;;
+;; Other ideas:
+;; - Financial product: create a defrecord with the right
+;; protocols given data describing the product
+;; - Product a data flow for a financial product based
+;; on its dependencies => reactive!
+;; - Produce a data flow for a simple computation
 ;; --------------------------------------------------------
 
-;; TODO
+(def computation-tree [+ :a [* :b :c]])
+
+(defn collect-dependencies
+  [tree]
+  (walk/postwalk
+    (fn [node]
+      (cond
+        (keyword? node) #{node}
+        (vector? node) (apply clojure.set/union node)
+        :else #{}))
+    tree))
+
+(defn keyword->symbol
+  [k]
+  (symbol (name k)))
+
+(defprotocol IEvalExpr
+  (eval-expr [this] "Evaluate the expression"))
+
+(defmacro def-data-flow
+  [name tree]
+  (let [deps (sort (map keyword->symbol (collect-dependencies tree)))]
+    `(defrecord ~name ~(vec deps)
+       IEvalExpr
+       (eval-expr [this] 1)
+       )))
+
+(def-data-flow Expr [+ :a [* :b :c]])
+
+(defn test-data-flow
+  []
+  (let [e (map->Expr {:a 1 :b 2 :c 3})]
+    (eval-expr e)
+    ))
