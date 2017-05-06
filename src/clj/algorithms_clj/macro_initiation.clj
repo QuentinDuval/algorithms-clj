@@ -209,20 +209,27 @@
 ;; Example 4-a: Adding logs around functions
 ;; --------------------------------------------------------
 
+(defn log-enter-message
+  [fct-name arg-list arg-values]
+  (str
+    "Entering the function " fct-name " with args "
+    (mapv vector arg-list arg-values)))
+
 (defmacro defn-log
   [name bindings body]
-  `(defn ~name
-     ~bindings
-     (println "Entering the function with args:" ~@bindings)
-     ~body))
+  (let [fct-name (-> &form first str)]
+    `(defn ~name
+       ~bindings
+       (println (log-enter-message ~fct-name (quote ~bindings) ~bindings))
+       ~body)))
 
-(defn-log add-log
+(defn-log add-with-log
   [a b]
   (+ a b))
 
 (defn test-add-log
   []
-  (add-log 1 2))
+  (add-with-log 1 2))
 
 ;; --------------------------------------------------------
 ;; Example 4-b: Adding logs based on run time option (no overhead)
