@@ -597,7 +597,8 @@
     tree))
 
 (defprotocol IEvalExpr
-  (eval-expr [this] "Evaluate the expression"))
+  (eval-expr [this] "Evaluate the expression")
+  (expr->data [this] "The form used to create it"))
 
 (defmacro def-data-flow
   [name tree]
@@ -607,6 +608,7 @@
        IEvalExpr
        ;; (eval-expr [~this] (eval-expr-in-env ~tree ~this))
        (eval-expr [~this] ~(compile-eval-expr tree this))
+       (expr->data [_] (quote ~tree))
        )))
 
 (def-data-flow Expr [+ :a [* :b :c]])
@@ -614,5 +616,6 @@
 (defn test-data-flow
   []
   (let [e (map->Expr {:a 1 :b 2 :c 3})]
-    (eval-expr e)
+    (println (eval-expr e))
+    (println (expr->data e))
     ))
