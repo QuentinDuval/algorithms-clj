@@ -206,100 +206,7 @@
 
 
 ;; --------------------------------------------------------
-;; Example 4-a: Adding logs around functions
-;; --------------------------------------------------------
-
-(defn log-enter-message
-  [fct-name arg-list arg-values]
-  (str
-    "Entering the function " fct-name " with args "
-    (vec (mapcat vector arg-list arg-values))))
-
-(defn compile-log-message
-  [form bindings]
-  (let [fct-name (-> form second str)]
-    `(log-enter-message ~fct-name (quote ~bindings) ~bindings)
-    ))
-
-(defmacro defn-log
-  [name bindings body]
-  `(defn ~name
-     ~bindings
-     (println ~(compile-log-message &form bindings))
-     ~body))
-
-(defn-log add-with-log
-  [a b]
-  (+ a b))
-
-(defn test-add-with-log
-  []
-  (println
-    (walk/macroexpand-all
-      '(defn-log add-with-log [a b] (+ a b))))
-  (add-with-log 1 2))
-
-;; --------------------------------------------------------
-;; Example 4-b: Adding logs based on run time option (no overhead)
-;; --------------------------------------------------------
-
-(def default-logger (partial println "INFO:"))
-(def logger (atom default-logger))
-
-(defmacro defn-log-2
-  [name bindings body]
-  `(defn ~name
-     ~bindings
-     (if-let [log-fct# @logger]
-       (log-fct# ~(compile-log-message &form bindings)))
-     ~body))
-
-(defn-log-2 add-with-log-2
-  [a b]
-  (+ a b))
-
-(defn test-add-with-log-2
-  []
-  (reset! logger default-logger)
-  (println (add-with-log-2 1 2))
-  (reset! logger nil)
-  (println (add-with-log-2 1 2))
-  (reset! logger default-logger))
-
-;; --------------------------------------------------------
-;; Example 4-c: Adding logs based on compile time option (no overhead)
-;; --------------------------------------------------------
-
-(def ^:const log-config-file
-  "./src/clj/algorithms_clj/macro_initiation_resource.edn")
-
-(defn logger-enabled?
-  "Read whether the log should be enabled by reading config file"
-  []
-  (let [log-config (read-string (slurp log-config-file))]
-    (-> log-config :log :enabled?)))
-
-(defmacro defn-log-3
-  [name bindings body]
-  (if (logger-enabled?)
-    `(defn-log-2 ~name
-       ~bindings
-       ~body)
-    `(defn ~name
-       ~bindings
-       ~body)))
-
-(defn-log-3 add-with-log-3
-  [a b]
-  (+ a b))
-
-(defn test-add-with-log-3
-  []
-  (reset! logger default-logger)
-  (println (add-with-log-3 1 2)))
-
-;; --------------------------------------------------------
-;; Example 5: Generating some code based on data structure
+;; Example 4: Generating some code based on data structure
 ;; - Go iteratively?
 ;; - Show the example of efficient loop generation
 ;; --------------------------------------------------------
@@ -454,6 +361,100 @@
            [:mapcat repeat-2]]
           coll)))
     ))
+
+
+;; --------------------------------------------------------
+;; Example 5-a: Adding logs around functions
+;; --------------------------------------------------------
+
+(defn log-enter-message
+  [fct-name arg-list arg-values]
+  (str
+    "Entering the function " fct-name " with args "
+    (vec (mapcat vector arg-list arg-values))))
+
+(defn compile-log-message
+  [form bindings]
+  (let [fct-name (-> form second str)]
+    `(log-enter-message ~fct-name (quote ~bindings) ~bindings)
+    ))
+
+(defmacro defn-log
+  [name bindings body]
+  `(defn ~name
+     ~bindings
+     (println ~(compile-log-message &form bindings))
+     ~body))
+
+(defn-log add-with-log
+  [a b]
+  (+ a b))
+
+(defn test-add-with-log
+  []
+  (println
+    (walk/macroexpand-all
+      '(defn-log add-with-log [a b] (+ a b))))
+  (add-with-log 1 2))
+
+;; --------------------------------------------------------
+;; Example 5-b: Adding logs based on run time option (no overhead)
+;; --------------------------------------------------------
+
+(def default-logger (partial println "INFO:"))
+(def logger (atom default-logger))
+
+(defmacro defn-log-2
+  [name bindings body]
+  `(defn ~name
+     ~bindings
+     (if-let [log-fct# @logger]
+       (log-fct# ~(compile-log-message &form bindings)))
+     ~body))
+
+(defn-log-2 add-with-log-2
+  [a b]
+  (+ a b))
+
+(defn test-add-with-log-2
+  []
+  (reset! logger default-logger)
+  (println (add-with-log-2 1 2))
+  (reset! logger nil)
+  (println (add-with-log-2 1 2))
+  (reset! logger default-logger))
+
+;; --------------------------------------------------------
+;; Example 5-c: Adding logs based on compile time option (no overhead)
+;; --------------------------------------------------------
+
+(def ^:const log-config-file
+  "./src/clj/algorithms_clj/macro_initiation_resource.edn")
+
+(defn logger-enabled?
+  "Read whether the log should be enabled by reading config file"
+  []
+  (let [log-config (read-string (slurp log-config-file))]
+    (-> log-config :log :enabled?)))
+
+(defmacro defn-log-3
+  [name bindings body]
+  (if (logger-enabled?)
+    `(defn-log-2 ~name
+       ~bindings
+       ~body)
+    `(defn ~name
+       ~bindings
+       ~body)))
+
+(defn-log-3 add-with-log-3
+  [a b]
+  (+ a b))
+
+(defn test-add-with-log-3
+  []
+  (reset! logger default-logger)
+  (println (add-with-log-3 1 2)))
 
 
 ;; --------------------------------------------------------
