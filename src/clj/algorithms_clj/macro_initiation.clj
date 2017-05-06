@@ -489,11 +489,11 @@
 
 (def module-dependencies (modules->dependency-graph modules))
 
-(defn visit
+(defn post-order-visit
   [{:keys [graph not-visited sorted] :as dfs} node]
   (if (not-visited node)
     (->
-      (reduce visit
+      (reduce post-order-visit
         (update dfs :not-visited disj node)
         (get graph node []))
       (update :sorted conj node))
@@ -504,7 +504,7 @@
   (some
     #(if (-> % :not-visited empty?) (:sorted %))
     (iterate
-      #(visit % (-> % :not-visited first))
+      #(post-order-visit % (-> % :not-visited first))
       {:graph graph
        :not-visited (set (keys graph))
        :sorted []})))
