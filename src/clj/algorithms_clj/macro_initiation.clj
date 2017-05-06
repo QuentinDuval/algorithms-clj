@@ -565,7 +565,10 @@
 
 (def computation-tree [+ :a [* :b :c]])
 
+(defn keyword->symbol [k] (-> k name symbol))
+
 (defn collect-dependencies
+  "Collect all the dependencies of an environment"
   [tree]
   (walk/postwalk
     (fn [node]
@@ -576,30 +579,38 @@
     tree))
 
 (defn eval-expr-in-env
+  "Evaluate the expression in an environment"
   [tree env]
   (walk/postwalk
     (fn [node]
       (cond
         (keyword? node) (get env node)
-        (vector? node) (apply (first node) (next node))
+        (vector? node) (apply (first node) (rest node))
         :else node))
     tree))
 
-;; TODO - compile expression instead!
-
-(defn keyword->symbol
-  [k]
-  (symbol (name k)))
+(defn compile-eval-expr
+  "Compile the expression in optimal code"
+  [tree symbol-env]
+  (walk/postwalk
+    (fn [node]
+      (cond
+        (keyword? node) `(~node ~symbol-env)
+        (vector? node) `(~(first node) ~@(rest node))
+        :else node))
+    tree))
 
 (defprotocol IEvalExpr
   (eval-expr [this] "Evaluate the expression"))
 
 (defmacro def-data-flow
   [name tree]
-  (let [deps (sort (map keyword->symbol (collect-dependencies tree)))]
+  (let [deps (sort (map keyword->symbol (collect-dependencies tree)))
+        this (gensym "this")]
     `(defrecord ~name ~(vec deps)
        IEvalExpr
-       (eval-expr [this#] (eval-expr-in-env ~tree this#))
+       ;; (eval-expr [~this] (eval-expr-in-env ~tree ~this))
+       (eval-expr [~this] ~(compile-eval-expr tree this))
        )))
 
 (def-data-flow Expr [+ :a [* :b :c]])
