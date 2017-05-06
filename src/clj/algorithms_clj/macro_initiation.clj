@@ -213,21 +213,27 @@
   [fct-name arg-list arg-values]
   (str
     "Entering the function " fct-name " with args "
-    (mapv vector arg-list arg-values)))
+    (vec (mapcat vector arg-list arg-values))))
+
+(defn compile-log-expression
+  [form bindings]
+  (let [fct-name (-> form first str)]
+    `(println (log-enter-message ~fct-name (quote ~bindings) ~bindings))
+    ))
 
 (defmacro defn-log
   [name bindings body]
-  (let [fct-name (-> &form first str)]
+  (let [log-stmt (compile-log-expression &form bindings)]
     `(defn ~name
        ~bindings
-       (println (log-enter-message ~fct-name (quote ~bindings) ~bindings))
+       ~log-stmt
        ~body)))
 
 (defn-log add-with-log
   [a b]
   (+ a b))
 
-(defn test-add-log
+(defn test-add-with-log
   []
   (add-with-log 1 2))
 
