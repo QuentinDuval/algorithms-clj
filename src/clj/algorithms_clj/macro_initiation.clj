@@ -365,6 +365,9 @@
 
 ;; --------------------------------------------------------
 ;; Example 5-a: Adding logs around functions
+;;
+;; Show that we can extend the language as desired
+;; Macros can help address operational constraints
 ;; --------------------------------------------------------
 
 (defn log-enter-message
@@ -461,6 +464,9 @@
 ;; Example 6: DFS to do a topological sort
 ;; - You list a bunch of dependencies
 ;; - You get a list of tasks to run
+;;
+;; Show that we can use macro for software architecture
+;;
 ;; Result:
 ;; 1. Simple (re-use topological sort runtime)
 ;; 2. Explicit ordering (not implicit positioning)
@@ -536,12 +542,15 @@
   []
   ((:shut init-shut-sequence)))
 
+
 ;; --------------------------------------------------------
 ;; Example 7: Generating some code based on data structure
 ;; Something based on description of data model
 ;; - Generate the code to save it
 ;; - Generate the classes
 ;; - Find something else...
+;;
+;; Show that macros can be used at the business level as well
 ;; --------------------------------------------------------
 
 ;; TODO
