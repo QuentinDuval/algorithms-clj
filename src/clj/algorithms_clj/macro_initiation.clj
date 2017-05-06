@@ -548,19 +548,15 @@
 
 ;; --------------------------------------------------------
 ;; Example 7: Generating some code based on data structure
-;; Something based on description of data model
-;; - Generate the code to save it
-;; - Generate the classes
-;; - Find something else...
 ;;
-;; Show that macros can be used at the business level as well
+;; Macros can be used at the business level as well:
+;; - Expression your business
+;; - Get powerful code for it
 ;;
-;; Other ideas:
-;; - Financial product: create a defrecord with the right
-;; protocols given data describing the product
-;; - Product a data flow for a financial product based
-;; on its dependencies => reactive!
-;; - Produce a data flow for a simple computation
+;; Here we define a computation in terms of variables
+;; - We produce a record for this computation (type)
+;; - We produce an implementation of an evaluator
+;; - Everything is done at compile time (and can be tested)
 ;; --------------------------------------------------------
 
 (def computation-tree [+ :a [* :b :c]])
