@@ -575,6 +575,18 @@
         :else #{}))
     tree))
 
+(defn eval-expr-in-env
+  [tree env]
+  (walk/postwalk
+    (fn [node]
+      (cond
+        (keyword? node) (get env node)
+        (vector? node) (apply (first node) (next node))
+        :else node))
+    tree))
+
+;; TODO - compile expression instead!
+
 (defn keyword->symbol
   [k]
   (symbol (name k)))
@@ -587,7 +599,7 @@
   (let [deps (sort (map keyword->symbol (collect-dependencies tree)))]
     `(defrecord ~name ~(vec deps)
        IEvalExpr
-       (eval-expr [this] 1)
+       (eval-expr [this#] (eval-expr-in-env ~tree this#))
        )))
 
 (def-data-flow Expr [+ :a [* :b :c]])
