@@ -547,11 +547,16 @@
 
 
 ;; --------------------------------------------------------
-;; Example 7: Generating some code based on data structure
-;;
-;; Macros can be used at the business level as well:
+;; Example 7: Macros can be used at the requirement level:
 ;; - Expression your business
 ;; - Get powerful code for it
+;;
+;; Phase 1: Factorize some common used patterns
+;; - tree transformation of collect dependencies
+;; - tree transformation of evaluate with env
+;; => Factorize into tree morphism
+;;
+;; Phase 2: Generating some code based on data structure
 ;;
 ;; Here we define a computation in terms of variables
 ;; - We produce a record for this computation (type)
@@ -566,7 +571,7 @@
 
 (defn keyword->symbol [k] (-> k name symbol))
 
-(defn collect-dependencies
+#_(defn collect-dependencies
   "Collect all the dependencies of an environment"
   [tree]
   (walk/postwalk
@@ -577,7 +582,7 @@
         :else #{}))
     tree))
 
-(defn eval-expr-in-env
+#_(defn eval-expr-in-env
   "Evaluate the expression in an environment"
   [tree env]
   (walk/postwalk
@@ -588,16 +593,38 @@
         :else node))
     tree))
 
+(defmacro tree-catamorph
+  [[tree-symbol node-symbol] & conditions]
+  `(walk/postwalk
+     (fn [~node-symbol] (cond ~@conditions))
+     ~tree-symbol))
+
+(defn collect-dependencies
+  "Collect all the dependencies of an environment"
+  [tree]
+  (tree-catamorph [tree node]
+    (keyword? node) #{node}
+    (vector? node) (apply clojure.set/union node)
+    :else #{}))
+
+(defn eval-expr-in-env
+  "Evaluate the expression in an environment"
+  [tree env]
+  (tree-catamorph [tree node]
+    (keyword? node) (get env node)
+    (vector? node) (apply (first node) (rest node))
+    :else node))
+
+;; Phase 2: optimizing the code and creating types
+;; for commonly used expressions.
+
 (defn compile-eval-expr
   "Compile the expression in optimal code"
   [tree symbol-env]
-  (walk/postwalk
-    (fn [node]
-      (cond
-        (keyword? node) `(~node ~symbol-env)
-        (vector? node) `(~(first node) ~@(rest node))
-        :else node))
-    tree))
+  (tree-catamorph [tree node]
+    (keyword? node) `(~node ~symbol-env)
+    (vector? node) `(~(first node) ~@(rest node))
+    :else node))
 
 (defprotocol IEvalExpr
   (eval-expr [this] "Evaluate the expression")
