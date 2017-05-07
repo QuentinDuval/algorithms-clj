@@ -564,9 +564,6 @@
 ;; - Everything is done at compile time (and can be tested)
 ;; --------------------------------------------------------
 
-;; TODO - factorize the walks (start by showing this factoring)
-;; TODO - optimize the expression
-
 (def computation-tree [+ :a [* :b :c]])
 
 (defn keyword->symbol [k] (-> k name symbol))
@@ -615,8 +612,11 @@
     (vector? node) (apply (first node) (rest node))
     :else node))
 
-;; Phase 2: optimizing the code and creating types
-;; for commonly used expressions.
+;; Phase 2:
+;; Optimizing and creating types for commonly used expressions.
+;; - We can compile the expression
+;; - TODO: we can optimize it first
+;; Explain the link with expression templates
 
 (defn compile-eval-expr
   "Compile the expression in optimal code"
