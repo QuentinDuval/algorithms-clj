@@ -384,13 +384,24 @@
   [fct-name arg-list arg-values]
   (str
     "Entering the function " fct-name " with args "
-    (vec (mapcat vector arg-list arg-values))))
+    (zipmap arg-list arg-values)))
+
+(defn bindings->bound-vars
+  [bindings]
+  (->>
+    (flatten bindings)
+    (remove #{'&})
+    (remove keyword?)
+    (vec)))
 
 (defn compile-log-message
-  [form bindings]
-  (let [fct-name (-> form second str)]
-    `(log-enter-message ~fct-name (quote ~bindings) ~bindings)
-    ))
+  [form binding-vec]
+  (let [fct-name (-> form second str)
+        bindings (bindings->bound-vars binding-vec)]
+    `(log-enter-message
+       ~fct-name
+       (quote ~bindings)
+       ~bindings)))
 
 (defmacro defn-log
   [name bindings body]
@@ -629,11 +640,10 @@
     :else node))
 
 (defn optimize-op
-  [[op & args :as expr]] ;; TODO - def-log does not work here
+  [[op & args :as expr]]
   (let [variables (filter (complement number?) args)
         constants (filter number? args)
         reduced (reduce op constants)]
-    (println reduced)
     (if-not (empty? constants)
       (into [op reduced] variables)
       expr)))
