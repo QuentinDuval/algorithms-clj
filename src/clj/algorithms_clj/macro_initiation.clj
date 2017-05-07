@@ -19,6 +19,16 @@
   [fct & args]
   (eval `(~fct ~@args)))
 
+#_(defmacro constexpr-2
+  [[fct & args]]
+  (list* fct (map (fn [a] `~a) args)))
+
+#_(defmacro defconstexpr
+  [name arguments body]
+  (println (str body))
+  `(defmacro ~name ~arguments
+     (constexpr ~body)))
+
 ;; --------------------------------------------------------
 ;; Example 1: equivalent with constexpr
 ;; --------------------------------------------------------
