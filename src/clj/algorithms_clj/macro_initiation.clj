@@ -622,10 +622,33 @@
     (vector? node) (apply (first node) (rest node))
     :else node))
 
+(defn resolve-operators
+  [tree]
+  (tree-catamorph [tree node]
+    (symbol? node) (resolve node)
+    :else node))
+
+(defn optimize-op
+  [[op & args :as expr]] ;; TODO - def-log does not work here
+  (let [variables (filter (complement number?) args)
+        constants (filter number? args)
+        reduced (reduce op constants)]
+    (println reduced)
+    (if-not (empty? constants)
+      (into [op reduced] variables)
+      expr)))
+
+(defn optimize-expr
+  "Optimize the shape of an expression"
+  [tree]
+  (tree-catamorph [tree node]
+    (vector? node) (optimize-op node)
+    :else node))
+
 ;; Phase 2:
 ;; Optimizing and creating types for commonly used expressions.
 ;; - We can compile the expression
-;; - TODO: we can optimize it first
+;; - We can optimize it first
 ;; Explain the link with expression templates
 
 (defn compile-eval-expr
@@ -640,20 +663,21 @@
   (eval-expr [this] "Evaluate the expression")
   (expr->data [this] "The form used to create it"))
 
-(defmacro def-data-flow
+(defmacro def-expr
   [name tree]
   (let [deps (sort (map keyword->symbol (collect-dependencies tree)))
+        fast (optimize-expr (resolve-operators tree))
         this (gensym "this")]
     `(defrecord ~name ~(vec deps)
        IEvalExpr
        ;; (eval-expr [~this] (eval-expr-in-env ~tree ~this))
-       (eval-expr [~this] ~(compile-eval-expr tree this))
+       (eval-expr [~this] ~(compile-eval-expr fast this))
        (expr->data [_] (quote ~tree))
        )))
 
-(def-data-flow Expr [+ :a [* :b :c]])
+(def-expr Expr [+ [* 2 3 :a] [* 2 :b :c]])
 
-(defn test-data-flow
+(defn test-def-expr
   []
   (let [e (map->Expr {:a 1 :b 2 :c 3})]
     (println (eval-expr e))
