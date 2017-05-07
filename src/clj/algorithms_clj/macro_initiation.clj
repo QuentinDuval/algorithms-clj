@@ -381,12 +381,14 @@
 ;; --------------------------------------------------------
 
 (defn log-enter-message
-  [fct-name arg-list arg-values]
+  "Returns the log message for the function and its arguments"
+  [fct-name arg-names arg-values]
   (str
     "Entering the function " fct-name " with args "
-    (zipmap arg-list arg-values)))
+    (zipmap arg-names arg-values)))
 
 (defn bindings->bound-vars
+  "Clean the bindings to remove the restructuring artifacts"
   [bindings]
   (->>
     (flatten bindings)
