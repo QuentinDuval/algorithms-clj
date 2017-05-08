@@ -20,14 +20,14 @@
   (eval `(~fct ~@args)))
 
 #_(defmacro constexpr-2
-  [[fct & args]]
-  (list* fct (map (fn [a] `~a) args)))
+    [[fct & args]]
+    (list* fct (map (fn [a] `~a) args)))
 
 #_(defmacro defconstexpr
-  [name arguments body]
-  (println (str body))
-  `(defmacro ~name ~arguments
-     (constexpr ~body)))
+    [name arguments body]
+    (println (str body))
+    `(defmacro ~name ~arguments
+       (constexpr ~body)))
 
 ;; --------------------------------------------------------
 ;; Example 1: equivalent with constexpr
@@ -137,10 +137,12 @@
 
 (defn freq-map
   [coll]
-  (reduce
-    (fn [freqs val] (update freqs val (fnil + 0) 1))
-    {}
-    coll))
+  (persistent!
+    (reduce
+      (fn [freqs val]
+        (assoc! freqs val (inc (get freqs val 0))))
+      (transient {})
+      coll)))
 
 (defmacro freq-map-m
   [coll]
@@ -592,26 +594,26 @@
 (defn keyword->symbol [k] (-> k name symbol))
 
 #_(defn collect-dependencies
-  "Collect all the dependencies of an environment"
-  [tree]
-  (walk/postwalk
-    (fn [node]
-      (cond
-        (keyword? node) #{node}
-        (vector? node) (apply clojure.set/union node)
-        :else #{}))
-    tree))
+    "Collect all the dependencies of an environment"
+    [tree]
+    (walk/postwalk
+      (fn [node]
+        (cond
+          (keyword? node) #{node}
+          (vector? node) (apply clojure.set/union node)
+          :else #{}))
+      tree))
 
 #_(defn eval-expr-in-env
-  "Evaluate the expression in an environment"
-  [tree env]
-  (walk/postwalk
-    (fn [node]
-      (cond
-        (keyword? node) (get env node)
-        (vector? node) (apply (first node) (rest node))
-        :else node))
-    tree))
+    "Evaluate the expression in an environment"
+    [tree env]
+    (walk/postwalk
+      (fn [node]
+        (cond
+          (keyword? node) (get env node)
+          (vector? node) (apply (first node) (rest node))
+          :else node))
+      tree))
 
 (defmacro tree-catamorph
   [[tree-symbol node-symbol] & conditions]
