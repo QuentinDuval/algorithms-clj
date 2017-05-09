@@ -394,10 +394,8 @@
 
 (defn log-enter-message
   "Returns the log message for the function and its arguments"
-  [fct-name arg-names arg-values]
-  (str
-    "Entering the function " fct-name " with args "
-    (zipmap arg-names arg-values)))
+  [log-prefix arg-names arg-values]
+  (str log-prefix (zipmap arg-names arg-values)))
 
 (defn bindings->bound-vars
   "Clean the bindings to remove the restructuring artifacts"
@@ -408,12 +406,16 @@
     (remove keyword?)
     (vec)))
 
+(defn compile-log-prefix
+  [fct-name]
+  (str "Entering the function " fct-name " with arguents: "))
+
 (defn compile-log-message
   [form binding-vec]
   (let [fct-name (-> form second str)
         bindings (bindings->bound-vars binding-vec)]
     `(log-enter-message
-       ~fct-name
+       ~(compile-log-prefix fct-name)
        (quote ~bindings)
        ~bindings)))
 
