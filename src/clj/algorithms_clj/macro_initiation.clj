@@ -406,16 +406,16 @@
     (remove keyword?)
     (vec)))
 
-(defn compile-log-prefix
+(defn log-prefix
   [fct-name]
-  (str "Entering the function " fct-name " with arguents: "))
+  (str "[TRACE] Entering \"" fct-name "\" with arguments: "))
 
 (defn compile-log-message
   [form binding-vec]
   (let [fct-name (-> form second str)
         bindings (bindings->bound-vars binding-vec)]
     `(log-enter-message
-       ~(compile-log-prefix fct-name)
+       ~(log-prefix fct-name)
        (quote ~bindings)
        ~bindings)))
 
