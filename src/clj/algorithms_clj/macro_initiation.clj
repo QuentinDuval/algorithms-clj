@@ -402,7 +402,7 @@
   [bindings]
   (->>
     (flatten bindings)
-    (remove #{'&})
+    (remove #{'& '_})
     (remove keyword?)
     (vec)))
 
@@ -491,10 +491,15 @@
   [a b]
   (+ a b))
 
+(defn-log-3 get-first
+  [[x & _ :as list]]
+  x)
+
 (defn test-add-with-log-3
   []
   (reset! logger default-logger)
-  (println (add-with-log-3 1 2)))
+  (println (add-with-log-3 1 2))
+  (println (get-first [1 2 3])))
 
 
 ;; --------------------------------------------------------
