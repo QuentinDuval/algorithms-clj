@@ -135,6 +135,16 @@
 ;; - And that's the thing: 1 language to learn, not 2
 ;; --------------------------------------------------------
 
+#_(set! *warn-on-reflection* true)
+
+(defn freq-map-opt
+  "Optimized version of the frequency map"
+  [coll]
+  (let [freqs (java.util.HashMap.)]
+    (doseq [val coll]
+      (.put freqs val (inc (get freqs val 0))))
+    freqs))
+
 (defn freq-map
   [coll]
   (persistent!
