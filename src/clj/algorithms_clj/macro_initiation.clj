@@ -4,6 +4,8 @@
     ))
 
 
+(set! *warn-on-reflection* true)
+
 (defmacro expension-report
   "Debugging macro to show the result of the expension"
   [body]
@@ -134,8 +136,6 @@
 ;; - And there you are in troube with C++ constexpr
 ;; - And that's the thing: 1 language to learn, not 2
 ;; --------------------------------------------------------
-
-#_(set! *warn-on-reflection* true)
 
 (defn freq-map-opt
   "Optimized version of the frequency map"
@@ -268,17 +268,17 @@
     `(~reducer ~r ~h))
 
 ;; Phase 4 (finished!)
-(defmacro inline-reducer
+(defmacro compile-reducer
   [reducer transforms r h]
   (let [[op fct] (first transforms)
         remaining (rest transforms)]
     (case op
       :map
       `(let [h2# (~fct ~h)]
-         (inline-reducer ~reducer ~remaining ~r h2#))
+         (compile-reducer ~reducer ~remaining ~r h2#))
       :filter
       `(if (~fct ~h)
-         (inline-reducer ~reducer ~remaining ~r ~h)
+         (compile-reducer ~reducer ~remaining ~r ~h)
          ~r)
       :mapcat
       (let [h2 (with-meta (gensym "h2") {:tag 'java.lang.Iterable})]
@@ -288,12 +288,13 @@
 
 (defmacro inline-reduce
   [reducer initial transforms coll]
-  (let [iter (with-meta (gensym "iter") {:tag 'java.util.Iterator})]
+  (let [iter (with-meta (gensym "iter") {:tag 'java.util.Iterator})
+        coll (with-meta coll {:tag 'java.lang.Iterable})]
     `(let [~iter (.iterator ~coll)]
        (loop [r# ~initial]
          (if (.hasNext ~iter)
            (let [h# (.next ~iter)
-                 r2# (inline-reducer ~reducer ~transforms r# h#)]
+                 r2# (compile-reducer ~reducer ~transforms r# h#)]
              (recur r2#))
            r#)))))
 
@@ -303,17 +304,22 @@
   (let [coll (into [] (range 10))]
     (println (reduce + 0 (map #(* 2 %) (filter odd? coll))))
 
-    (report (inline-reducer
+    (report (compile-reducer
               +
               [[:map #(* 2 %)]]
               5
               1))
 
-    (report (inline-reducer
+    (report (compile-reducer
               +
               [[:filter odd?] [:map #(* 2 %)]]
               5
               1))
+
+    (report (inline-reduce
+              + 0
+              []
+              coll))
 
     (report (inline-reduce
               + 0
@@ -408,7 +414,7 @@
 
 (defn log-prefix
   [fct-name]
-  (str "[TRACE] Entering \"" fct-name "\" with arguments: "))
+  (str "[TRACE] Call to \"" fct-name "\" with arguments: "))
 
 (defn compile-log-message
   [fct-name binding-vec]
@@ -440,7 +446,7 @@
 ;; Example 5-b: Adding logs based on run time option (no overhead)
 ;; --------------------------------------------------------
 
-(def default-logger (partial println "INFO:"))
+(def default-logger println)
 (def logger (atom default-logger))
 
 (defmacro defn-log-2
