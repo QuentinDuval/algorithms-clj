@@ -411,9 +411,8 @@
   (str "[TRACE] Entering \"" fct-name "\" with arguments: "))
 
 (defn compile-log-message
-  [form binding-vec]
-  (let [fct-name (-> form second str)
-        bindings (bindings->bound-vars binding-vec)]
+  [fct-name binding-vec]
+  (let [bindings (bindings->bound-vars binding-vec)]
     `(log-enter-message
        ~(log-prefix fct-name)
        (quote ~bindings)
@@ -423,7 +422,7 @@
   [name bindings body]
   `(defn ~name
      ~bindings
-     (println ~(compile-log-message &form bindings))
+     (println ~(compile-log-message name bindings))
      ~body))
 
 (defn-log add-with-log
@@ -449,7 +448,7 @@
   `(defn ~name
      ~bindings
      (if-let [log-fct# @logger]
-       (log-fct# ~(compile-log-message &form bindings)))
+       (log-fct# ~(compile-log-message name bindings)))
      ~body))
 
 (defn-log-2 add-with-log-2
