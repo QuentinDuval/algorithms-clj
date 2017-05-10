@@ -5,6 +5,8 @@
 
 
 (set! *warn-on-reflection* true)
+;; (set! *unchecked-math* :warn-on-boxed)
+
 
 (defmacro expension-report
   "Debugging macro to show the result of the expension"
