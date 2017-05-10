@@ -4,7 +4,7 @@
     ))
 
 
-(set! *warn-on-reflection* true)
+;; (set! *warn-on-reflection* true)
 ;; (set! *unchecked-math* :warn-on-boxed)
 
 
@@ -400,10 +400,10 @@
 ;; Macros can help address operational constraints
 ;; --------------------------------------------------------
 
-(defn log-enter-message
-  "Returns the log message for the function and its arguments"
-  [log-prefix arg-names arg-values]
-  (str log-prefix (zipmap arg-names arg-values)))
+(defn log-symbol-values
+  "Log the values of a list of symbols, with a prefix"
+  [prefix symbols values]
+  (str prefix (zipmap symbols values)))
 
 (defn bindings->bound-vars
   "Clean the bindings to remove the restructuring artifacts"
@@ -421,7 +421,7 @@
 (defn compile-log-message
   [fct-name binding-vec]
   (let [bindings (bindings->bound-vars binding-vec)]
-    `(log-enter-message
+    `(log-symbol-values
        ~(log-prefix fct-name)
        (quote ~bindings)
        ~bindings)))
@@ -436,6 +436,10 @@
 (defn-log add-with-log
   [a b]
   (+ a b))
+
+(defn-log repeat-n
+  [n s]
+  (apply str (repeat n s)))
 
 (defn test-add-with-log
   []
