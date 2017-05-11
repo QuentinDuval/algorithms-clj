@@ -414,7 +414,8 @@
     (remove keyword?)
     (vec)))
 
-(defn log-prefix
+(defn function-log-prefix
+  "Return the prefix of the log entry for a function"
   [fct-name]
   (str "[TRACE] Call to \"" fct-name "\" with arguments: "))
 
@@ -422,7 +423,7 @@
   [fct-name binding-vec]
   (let [bindings (bindings->bound-vars binding-vec)]
     `(log-symbol-values
-       ~(log-prefix fct-name)
+       ~(function-log-prefix fct-name)
        (quote ~bindings)
        ~bindings)))
 
