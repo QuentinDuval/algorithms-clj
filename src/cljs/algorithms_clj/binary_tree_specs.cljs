@@ -1,6 +1,6 @@
 (ns algorithms-clj.binary-tree-specs
   (:require-macros
-    [algorithms-clj.binary-tree-macros :refer [binary-tree-of def-b-tree]])
+    [algorithms-clj.binary-tree-specs :refer [binary-tree-of def-b-tree]])
   (:require
     [cljs.spec.alpha :as s]))
 
@@ -30,7 +30,7 @@
 
 (s/def ::int-binary-tree
   (s/and
-    (comp (partial every? int?) dfs-binary-tree)
+    #(every? int? (dfs-binary-tree %))
     ::binary-tree-impl))
 
 (s/def ::int-binary-tree-macro

@@ -1,4 +1,4 @@
-(ns algorithms-clj.binary-tree-macros)
+(ns algorithms-clj.binary-tree-specs)
 
 (defmacro def-b-tree
   [name pred]
@@ -11,6 +11,5 @@
 (defmacro binary-tree-of
   [pred]
   `(s/and
-     (comp (partial every? ~pred)
-       algorithms-clj.binary-tree-specs/dfs-binary-tree)
-     :algorithms-clj.binary-tree-specs/binary-tree-impl))
+     #(every? ~pred (dfs-binary-tree %))
+     ::binary-tree-impl))
