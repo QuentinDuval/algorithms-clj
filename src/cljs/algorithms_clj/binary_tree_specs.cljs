@@ -41,3 +41,6 @@
 (println (s/valid? ::int-b-tree sample-tree))
 (println (s/valid? ::int-binary-tree sample-tree))
 (println (s/valid? ::int-binary-tree-macro sample-tree))
+(println (s/valid? (binary-tree-of int?) sample-tree))
+(println (s/valid? (binary-tree-of string?) sample-tree))
+(println (s/valid? (binary-tree-of any?) sample-tree))
