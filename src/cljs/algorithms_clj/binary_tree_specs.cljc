@@ -31,10 +31,10 @@
 (defmacro binary-tree-of
   [pred]
   `(s/and
-     #(every? ~pred (dfs-binary-tree %))
+     (comp (partial every? ~pred) dfs-binary-tree)
      ::binary-tree-impl))
 
 (s/def ::int-binary-tree
   (s/and
-    #(every? int? (dfs-binary-tree %))
+    (comp (partial every? int?) dfs-binary-tree)
     ::binary-tree-impl))
