@@ -44,3 +44,7 @@
 (println (s/valid? (binary-tree-of int?) sample-tree))
 (println (s/valid? (binary-tree-of string?) sample-tree))
 (println (s/valid? (binary-tree-of any?) sample-tree))
+(println
+  (s/valid?
+    (binary-tree-of (binary-tree-of any?))
+    [sample-tree {}]))

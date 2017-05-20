@@ -8,8 +8,14 @@
        :children
        (s/map-of #{:left :right} ~name))))
 
-(defmacro binary-tree-of
+#_(defmacro binary-tree-of
   [pred]
   `(s/and
      #(every? ~pred (dfs-binary-tree %))
+     ::binary-tree-impl))
+
+(defmacro binary-tree-of
+  [pred]
+  `(s/and
+     #(every? (partial s/valid? ~pred) (dfs-binary-tree %))
      ::binary-tree-impl))
