@@ -1,5 +1,13 @@
 (ns algorithms-clj.binary-tree-macros)
 
+(defmacro def-b-tree
+  [name pred]
+  `(s/def ~name
+     (s/cat
+       :value ~pred
+       :children
+       (s/map-of #{:left :right} ~name))))
+
 (defmacro binary-tree-of
   [pred]
   `(s/and

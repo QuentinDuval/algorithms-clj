@@ -1,6 +1,6 @@
 (ns algorithms-clj.binary-tree-specs
   (:require-macros
-    [algorithms-clj.binary-tree-macros :refer [binary-tree-of]])
+    [algorithms-clj.binary-tree-macros :refer [binary-tree-of def-b-tree]])
   (:require
     [cljs.spec.alpha :as s]))
 
@@ -36,5 +36,8 @@
 (s/def ::int-binary-tree-macro
   (binary-tree-of int?))
 
+(def-b-tree ::int-b-tree int?)
+
+(println (s/valid? ::int-b-tree sample-tree))
 (println (s/valid? ::int-binary-tree sample-tree))
 (println (s/valid? ::int-binary-tree-macro sample-tree))
