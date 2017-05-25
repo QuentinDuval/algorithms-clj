@@ -17,5 +17,6 @@
 (defmacro binary-tree-of
   [pred]
   `(s/and
+     #(s/valid? ::binary-tree-impl %)
      #(every? (partial s/valid? ~pred) (dfs-binary-tree %))
-     ::binary-tree-impl))
+     ))
