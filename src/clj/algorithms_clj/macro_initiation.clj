@@ -424,15 +424,15 @@
   (let [bindings (bindings->bound-vars binding-vec)]
     `(log-symbol-values
        ~(function-log-prefix fct-name)
-       (quote ~bindings)
+       '~bindings
        ~bindings)))
 
 (defmacro defn-log
-  [name bindings body]
+  [name bindings & body]
   `(defn ~name
      ~bindings
      (println ~(compile-log-message name bindings))
-     ~body))
+     ~@body))
 
 (defn-log add-with-log
   [a b]
@@ -440,6 +440,13 @@
 
 (defn-log repeat-n
   [n s]
+  (apply str (repeat n s)))
+
+(defn repeat-n-with-logs
+  [n s]
+  (prn (log-symbol-values
+         (function-log-prefix "repeat-n")
+         '[n s] [n s]))
   (apply str (repeat n s)))
 
 (defn test-add-with-log
