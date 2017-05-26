@@ -493,8 +493,7 @@
 (defn logger-enabled?
   "Read whether the log should be enabled by reading config file"
   []
-  (let [log-config (read-string (slurp log-config-file))]
-    (-> log-config :log :enabled?)))
+  (-> (slurp log-config-file) (read-string) :log :enabled?))
 
 (defmacro defn-log-3
   [& args]
