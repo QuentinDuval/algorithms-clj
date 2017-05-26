@@ -497,14 +497,10 @@
     (-> log-config :log :enabled?)))
 
 (defmacro defn-log-3
-  [name bindings body]
+  [& args]
   (if (logger-enabled?)
-    `(defn-log-2 ~name
-       ~bindings
-       ~body)
-    `(defn ~name
-       ~bindings
-       ~body)))
+    `(defn-log-2 ~@args)
+    `(defn ~@args)))
 
 (defn-log-3 add-with-log-3
   [a b]
