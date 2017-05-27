@@ -3,6 +3,7 @@
     [criterium.core :as perf]))
 
 (set! *unchecked-math* true)
+(set! *warn-on-reflection* true)
 
 (defn fibo-iterate
   [n]
