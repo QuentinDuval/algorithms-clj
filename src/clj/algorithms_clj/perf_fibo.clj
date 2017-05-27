@@ -79,14 +79,25 @@
   [n]
   (advance (FiboType. 0N 1N) n))
 
+; -----------------------------------------------
+
+(defn run-bench*
+  [name f n]
+  (println name ": ------------------------------")
+  (perf/quick-bench (f n)))
+
+(defmacro run-bench
+  [[f n]]
+  `(run-bench* ~(name f) ~f ~n))
+
 (defn run-benches
   []
   (let [n 1000]
-    (perf/quick-bench (fibo-iterate n))
-    (perf/quick-bench (fibo-lazy-seq n))
-    (perf/quick-bench (fibo-recur n))
-    (perf/quick-bench (fibo-imperative n))
-    (perf/quick-bench (fibo-volatile n))
-    (perf/quick-bench (fibo-with-type n))
+    (run-bench (fibo-iterate n))
+    (run-bench (fibo-lazy-seq n))
+    (run-bench (fibo-recur n))
+    (run-bench (fibo-imperative n))
+    (run-bench (fibo-volatile n))
+    (run-bench (fibo-with-type n))
     #_(perf/quick-bench (fibo-lazy-cat n))
     ))
