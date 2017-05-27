@@ -20,9 +20,9 @@
   [n]
   (loop [curr 0N
          next 1N
-         iter n]
-    (if-not (zero? iter)
-      (recur next (+ curr next) (dec iter))
+         n n]
+    (if-not (zero? n)
+      (recur next (+ curr next) (dec n))
       curr)))
 
 (defn fibo-trampoline
@@ -33,7 +33,7 @@
               curr))]
     (trampoline (fibs 0N 1N n))))
 
-(defn fibo-imperative
+(defn fibo-local-vars
   [n]
   (with-local-vars [curr 0N
                     next 1N
@@ -104,7 +104,7 @@
     (run-bench (fibo-lazy-seq n))
     (run-bench (fibo-recur n))
     (run-bench (fibo-trampoline n))
-    (run-bench (fibo-imperative n))
+    (run-bench (fibo-local-vars n))
     (run-bench (fibo-volatile n))
     (run-bench (fibo-with-type n))
     #_(perf/quick-bench (fibo-lazy-cat n))
