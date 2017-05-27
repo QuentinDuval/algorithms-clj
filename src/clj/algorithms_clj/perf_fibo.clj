@@ -25,6 +25,14 @@
       (recur next (+ curr next) (dec iter))
       curr)))
 
+(defn fibo-trampoline
+  [n]
+  (letfn [(fibs [curr next n]
+            (if-not (zero? n)
+              #(fibs next (+ curr next) (dec n))
+              curr))]
+    (trampoline (fibs 0N 1N n))))
+
 (defn fibo-imperative
   [n]
   (with-local-vars [curr 0N
@@ -47,8 +55,7 @@
       (let [nnext (+ @curr @next)]
         (vreset! curr @next)
         (vreset! next nnext)
-        (vswap! iter dec)
-        ))
+        (vswap! iter dec)))
     @curr))
 
 (defn fibo-lazy-cat
@@ -96,6 +103,7 @@
     (run-bench (fibo-iterate n))
     (run-bench (fibo-lazy-seq n))
     (run-bench (fibo-recur n))
+    (run-bench (fibo-trampoline n))
     (run-bench (fibo-imperative n))
     (run-bench (fibo-volatile n))
     (run-bench (fibo-with-type n))
