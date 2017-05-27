@@ -26,6 +26,7 @@
   :min-lein-version "2.6.1"
 
   :source-paths ["src/clj" "src/cljs" "src/cljc"]
+  :java-source-paths ["src/javaalg"]
 
   :test-paths ["test/clj" "test/cljc"]
 

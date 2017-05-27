@@ -1,6 +1,7 @@
 (ns algorithms-clj.perf-fibo
-  (:require
-    [criterium.core :as perf]))
+  (:require [criterium.core :as perf]))
+
+; -----------------------------------------------
 
 (set! *unchecked-math* true)
 (set! *warn-on-reflection* true)
@@ -33,6 +34,14 @@
               curr))]
     (trampoline (fibs 0N 1N n))))
 
+(defn fibo-lazy-cat
+  ; TODO - This is weird... it should be a var, but then...
+  [n]
+  (letfn [(fibs [] (lazy-cat [0N 1N] (map + (rest (fibs)) (fibs))))]
+    (nth (fibs) n)))
+
+; -----------------------------------------------
+
 (defn fibo-local-vars
   [n]
   (with-local-vars [curr 0N
@@ -58,12 +67,6 @@
         (vswap! iter dec)))
     @curr))
 
-(defn fibo-lazy-cat
-  ; TODO - This is weird... it should be a var, but then...
-  [n]
-  (letfn [(fibs [] (lazy-cat [0N 1N] (map + (rest (fibs)) (fibs))))]
-    (nth (fibs) n)))
-
 ;; This gets really weird now...
 
 (defprotocol Advance
@@ -88,6 +91,12 @@
 
 ; -----------------------------------------------
 
+(defn fibo-with-java
+  [n]
+  (javaalg.algorithms.PerfFiboJava/fibs n))
+
+; -----------------------------------------------
+
 (defn run-bench*
   [name f n]
   (println name ": ------------------------------")
@@ -107,5 +116,6 @@
     (run-bench (fibo-local-vars n))
     (run-bench (fibo-volatile n))
     (run-bench (fibo-with-type n))
+    (run-bench (fibo-with-java n))
     #_(perf/quick-bench (fibo-lazy-cat n))
     ))
