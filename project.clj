@@ -10,6 +10,7 @@
                  [org.clojure/core.logic "0.8.10"]
                  [org.clojure/data.priority-map "0.0.7"]
                  [org.clojure/test.check "0.9.0"]
+                 [criterium "0.4.4"]
                  [ring "1.4.0"]
                  [ring/ring-defaults "0.2.0"]
                  [bk/ring-gzip "0.1.1"]
