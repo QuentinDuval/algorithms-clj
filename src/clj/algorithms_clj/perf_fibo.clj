@@ -106,8 +106,8 @@
 
 (defn run-bench*
   [name f n]
-  (println name ": ------------------------------")
-  (perf/quick-bench (f n)))
+  (println "\n" name ": ------------------------------")
+  (perf/bench (f n)))
 
 (defmacro run-bench
   [[f n]]
