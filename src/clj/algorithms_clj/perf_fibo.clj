@@ -2,6 +2,7 @@
   (:require
     [criterium.core :as perf]))
 
+(set! *unchecked-math* true)
 
 (defn fibo-iterate
   [n]
@@ -55,6 +56,28 @@
   (letfn [(fibs [] (lazy-cat [0N 1N] (map + (rest (fibs)) (fibs))))]
     (nth (fibs) n)))
 
+;; This gets really weird now...
+
+(defprotocol Advance
+  (advance [this n]))
+
+(deftype FiboType [^:unsynchronized-mutable curr
+                   ^:unsynchronized-mutable next]
+  Advance
+  (advance [_ n]
+    (loop [n n]
+      (if-not (zero? n)
+        (let [nnext (+ curr next)]
+          (set! curr next)
+          (set! next nnext)
+          (recur (dec n))
+          )))
+    curr))
+
+(defn fibo-with-type
+  [n]
+  (advance (FiboType. 0N 1N) n))
+
 (defn run-benches
   []
   (let [n 1000]
@@ -62,5 +85,7 @@
     (perf/quick-bench (fibo-lazy-seq n))
     (perf/quick-bench (fibo-recur n))
     (perf/quick-bench (fibo-imperative n))
+    (perf/quick-bench (fibo-volatile n))
+    (perf/quick-bench (fibo-with-type n))
     #_(perf/quick-bench (fibo-lazy-cat n))
     ))
