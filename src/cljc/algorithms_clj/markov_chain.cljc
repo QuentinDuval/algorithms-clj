@@ -32,7 +32,7 @@
         (if (< choice w) val (recur more))))))
 
 
-;; Construct the transitions
+;; Construct the markov-chain
 ;; TODO - have a specific transducer for this
 
 (defn read-transitions
@@ -46,30 +46,34 @@
       (partition 2 1 (partition memory 1 token-seq)))))
 
 
+;; Transformation into a markov chain
+
+(defn transition->markov-chain
+  [transitions]
+  (letfn [(weight-key [[curr nexts]] [curr (count nexts)])]
+    {:weighted-keys (into {} (map weight-key) transitions)
+     :transitions transitions}))
+
+
 ;; Random generation based on initial values
 
 (defn random-jump
-  [transitions weighted-keys curr]
+  [{:keys [weighted-keys transitions]} curr]
   (let [possibles (or (get transitions curr) weighted-keys)]
     (weighted-rand possibles)))
 
 (defn random-walk-from
-  [transitions curr]
-  (let [weighted-keys (into {}
-                        (map (fn [[curr nexts]]
-                               [curr (count nexts)]))
-                        transitions)]
-    (letfn [(go [curr]
-              (cons (first curr)
-                (lazy-seq
-                  (go (random-jump transitions weighted-keys curr)))))]
-      (go curr))))
+  [markov-chain curr]
+  (letfn [(go [curr]
+            (cons (first curr)
+              (lazy-seq
+                (go (random-jump markov-chain curr)))))]
+    (go curr)))
 
 (defn random-map-walk
-  [transitions]
-  ;; TODO - weighted keys there too... need better data structure than just a map
-  (random-walk-from transitions
-    (rand-nth (keys transitions))))
+  [markov-chain]
+  (random-walk-from markov-chain
+    (weighted-rand (:weighted-keys markov-chain))))
 
 
 ;; Test case
@@ -77,7 +81,7 @@
 (defn run-test
   []
   (let [text (slurp "./src/cljc/algorithms_clj/markov-chain-input.edn")
-        markov (read-transitions (split-words text) 1)]
+        markov (transition->markov-chain (read-transitions (split-words text) 1))]
     (str/join " "
       (take 100 (random-map-walk markov)))
     ))
