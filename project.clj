@@ -118,11 +118,14 @@
                         [lein-doo "0.1.6"]]
 
               :source-paths ["dev"]
+              :jvm-opts ^:replace ["-server"]
               :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}}
 
              :uberjar
              {:source-paths ^:replace ["src/clj" "src/cljc"]
+              :java-source-paths ["src/javaalg"]
               :prep-tasks ["compile" ["cljsbuild" "once" "min"]]
               :hooks []
+              :jvm-opts ^:replace ["-server"]
               :omit-source true
               :aot :all}})

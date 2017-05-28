@@ -1,6 +1,7 @@
 (ns algorithms-clj.macro-initiation
   (:require
     [clojure.walk :as walk]
+    [criterium.core :as perf]
     ))
 
 
@@ -304,7 +305,6 @@
   ;; TODO - We could do better and accept a form, not a lambda
   []
   (let [coll (into [] (range 10))]
-    (println (reduce + 0 (map #(* 2 %) (filter odd? coll))))
 
     (report (compile-reducer
               +
@@ -336,7 +336,19 @@
               coll))
     ))
 
+
+;; --------------------------------------------------------
 ;; Versus reducer API
+;; --------------------------------------------------------
+
+(defn run-bench*
+  [name f n]
+  (println "\n" name ": ------------------------------")
+  (perf/quick-bench (f n)))
+
+(defmacro run-bench
+  [[f n]]
+  `(run-bench* ~(name f) ~f ~n))
 
 (defn filterer [pred next]
   (fn [result val]
@@ -352,44 +364,44 @@
   (fn [result val]
     (reduce next result (xf val))))
 
-(defn test-reducers
+(defn bench-reducers
   []
-  (let [coll (into [] (range 5000))
+  (let [coll (vec (range 5000))
+        times-2 (fn [^long x] (* x 2))
         repeat-2 (fn [x] [x x])]
 
-    (println "Naive reduction: 10ms")
-    (time
-      (dotimes [i 10]
-        (reduce + 0
-          (mapcat repeat-2 (map #(* 2 %) (filter odd? coll)))
-          )))
+    (letfn [(naive-reduction [coll]
+              (reduce + 0
+                (mapcat repeat-2
+                  (map times-2
+                    (filter odd? coll)))))]
+      (run-bench (naive-reduction coll)))
 
-    (println "With reducers: 2ms")
-    (time
-      (dotimes [i 10]
-        (reduce
-          (filterer odd? (mapper #(* 2 %) (map-catter repeat-2 +)))
-          0 coll)))
+    (letfn [(with-reducers [coll]
+              (reduce
+                (filterer odd?
+                  (mapper times-2
+                    (map-catter repeat-2 +)))
+                0 coll))]
+      (run-bench (with-reducers coll)))
 
-    (println "With transducers: 2ms")
-    (time
-      (dotimes [i 10]
-        (transduce
-          (comp
-            (filter odd?)
-            (map #(* 2 %))
-            (mapcat repeat-2))
-          + 0 coll)))
+    (letfn [(with-transducer [coll]
+              (transduce
+                (comp
+                  (filter odd?)
+                  (map times-2)
+                  (mapcat repeat-2))
+                + 0 coll))]
+      (run-bench (with-transducer coll)))
 
-    (println "With inline-reduce: 1.4ms")
-    (time
-      (dotimes [i 10]
-        (inline-reduce
-          + 0
-          [[:filter odd?]
-           [:map #(* 2 %)]
-           [:mapcat repeat-2]]
-          coll)))
+    (letfn [(with-inline-reduce [coll]
+              (inline-reduce
+                + 0
+                [[:filter odd?]
+                 [:map times-2]
+                 [:mapcat repeat-2]]
+                coll))]
+      (run-bench (with-inline-reduce coll)))
     ))
 
 
