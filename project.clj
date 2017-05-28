@@ -17,6 +17,7 @@
                  [midje "1.8.3"]
                  [ring.middleware.logger "0.5.0"]
                  [compojure "1.5.0"]
+                 ; [bigml/sampling "3.0"] ; weighted random choice
                  [environ "1.0.3"]
                  [reagent "0.6.0-rc"]]
 

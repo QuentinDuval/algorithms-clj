@@ -17,9 +17,23 @@
       (partition-by #(Character/isUpperCase %) class-name))))
 
 
+;; Weighted choice
+;; TODO - use a better algorithm... this one is linear
+
+(defn weighted-rand
+  "Given a map of generators and weights, return a value from one of
+   the generators, selecting generator based on weights."
+  [m]
+  (let [weights (reductions + (vals m))
+        total (last weights)
+        choices (map vector (keys m) weights)]
+    (let [choice (rand-int total)]
+      (loop [[[val w] & more] choices]
+        (if (< choice w) val (recur more))))))
+
+
 ;; Construct the transitions
 ;; TODO - have a specific transducer for this
-;; TODO - The weighting is based on duplicates...
 
 (defn read-transitions
   [token-seq memory]
@@ -27,7 +41,7 @@
     (reduce
       (fn [transitions [k v]]
         (assoc! transitions k
-          (conj (get transitions k []) v)))
+          (update (get transitions k {}) v (fnil + 0) 1)))
       (transient {})
       (partition 2 1 (partition memory 1 token-seq)))))
 
@@ -35,20 +49,25 @@
 ;; Random generation based on initial values
 
 (defn random-jump
-  [transitions curr]
-  (let [possibles (or (get transitions curr) (keys transitions))]
-    (rand-nth possibles)))
+  [transitions weighted-keys curr]
+  (let [possibles (or (get transitions curr) weighted-keys)]
+    (weighted-rand possibles)))
 
 (defn random-walk-from
   [transitions curr]
-  (letfn [(go [curr]
-            (cons (first curr)
-              (lazy-seq
-                (go (random-jump transitions curr)))))]
-    (go curr)))
+  (let [weighted-keys (into {}
+                        (map (fn [[curr nexts]]
+                               [curr (count nexts)]))
+                        transitions)]
+    (letfn [(go [curr]
+              (cons (first curr)
+                (lazy-seq
+                  (go (random-jump transitions weighted-keys curr)))))]
+      (go curr))))
 
 (defn random-map-walk
   [transitions]
+  ;; TODO - weighted keys there too... need better data structure than just a map
   (random-walk-from transitions
     (rand-nth (keys transitions))))
 
