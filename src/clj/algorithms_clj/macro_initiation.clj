@@ -5,8 +5,8 @@
     ))
 
 
-;; (set! *warn-on-reflection* true)
-;; (set! *unchecked-math* :warn-on-boxed)
+(set! *warn-on-reflection* true)
+; (set! *unchecked-math* :warn-on-boxed)
 
 
 (defmacro expension-report
@@ -24,15 +24,6 @@
   [fct & args]
   (eval `(~fct ~@args)))
 
-#_(defmacro constexpr-2
-    [[fct & args]]
-    (list* fct (map (fn [a] `~a) args)))
-
-#_(defmacro defconstexpr
-    [name arguments body]
-    (println (str body))
-    `(defmacro ~name ~arguments
-       (constexpr ~body)))
 
 ;; --------------------------------------------------------
 ;; Example 1: equivalent with constexpr
@@ -84,10 +75,6 @@
     (report (add-inline 1 2))
     (report (add-m-3 1 2))
 
-    ;; Does not compile: cannot add symbols (explain this)
-    ;; (println (add-m x y))
-    ;; (println (add-m-2 x y))
-
     ;; This however works, thanks to eval or custom macro
     (report (add-inline x y))
     (report (add-m-3 x1 x2))
@@ -126,7 +113,6 @@
   []
   (let [coll [1 2 3 4]]
     (report (average coll))
-    ;; (println (average-m coll)) ;; Would not compile
     (report (average-m [1 2 3 4]))
     (report (my-average))
     (report my-average-2)
@@ -301,10 +287,24 @@
              (recur r2#))
            r#)))))
 
+(defn inlined-reduce
+  [coll]
+  (let*
+    [^java.util.Iterator iter33662 (. ^java.lang.Iterable coll iterator)]
+    (loop*
+      [r__33312__auto__ 0]
+      (if
+        (. iter33662 hasNext)
+        (let*
+          [h__33313__auto__ (. iter33662 next)
+           r2__33314__auto__ (+ r__33312__auto__ h__33313__auto__)]
+          (recur r2__33314__auto__))
+        r__33312__auto__))))
+
 (defn test-inline-reduce
   ;; TODO - We could do better and accept a form, not a lambda
   []
-  (let [coll (into [] (range 10))]
+  (let [coll (vec (range 10))]
 
     (report (compile-reducer
               +
