@@ -19,6 +19,7 @@
 
 ;; Weighted choice
 ;; TODO - use a better algorithm... this one is linear
+;; TODO - make a preparation phase for this algo as well... this is not good
 
 (defn weighted-rand
   "Given a map of generators and weights, return a value from one of
@@ -34,6 +35,7 @@
 
 ;; Construct the markov-chain
 ;; TODO - have a specific transducer for this
+;; TODO - Allow to feed the transitions several times (for classes, we need it)
 
 (defn read-transitions
   [token-seq memory]
