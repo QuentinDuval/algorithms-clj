@@ -5,7 +5,7 @@
     ))
 
 
-(set! *warn-on-reflection* true)
+; (set! *warn-on-reflection* true)
 ; (set! *unchecked-math* :warn-on-boxed)
 
 
@@ -586,8 +586,7 @@
 (defn test-topological-sort
   []
   (println (topological-sort {:a [:b] :b [:c] :c []}))
-  (println (topological-sort module-dependencies))
-  )
+  (println (topological-sort module-dependencies)))
 
 (defn modules->init-calls
   [modules]
@@ -599,19 +598,12 @@
 (defmacro compile-init-sequence
   [modules]
   (let [ordered-calls (modules->init-calls (eval modules))]
-    `{:init (fn [] (do ~@ordered-calls))
-      :shut (fn [] (do ~@(reverse ordered-calls)))
-      }))
+    `(do
+       (defn run-init-sequence [] (do ~@ordered-calls))
+       (defn run-shut-sequence [] (do ~@(reverse ordered-calls)))
+       )))
 
-(def init-shut-sequence (compile-init-sequence modules))
-
-(defn run-init-sequence
-  []
-  ((:init init-shut-sequence)))
-
-(defn run-shut-sequence
-  []
-  ((:shut init-shut-sequence)))
+(compile-init-sequence modules)
 
 
 ;; --------------------------------------------------------
