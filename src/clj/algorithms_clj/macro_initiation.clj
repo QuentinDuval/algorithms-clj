@@ -685,8 +685,8 @@
   [[op & args :as expr]]
   (let [variables (filter (complement number?) args)
         constants (filter number? args)]
-    (if-not (< 1 (count constants))
-      (into [op (reduce op constants)] variables)
+    (if (< 1 (count constants))
+      (into [op (apply op constants)] variables)
       expr)))
 
 (defn optimize-expr
@@ -730,16 +730,6 @@
 
 (def-expr Expr [+ [* 2 3 :a] [* 2 :b :c]])
 
-; TODO - does not work because of optim of expr (zero arity)
-; (def-expr Expr2 [/ [* 2 3 :a] [* 2 :b :c]])
-
-(defn test-def-expr
-  []
-  (let [e (map->Expr {:a 1 :b 2 :c 3})]
-    (println (eval-expr e))
-    (println (expr->data e))
-    ))
-
 (deftest test-def-expr
   (let [e (map->Expr {:a 1 :b 2 :c 3})]
     (is (= 18 (eval-expr e)))
@@ -763,7 +753,13 @@
   (let [compiled (-> (slurp expression-rsrc) read-string rsrc->compiled-expressions)]
     `(do ~@compiled)))
 
-#_(compile-resource-expressions)
+(compile-resource-expressions)
+
+(deftest test-def-expr-rsrc
+  (let [e (map->GravitationalPull {:m1 2 :m2 3 :distance 2})]
+    (is (= 3/2 (eval-expr e)))
+    (is (= '[/ [* :m1 :m2] [* :distance :distance]] (expr->data e)))
+    ))
 
 ;; --------------------------------------------------------
 ;; Running the tests
