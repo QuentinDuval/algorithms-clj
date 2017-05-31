@@ -2,6 +2,7 @@
   (:require
     [clojure.walk :as walk]
     [criterium.core :as perf]
+    [clojure.test :as test :refer [deftest is are testing]]
     ))
 
 
@@ -624,8 +625,6 @@
 ;; - Everything is done at compile time (and can be tested)
 ;; --------------------------------------------------------
 
-(def computation-tree [+ :a [* :b :c]])
-
 (defn keyword->symbol [k] (-> k name symbol))
 
 ; This are the plain ways to write the code
@@ -738,3 +737,20 @@
     (println (eval-expr e))
     (println (expr->data e))
     ))
+
+(deftest test-def-expr
+  (let [e (map->Expr {:a 1 :b 2 :c 3})]
+    (is (= 18 (eval-expr e)))
+    (is (= '[+ [* 2 3 :a] [* 2 :b :c]] (expr->data e)))
+    ))
+
+
+;; Phase 3:
+;; Read the expressions to compile from a resource file
+
+
+;; --------------------------------------------------------
+;; Running the tests
+;; --------------------------------------------------------
+
+(test/run-tests)
