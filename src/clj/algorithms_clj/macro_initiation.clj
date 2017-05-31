@@ -684,10 +684,9 @@
 (defn optimize-op
   [[op & args :as expr]]
   (let [variables (filter (complement number?) args)
-        constants (filter number? args)
-        reduced (reduce op constants)]
-    (if-not (empty? constants)
-      (into [op reduced] variables)
+        constants (filter number? args)]
+    (if-not (< 1 (count constants))
+      (into [op (reduce op constants)] variables)
       expr)))
 
 (defn optimize-expr
@@ -731,6 +730,9 @@
 
 (def-expr Expr [+ [* 2 3 :a] [* 2 :b :c]])
 
+; TODO - does not work because of optim of expr (zero arity)
+; (def-expr Expr2 [/ [* 2 3 :a] [* 2 :b :c]])
+
 (defn test-def-expr
   []
   (let [e (map->Expr {:a 1 :b 2 :c 3})]
@@ -748,6 +750,20 @@
 ;; Phase 3:
 ;; Read the expressions to compile from a resource file
 
+(def ^:const expression-rsrc
+  "./src/clj/algorithms_clj/macro_initiation_exprs.edn")
+
+(defn rsrc->compiled-expressions
+  [exprs]
+  (for [{:keys [name definition]} exprs]
+    `(def-expr ~name ~definition)))
+
+(defmacro compile-resource-expressions
+  []
+  (let [compiled (-> (slurp expression-rsrc) read-string rsrc->compiled-expressions)]
+    `(do ~@compiled)))
+
+#_(compile-resource-expressions)
 
 ;; --------------------------------------------------------
 ;; Running the tests

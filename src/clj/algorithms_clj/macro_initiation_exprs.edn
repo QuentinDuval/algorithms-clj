@@ -1,0 +1,7 @@
+[
+ {:name RectanglePerimeter
+  :definition [+ [* 2 :width] [* 2 :height]]}
+
+ {:name GravitationalPull
+  :definition [/ [* :m1 :m2] [* :distance :distance]]}
+ ]
