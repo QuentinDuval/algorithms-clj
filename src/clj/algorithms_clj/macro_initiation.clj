@@ -628,6 +628,8 @@
 
 (defn keyword->symbol [k] (-> k name symbol))
 
+; This are the plain ways to write the code
+
 #_(defn collect-dependencies
     "Collect all the dependencies of an environment"
     [tree]
@@ -655,6 +657,8 @@
   `(walk/postwalk
      (fn [~node-symbol] (cond ~@conditions))
      ~tree-symbol))
+
+; Here is how you can greatly simplify it
 
 (defn collect-dependencies
   "Collect all the dependencies of an environment"
@@ -719,7 +723,9 @@
         this (gensym "this")]
     `(defrecord ~name ~(vec deps)
        IEvalExpr
-       ;; (eval-expr [~this] (eval-expr-in-env ~tree ~this))
+       ; This is the low part one (where we do at run-time)
+       ; (eval-expr [~this] (eval-expr-in-env ~tree ~this))
+       ; But you can go must faster by compiling
        (eval-expr [~this] ~(compile-eval-expr fast this))
        (expr->data [_] (quote ~tree))
        )))
