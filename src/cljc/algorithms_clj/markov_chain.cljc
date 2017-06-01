@@ -35,12 +35,6 @@
         (loop [[[val w] & more] choices]
           (if (< choice w) val (recur more)))))))
 
-(defn weighted-rand
-  "Given a map of generators and weights, return a value from one of
-   the generators, selecting generator based on weights."
-  [m]
-  ((weighted-keys->gen m)))
-
 
 ;; Construct the markov-chain
 ;; TODO - have a specific transducer for this
@@ -63,16 +57,26 @@
   [transitions]
   (letfn [(weight-key [[curr nexts]] [curr (count nexts)])]
     ; TODO - weighted-keys is incorrect: should sum the weights of transitions as well
-    {:weighted-keys (into {} (map weight-key) transitions)
-     :transitions transitions}))
+    {:initial-gen (weighted-keys->gen
+                    (into {}
+                      (map weight-key)
+                      transitions))
+     :words->gen (reduce-kv
+                   (fn [word->gen word next-words]
+                     (assoc word->gen word
+                       (weighted-keys->gen next-words)))
+                   {}
+                   transitions)}))
 
 
 ;; Random generation based on initial values
 
+(defn run-gen [gen] (gen))
+
 (defn random-jump
-  [{:keys [weighted-keys transitions]} curr]
-  (let [possibles (or (get transitions curr) weighted-keys)]
-    (weighted-rand possibles)))
+  [{:keys [initial-gen words->gen]} curr]
+  (let [gen (or (get words->gen curr) initial-gen)]
+    (run-gen gen)))
 
 (defn random-walk-from
   [markov-chain curr]
@@ -85,7 +89,7 @@
 (defn random-map-walk
   [markov-chain]
   (random-walk-from markov-chain
-    (weighted-rand (:weighted-keys markov-chain))))
+    (run-gen (:initial-gen markov-chain))))
 
 
 ;; Test case
