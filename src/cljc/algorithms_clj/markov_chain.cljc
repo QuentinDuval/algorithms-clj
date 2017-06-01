@@ -11,12 +11,20 @@
   [text]
   (str/split text #" "))
 
-(defn split-class-name
-  [class-name]
-  (map (fn [[a b]]
-         (str (apply str a) (apply str b)))
-    (partition 2
-      (partition-by #(Character/isUpperCase %) class-name))))
+#_(defn split-class-name
+    [class-name]
+    (map (fn [[a b]]
+           (str (apply str a) (apply str b)))
+      (partition 2
+        (partition-by #(Character/isUpperCase %) class-name))))
+
+(defn map-values
+  [f m]
+  (persistent!
+    (reduce-kv
+      (fn [res k v] (assoc! res k (f v)))
+      (transient {})
+      m)))
 
 
 ;; Weighted choice
@@ -58,15 +66,9 @@
   (letfn [(weight-key [[curr nexts]] [curr (count nexts)])]
     ; TODO - weighted-keys is incorrect: should sum the weights of transitions as well
     {:initial-gen (weighted-keys->gen
-                    (into {}
-                      (map weight-key)
-                      transitions))
-     :words->gen (reduce-kv
-                   (fn [word->gen word next-words]
-                     (assoc word->gen word
-                       (weighted-keys->gen next-words)))
-                   {}
-                   transitions)}))
+                    (into {} (map weight-key) transitions))
+     :words->gen (map-values weighted-keys->gen transitions)
+     }))
 
 
 ;; Random generation based on initial values
