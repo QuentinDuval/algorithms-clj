@@ -1,6 +1,8 @@
 (ns cljc.algorithms-clj.markov-chain
   (:require
-    [clojure.string :as str]))
+    [clojure.string :as str]
+    [clojure.test :as test :refer [deftest is are testing]]
+    ))
 
 
 ;; Different ways to extract the information from text
@@ -21,16 +23,23 @@
 ;; TODO - use a better algorithm... this one is linear
 ;; TODO - make a preparation phase for this algo as well... this is not good
 
-(defn weighted-rand
+(defn weighted-keys->gen
   "Given a map of generators and weights, return a value from one of
    the generators, selecting generator based on weights."
   [m]
   (let [weights (reductions + (vals m))
         total (last weights)
         choices (map vector (keys m) weights)]
-    (let [choice (rand-int total)]
-      (loop [[[val w] & more] choices]
-        (if (< choice w) val (recur more))))))
+    (fn []
+      (let [choice (rand-int total)]
+        (loop [[[val w] & more] choices]
+          (if (< choice w) val (recur more)))))))
+
+(defn weighted-rand
+  "Given a map of generators and weights, return a value from one of
+   the generators, selecting generator based on weights."
+  [m]
+  ((weighted-keys->gen m)))
 
 
 ;; Construct the markov-chain
@@ -53,6 +62,7 @@
 (defn transition->markov-chain
   [transitions]
   (letfn [(weight-key [[curr nexts]] [curr (count nexts)])]
+    ; TODO - weighted-keys is incorrect: should sum the weights of transitions as well
     {:weighted-keys (into {} (map weight-key) transitions)
      :transitions transitions}))
 
