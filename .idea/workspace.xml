@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="4b74b5df-d89b-4545-815b-103b1f7de7b2" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/replstate.xml" afterPath="$PROJECT_DIR$/.idea/replstate.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cljc/algorithms_clj/markov_chain.cljc" afterPath="$PROJECT_DIR$/src/cljc/algorithms_clj/markov_chain.cljc" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cljc/algorithms_clj/markov-chain-input.edn" afterPath="$PROJECT_DIR$/src/cljc/algorithms_clj/markov-chain-input.edn" />
     </list>
     <ignored path="algorithms-clj.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -44,21 +44,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="markov_chain.cljc" pinned="false" current-in-tab="true">
+      <file leaf-file-name="markov_chain.cljc" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/cljc/algorithms_clj/markov_chain.cljc">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="308">
-              <caret line="119" column="20" selection-start-line="119" selection-start-column="20" selection-end-line="119" selection-end-column="20" />
+            <state relative-caret-position="593">
+              <caret line="131" column="12" selection-start-line="131" selection-start-column="12" selection-end-line="131" selection-end-column="12" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="markov-chain-input.edn" pinned="false" current-in-tab="false">
+      <file leaf-file-name="markov-chain-input.edn" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/cljc/algorithms_clj/markov-chain-input.edn">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="190">
-              <caret line="10" column="21" selection-start-line="10" selection-start-column="21" selection-end-line="10" selection-end-column="21" />
+            <state relative-caret-position="209">
+              <caret line="11" column="0" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -113,11 +113,11 @@
         <option value="$PROJECT_DIR$/src/javaalg/algorithms/PerfFiboJava.java" />
         <option value="$PROJECT_DIR$/src/clj/algorithms_clj/perf_fibo.clj" />
         <option value="$PROJECT_DIR$/src/clj/algorithms_clj/server.clj" />
-        <option value="$PROJECT_DIR$/src/cljc/algorithms_clj/markov-chain-input.edn" />
         <option value="$PROJECT_DIR$/project.clj" />
         <option value="$PROJECT_DIR$/src/clj/algorithms_clj/macro_initiation_exprs.edn" />
         <option value="$PROJECT_DIR$/src/clj/algorithms_clj/macro_initiation.clj" />
         <option value="$PROJECT_DIR$/src/cljc/algorithms_clj/markov_chain.cljc" />
+        <option value="$PROJECT_DIR$/src/cljc/algorithms_clj/markov-chain-input.edn" />
       </list>
     </option>
   </component>
@@ -292,7 +292,7 @@
     <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file:///Users/duvalquentin/IdeaProjects/algorithms-clj/test/clj/algorithms_clj/huffman_test.clj&#10;huff&#9;FILE&#9;file:///Users/duvalquentin/IdeaProjects/algorithms-clj/test/clj/algorithms_clj/huffman_test.clj&#10;huffman&#9;FILE&#9;file:///Users/duvalquentin/IdeaProjects/algorithms-clj/src/clj/algorithms_clj/huffman.clj" />
     <property name="FullScreen" value="true" />
   </component>
-  <component name="ReplState" timestamp="1496429542483">{:repl-history {:ide [], :local [&quot;(defn yolo\n  []\n  (let [a (FiboType. 0N 1N)]\n    (.curr a)))&quot; &quot;(yolo)&quot; &quot;(deftype ImmutableFibo [a b])&quot; &quot;(.a (ImmutableFibo 0N 1N))&quot; &quot;(.a (ImmutableFibo. 0N 1N))&quot; &quot;(.curr (FiboType. 0N 1N))&quot; &quot;(type (BigInteger/valueOf 1))&quot; &quot;(run-bench (fibo-recur-java-bigint 1000))&quot; &quot;(perf/quick-bench (reduce + (range 1000)))&quot; &quot;(reduce + (range 1000))&quot; &quot;(perf/quick-bench (fibo-recur-java-bigint 1000))&quot; &quot;(run-benches)&quot; &quot;(run-bench (fibo-lazy-seq 1000))&quot; &quot;(test-inline-reduce)&quot; &quot;(run-bench\n  \&quot;Naive reduction\&quot;\n  (fn [coll] (reduce + 0 (mapcat repeat-2 (map #(* 2 %) (filter odd? coll)))))\n  (vec (range 5000)))&quot; &quot;(run-bench\n  \&quot;Naive reduction\&quot;\n  (fn [coll] (reduce + 0 (mapcat (fn [x] [x x]) (map #(* 2 %) (filter odd? coll)))))\n  (vec (range 5000)))&quot; &quot;(bench-reducers)&quot; &quot;(walk/macroexpand-all\n  '(inline-reduce\n     + 0\n     []\n     coll))&quot; &quot;(inline-reduce\n  + 0\n  []\n  (into-array coll))&quot; &quot;(inline-reduce\n  + 0\n  []\n  (into-array (range 10)))&quot; &quot;(inlined-reduce (vec (range 1000)))&quot; &quot;(str/split text #\&quot; \&quot;)&quot; &quot;(str/split \&quot;this is a sentence\&quot; #\&quot; \&quot;)&quot; &quot;(get {:a 1} :a (Thread/sleep 10))&quot; &quot;(get {:a 1} :a (Thread/sleep 1000))&quot; &quot;(or (get {:a 1} :a) (Thread/sleep 1000))&quot; &quot;(rand-nth [1 2 3])&quot; &quot;(transitions\n  (split-words \&quot;this is a simple test sentence\&quot;)\n  3)&quot; &quot;(transitions\n  (split-words \&quot;this is a simple test sentence\n                this is a stupid sentence\&quot;)\n  3)&quot; &quot;(transitions\n  (split-words \&quot;this is a simple test sentence this is a stupid sentence\&quot;)\n  3)&quot; &quot;(read)&quot; &quot;(str/j)&quot; &quot;(split-with pos? [1 -1 2])&quot; &quot;(split-with pos? [1 -1 2 -2 1])&quot; &quot;(Character/isUpperCase \\c)&quot; &quot;(Character/isUpperCase \\C)&quot; &quot;(partition 2\n  (partition-by #(Character/isUpperCase %) \&quot;MyClassName\&quot;))&quot; &quot;(split-class-name \&quot;MyFuckingClass\&quot;)&quot; &quot;(rand-int 100\n  )&quot; &quot;(rand-int 100)&quot; &quot;(weighted\n  {:head 1 :tail 2})&quot; &quot;(take 10\n  (repeatedly #(weighted\n              {:head 1 :tail 2})))&quot; &quot;(count\n  (filte #{:tail}\n    (take 10\n      (repeatedly\n        #(weighted {:head 1 :tail 2})))))&quot; &quot;(count\n  (filter #{:tail}\n    (take 10\n      (repeatedly\n        #(weighted {:head 1 :tail 2})))))&quot; &quot;(read-transitions\n  (split-words \&quot;this is a simple test sentence this is a stupid sentence\&quot;)\n  3)&quot; &quot;(read-transitions\n  (split-words \&quot;this is a simple test sentence this is a stupid sentence this is a stupid test\&quot;)\n  3)&quot; &quot;(transition-&gt;markov-chain (read-transitions (split-words \&quot;a b c d text\&quot;) 1))&quot; &quot;(transition-&gt;markov-chain\n  (read-transitions\n    (split-words \&quot;a b a d c\&quot;)\n    1))&quot; &quot;(run-test)&quot; &quot;(time\n  (run-test))&quot; &quot;(test-topological-sort)&quot; &quot;(run-init-sequence)&quot; &quot;(run-shut-sequence)&quot; &quot;(test-def-expr)&quot; &quot;(test/run-tests)&quot; &quot;computation-tree&quot; &quot;(read-expressions)&quot; &quot;(defn rsrc-&gt;compiled-expressions\n  []\n  (for [{:keys [name definition]} (read-expressions)]\n    (def-expr name tree)))&quot; &quot;(rsrc-&gt;compiled-expressions)&quot; &quot;(RectanglePerimeter. 1 2)&quot; &quot;(ns-map *ns*)&quot; &quot;(walk/macroexpand-all\n  '(compile-resource-expressions))&quot; &quot;(-&gt; (slurp expression-rsrc) read-string rsrc-&gt;compiled-expressions)&quot; &quot;(algorithms-clj.macro-initiation/def-expr\n  RectanglePerimeter2\n  [+ [* 2 :width] [* 2 :height]])\n&quot; &quot;(macroexpand-1\n  '(compile-resource-expressions))&quot; &quot;(do\n  (algorithms-clj.macro-initiation/def-expr RectanglePerimeter [+ [* 2 :width] [* 2 :height]])\n  (algorithms-clj.macro-initiation/def-expr GravitationalPull [/ [* :m1 :m2] [* :distance :distance]]))&quot; &quot;(macroexpand-1\n   '(def-expr Yoh\n  [/ [* :m1 :m2] [* :distance :distance]]))&quot; &quot;(compile-eval-expr\n  [/ [* :m1 :m2] [* :distance :distance]])&quot; &quot;(compile-eval-expr\n  [/ [* :m1 :m2] [* :distance :distance]]\n  {})&quot; &quot;(compile-eval-expr\n  '[/ [* :m1 :m2] [* :distance :distance]]\n  {})&quot; &quot;(def-expr Yoh\n  [/ [* :m1 :m2] [* :distance :distance]])&quot; &quot;(def-expr Yoh\n  [+ [* :m1 :m2] [* :distance :distance]])&quot; &quot;(/ 1 2)&quot; &quot;(/ 1 2 3)&quot; &quot;(Yoh. 1 2 3)&quot; &quot;(eval-expr *1)&quot; &quot;(/ (* (:m1 {}) (:m2 {})) (* (:distance {}) (:distance {})))\n&quot; &quot;(/ (* (:m1 {:m1 1}) (:m2 {:m2 2}))\n  (* (:distance {:distance 1}) (:distance {:distance 1})))\n&quot; &quot;(compile-resource-expressions)&quot; &quot;(macroexpand-1\n  '(def-expr Expr2 [/ [* 2 3 :a] [* 2 :b :c]]))&quot; &quot;(resolve-operators [/ [* 2 3 :a] [* 2 :b :c]])&quot; &quot;(/)&quot; &quot;(apply / [1])&quot; &quot;(apply / [1 2 3])&quot; &quot;(apply / [])&quot; &quot;(optimize-expr (resolve-operators [/ [* 2 3 :a] [* 2 :b :c]]))&quot; &quot;(optimize-expr\n  [/ 1 2])&quot; &quot;(optimize-expr\n  [/ 1 2 :a])&quot; &quot;(optimize-expr\n  [/ :a])&quot; &quot;(optimize-expr / :a)&quot; &quot;(optimize-expr [/ :a])&quot; &quot;(optimize-expr [+ :a])&quot; &quot;(optimize-op [+ :a])&quot; &quot;+&quot; &quot;(optimize-op ['+ :a])&quot; &quot;(optimize-op [#'+ :a])&quot; &quot;(optimize-op [#'/ :a])&quot; &quot;(optimize-op\n  [#'/ 1 2])&quot; &quot;(defn optimize-op\n  [[op &amp; args :as expr]]\n  (let [variables (filter (complement number?) args)\n        constants (filter number? args)]\n    ; TODO - This breaks with /. WHY?\n    (println constants)\n    (if-not (&lt; 1 (count constants))\n      (into [op (apply op constants)] variables)\n      expr)))&quot; &quot;(optimize-op\n  [#'/ 1 2 3])&quot; &quot;(optimize-expr\n  [/ [* 2 3 :a] [* 2 :b :c]])&quot;], :remote []}}</component>
+  <component name="ReplState" timestamp="1496429687290">{:repl-history {:ide [], :local [&quot;(defn yolo\n  []\n  (let [a (FiboType. 0N 1N)]\n    (.curr a)))&quot; &quot;(yolo)&quot; &quot;(deftype ImmutableFibo [a b])&quot; &quot;(.a (ImmutableFibo 0N 1N))&quot; &quot;(.a (ImmutableFibo. 0N 1N))&quot; &quot;(.curr (FiboType. 0N 1N))&quot; &quot;(type (BigInteger/valueOf 1))&quot; &quot;(run-bench (fibo-recur-java-bigint 1000))&quot; &quot;(perf/quick-bench (reduce + (range 1000)))&quot; &quot;(reduce + (range 1000))&quot; &quot;(perf/quick-bench (fibo-recur-java-bigint 1000))&quot; &quot;(run-benches)&quot; &quot;(run-bench (fibo-lazy-seq 1000))&quot; &quot;(test-inline-reduce)&quot; &quot;(run-bench\n  \&quot;Naive reduction\&quot;\n  (fn [coll] (reduce + 0 (mapcat repeat-2 (map #(* 2 %) (filter odd? coll)))))\n  (vec (range 5000)))&quot; &quot;(run-bench\n  \&quot;Naive reduction\&quot;\n  (fn [coll] (reduce + 0 (mapcat (fn [x] [x x]) (map #(* 2 %) (filter odd? coll)))))\n  (vec (range 5000)))&quot; &quot;(bench-reducers)&quot; &quot;(walk/macroexpand-all\n  '(inline-reduce\n     + 0\n     []\n     coll))&quot; &quot;(inline-reduce\n  + 0\n  []\n  (into-array coll))&quot; &quot;(inline-reduce\n  + 0\n  []\n  (into-array (range 10)))&quot; &quot;(inlined-reduce (vec (range 1000)))&quot; &quot;(str/split text #\&quot; \&quot;)&quot; &quot;(str/split \&quot;this is a sentence\&quot; #\&quot; \&quot;)&quot; &quot;(get {:a 1} :a (Thread/sleep 10))&quot; &quot;(get {:a 1} :a (Thread/sleep 1000))&quot; &quot;(or (get {:a 1} :a) (Thread/sleep 1000))&quot; &quot;(rand-nth [1 2 3])&quot; &quot;(transitions\n  (split-words \&quot;this is a simple test sentence\&quot;)\n  3)&quot; &quot;(transitions\n  (split-words \&quot;this is a simple test sentence\n                this is a stupid sentence\&quot;)\n  3)&quot; &quot;(transitions\n  (split-words \&quot;this is a simple test sentence this is a stupid sentence\&quot;)\n  3)&quot; &quot;(read)&quot; &quot;(str/j)&quot; &quot;(split-with pos? [1 -1 2])&quot; &quot;(split-with pos? [1 -1 2 -2 1])&quot; &quot;(Character/isUpperCase \\c)&quot; &quot;(Character/isUpperCase \\C)&quot; &quot;(partition 2\n  (partition-by #(Character/isUpperCase %) \&quot;MyClassName\&quot;))&quot; &quot;(split-class-name \&quot;MyFuckingClass\&quot;)&quot; &quot;(rand-int 100\n  )&quot; &quot;(rand-int 100)&quot; &quot;(weighted\n  {:head 1 :tail 2})&quot; &quot;(take 10\n  (repeatedly #(weighted\n              {:head 1 :tail 2})))&quot; &quot;(count\n  (filte #{:tail}\n    (take 10\n      (repeatedly\n        #(weighted {:head 1 :tail 2})))))&quot; &quot;(count\n  (filter #{:tail}\n    (take 10\n      (repeatedly\n        #(weighted {:head 1 :tail 2})))))&quot; &quot;(read-transitions\n  (split-words \&quot;this is a simple test sentence this is a stupid sentence\&quot;)\n  3)&quot; &quot;(read-transitions\n  (split-words \&quot;this is a simple test sentence this is a stupid sentence this is a stupid test\&quot;)\n  3)&quot; &quot;(transition-&gt;markov-chain (read-transitions (split-words \&quot;a b c d text\&quot;) 1))&quot; &quot;(transition-&gt;markov-chain\n  (read-transitions\n    (split-words \&quot;a b a d c\&quot;)\n    1))&quot; &quot;(run-test)&quot; &quot;(time\n  (run-test))&quot; &quot;(test-topological-sort)&quot; &quot;(run-init-sequence)&quot; &quot;(run-shut-sequence)&quot; &quot;(test-def-expr)&quot; &quot;(test/run-tests)&quot; &quot;computation-tree&quot; &quot;(read-expressions)&quot; &quot;(defn rsrc-&gt;compiled-expressions\n  []\n  (for [{:keys [name definition]} (read-expressions)]\n    (def-expr name tree)))&quot; &quot;(rsrc-&gt;compiled-expressions)&quot; &quot;(RectanglePerimeter. 1 2)&quot; &quot;(ns-map *ns*)&quot; &quot;(walk/macroexpand-all\n  '(compile-resource-expressions))&quot; &quot;(-&gt; (slurp expression-rsrc) read-string rsrc-&gt;compiled-expressions)&quot; &quot;(algorithms-clj.macro-initiation/def-expr\n  RectanglePerimeter2\n  [+ [* 2 :width] [* 2 :height]])\n&quot; &quot;(macroexpand-1\n  '(compile-resource-expressions))&quot; &quot;(do\n  (algorithms-clj.macro-initiation/def-expr RectanglePerimeter [+ [* 2 :width] [* 2 :height]])\n  (algorithms-clj.macro-initiation/def-expr GravitationalPull [/ [* :m1 :m2] [* :distance :distance]]))&quot; &quot;(macroexpand-1\n   '(def-expr Yoh\n  [/ [* :m1 :m2] [* :distance :distance]]))&quot; &quot;(compile-eval-expr\n  [/ [* :m1 :m2] [* :distance :distance]])&quot; &quot;(compile-eval-expr\n  [/ [* :m1 :m2] [* :distance :distance]]\n  {})&quot; &quot;(compile-eval-expr\n  '[/ [* :m1 :m2] [* :distance :distance]]\n  {})&quot; &quot;(def-expr Yoh\n  [/ [* :m1 :m2] [* :distance :distance]])&quot; &quot;(def-expr Yoh\n  [+ [* :m1 :m2] [* :distance :distance]])&quot; &quot;(/ 1 2)&quot; &quot;(/ 1 2 3)&quot; &quot;(Yoh. 1 2 3)&quot; &quot;(eval-expr *1)&quot; &quot;(/ (* (:m1 {}) (:m2 {})) (* (:distance {}) (:distance {})))\n&quot; &quot;(/ (* (:m1 {:m1 1}) (:m2 {:m2 2}))\n  (* (:distance {:distance 1}) (:distance {:distance 1})))\n&quot; &quot;(compile-resource-expressions)&quot; &quot;(macroexpand-1\n  '(def-expr Expr2 [/ [* 2 3 :a] [* 2 :b :c]]))&quot; &quot;(resolve-operators [/ [* 2 3 :a] [* 2 :b :c]])&quot; &quot;(/)&quot; &quot;(apply / [1])&quot; &quot;(apply / [1 2 3])&quot; &quot;(apply / [])&quot; &quot;(optimize-expr (resolve-operators [/ [* 2 3 :a] [* 2 :b :c]]))&quot; &quot;(optimize-expr\n  [/ 1 2])&quot; &quot;(optimize-expr\n  [/ 1 2 :a])&quot; &quot;(optimize-expr\n  [/ :a])&quot; &quot;(optimize-expr / :a)&quot; &quot;(optimize-expr [/ :a])&quot; &quot;(optimize-expr [+ :a])&quot; &quot;(optimize-op [+ :a])&quot; &quot;+&quot; &quot;(optimize-op ['+ :a])&quot; &quot;(optimize-op [#'+ :a])&quot; &quot;(optimize-op [#'/ :a])&quot; &quot;(optimize-op\n  [#'/ 1 2])&quot; &quot;(defn optimize-op\n  [[op &amp; args :as expr]]\n  (let [variables (filter (complement number?) args)\n        constants (filter number? args)]\n    ; TODO - This breaks with /. WHY?\n    (println constants)\n    (if-not (&lt; 1 (count constants))\n      (into [op (apply op constants)] variables)\n      expr)))&quot; &quot;(optimize-op\n  [#'/ 1 2 3])&quot; &quot;(optimize-expr\n  [/ [* 2 3 :a] [* 2 :b :c]])&quot;], :remote []}}</component>
   <component name="RunManager" selected="Clojure REPL.REPL for algorithms-clj">
     <configuration default="false" name="huffman_test" type="ClojureScriptRunConfiguration" factoryName="Clojure Script" temporary="true">
       <module name="algorithms-clj" />
@@ -1045,14 +1045,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/cljc/algorithms_clj/markov-chain-input.edn">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="190">
-          <caret line="10" column="21" selection-start-line="10" selection-start-column="21" selection-end-line="10" selection-end-column="21" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/clj/algorithms_clj/macro_initiation_exprs.edn">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="114">
@@ -1071,8 +1063,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/cljc/algorithms_clj/markov_chain.cljc">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="308">
-          <caret line="119" column="20" selection-start-line="119" selection-start-column="20" selection-end-line="119" selection-end-column="20" />
+        <state relative-caret-position="593">
+          <caret line="131" column="12" selection-start-line="131" selection-start-column="12" selection-end-line="131" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/cljc/algorithms_clj/markov-chain-input.edn">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="209">
+          <caret line="11" column="0" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
           <folding />
         </state>
       </provider>
