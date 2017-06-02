@@ -51,6 +51,7 @@
 ;; TODO - Allow to feed the transitions several times (for classes, we need it)
 
 (defn read-transitions
+  ;; TODO - use train or better vocabulary for this
   "Build the transitions from a sequence of elements, based
    on a sliding window of size `window-size`"
   [token-seq window-size]
@@ -115,12 +116,27 @@
       (go start))))
 
 
+;; Transitions from file
+;; Read by streaming
+
+(defn file->markov-transitions
+  [file-path window-size]
+  (with-open [r (clojure.java.io/reader file-path)]
+    (read-transitions
+      (eduction
+        (mapcat split-words)
+        (line-seq r))
+      window-size)))
+
+
 ;; Test case
+
+(def test-file-path
+  "./src/cljc/algorithms_clj/markov-chain-input.edn")
 
 (defn run-test
   []
-  (let [text (slurp "./src/cljc/algorithms_clj/markov-chain-input.edn")
-        markov (transition->markov-chain (read-transitions (split-words text) 1))]
+  (let [markov (transition->markov-chain (file->markov-transitions test-file-path 1))]
     (str/join " "
       (take 100 (random-map-walk markov)))
     ))
