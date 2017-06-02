@@ -49,14 +49,16 @@
 ;; TODO - Allow to feed the transitions several times (for classes, we need it)
 
 (defn read-transitions
-  [token-seq memory]
+  "Build the transitions from a sequence of elements, based
+   on a sliding window of size `window-size`"
+  [token-seq window-size]
   (persistent!
     (reduce
       (fn [transitions [k v]]
         (assoc! transitions k
           (update (get transitions k {}) v (fnil + 0) 1)))
       (transient {})
-      (partition 2 1 (partition memory 1 token-seq)))))
+      (partition 2 1 (partition window-size 1 token-seq)))))
 
 
 ;; Transformation into a markov chain
