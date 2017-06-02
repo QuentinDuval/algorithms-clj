@@ -76,22 +76,24 @@
 (defn run-gen [gen] (gen))
 
 (defn random-jump
-  [{:keys [initial-gen words->gen]} curr]
-  (let [gen (or (get words->gen curr) initial-gen)]
-    (run-gen gen)))
-
-(defn random-walk-from
   [markov-chain curr]
-  (letfn [(go [curr]
-            (cons (first curr)
-              (lazy-seq
-                (go (random-jump markov-chain curr)))))]
-    (go curr)))
+  (->
+    (get (:words->gen markov-chain) curr)
+    (or (:initial-gen markov-chain))
+    run-gen))
 
-(defn random-map-walk
-  [markov-chain]
-  (random-walk-from markov-chain
-    (run-gen (:initial-gen markov-chain))))
+(defn random-walk
+  "Returns an infinite sequence of element, based on the markovian chain
+   The optional second argument allows to provide a starting element"
+  ([markov-chain]
+    (let [start (run-gen (:initial-gen markov-chain))]
+      (random-walk markov-chain start)))
+  ([markov-chain start]
+    (letfn [(go [curr]
+              (cons (first curr)
+                (lazy-seq
+                  (go (random-jump markov-chain curr)))))]
+      (go start))))
 
 
 ;; Test case
