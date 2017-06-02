@@ -43,6 +43,8 @@
         (loop [[[val w] & more] choices]
           (if (< choice w) val (recur more)))))))
 
+(defn run-gen [gen] (gen))
+
 
 ;; Construct the markov-chain
 ;; TODO - have a specific transducer for this
@@ -75,19 +77,21 @@
 
 ;; Transformation into a markov chain
 
-(defn transition->markov-chain
+(defn weighted-start-elements
   [transitions]
   (letfn [(weight-key [[curr nexts]] [curr (count nexts)])]
-    ; TODO - weighted-keys is incorrect: should sum the weights of transitions as well
-    {:initial-gen (weighted-keys->gen
-                    (into {} (map weight-key) transitions))
-     :words->gen (map-values weighted-keys->gen transitions)
-     }))
+    (into {} (map weight-key) transitions)))
+
+(defn transition->markov-chain
+  "Transform a sequence of weighted transitions into a markovian process
+   Each weighted map is transformed into a generator"
+  [transitions]
+  {:initial-gen (weighted-keys->gen (weighted-start-elements transitions))
+   :words->gen (map-values weighted-keys->gen transitions)
+   })
 
 
 ;; Random generation based on initial values
-
-(defn run-gen [gen] (gen))
 
 (defn random-jump
   [markov-chain curr]
