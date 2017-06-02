@@ -79,7 +79,8 @@
 
 (defn weighted-start-elements
   [transitions]
-  (letfn [(weight-key [[curr nexts]] [curr (count nexts)])]
+  (letfn [(weight-key [[curr nexts]]
+            [curr (transduce (map second) + nexts)])]
     (into {} (map weight-key) transitions)))
 
 (defn transition->markov-chain
