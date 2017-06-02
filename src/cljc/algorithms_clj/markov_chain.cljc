@@ -60,6 +60,18 @@
       (transient {})
       (partition 2 1 (partition window-size 1 token-seq)))))
 
+(deftest test-read-transitions
+  (let [token-seq (split-words "a b c a b d")]
+    (is (= '{("a") {("b") 2}
+             ("b") {("c") 1 ("d") 1}
+             ("c") {("a") 1}}
+          (read-transitions token-seq 1)))
+    (is (= '{("a" "b") {("b" "c") 1 ("b" "d") 1}
+             ("b" "c") {("c" "a") 1}
+             ("c" "a") {("a" "b") 1}}
+          (read-transitions token-seq 2)))
+    ))
+
 
 ;; Transformation into a markov chain
 
