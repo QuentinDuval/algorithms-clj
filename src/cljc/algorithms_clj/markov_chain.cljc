@@ -35,39 +35,66 @@
 
 (defn weight [[val weight]] weight)
 
-(defn weighted-pairs->aliases
+(defn enumerated-dist->aliases
   [weighted-pairs]
   (let [sum-weights (transduce (map weight) + weighted-pairs)
-        avg-weight (/ sum-weights (dec (count weighted-pairs)))
+        avg-weight (/ sum-weights (count weighted-pairs))
         balanced (filter #(= (weight %) avg-weight) weighted-pairs)]
+
+    (println avg-weight)
     (loop [lowers (filter #(< (weight %) avg-weight) weighted-pairs)
            higher (filter #(> (weight %) avg-weight) weighted-pairs)
            result (map (fn [[val weight]] [val val 1]) balanced)]
+
+      (println lowers)
+      (println higher)
+      (println result)
+
       (cond
-        (empty? lowers) result
-        (= 1 (count lowers)) nil     ; should not happen
-        (= 2 (count lowers))         ; last two elements with avg-weight as sum
-        (let [[[lo wo] [hi wi]] lowers]
-          (conj result [lo hi (/ wo avg-weight)]))
-        :else                        ; at least one higher
+        ; End of the algorithm
+        (empty? lowers)
+        result
+
+        ; Compensate lower by higher
+        (not (empty? higher))
         (let [[[lo wo] & lowers] lowers
               [[hi wi] & higher] higher
               result (conj result [lo hi (/ wo avg-weight)])
-              new-wi (- wi wo)
+              new-wi (- wi (- avg-weight wo))
               new-hi [hi new-wi]]
           (cond
             (< new-wi avg-weight) (recur (conj lowers new-hi) higher result)
             (< avg-weight new-wi) (recur lowers (conj higher new-hi) result)
-            :else (recur lowers higher (conj result [hi hi 1])))
-          )))))
+            :else (recur lowers higher (conj result [hi hi 1]))))
+
+        ; Last two elements should sum to average wieght
+        (= 2 (count lowers))
+        (let [[[lo wo] [hi wi]] lowers]
+          (conj result [lo hi (/ wo avg-weight)]))
+
+        ; should not happen
+        (= 1 (count lowers)) nil))))
 
 (defn alias-method-gen
   [weighted-pairs]
-  (let [aliases (weighted-pairs->aliases weighted-pairs)]
+  (let [aliases (enumerated-dist->aliases weighted-pairs)]
     (fn alias-gen []
       (let [[v1 v2 p] (rand-nth aliases)]
         (if (< (rand) p) v1 v2)))
     ))
+
+(deftest test-enumarated-dist->aliases
+  (are [expected input] (= expected (enumerated-dist->aliases input))
+    '([:c :c 1] [:b :c 3/4] [:a :c 3/4]) {:a 1 :b 1 :c 2}
+    '([:a :a 1] [:b :b 1] [:c :c 1]) {:a 1 :b 1 :c 1}
+    '([:B :A 0.80
+       :A :C 0.92
+       :C :F 0.12
+       :E :F 0.48]) {:A 0.28 :B 0.20 :C 0.05 :E 0.12 :F 0.35}
+    ))
+
+
+;; To Weighted Generators
 
 (defn weighted-keys->gen
   "Given a map of generators and weights, return a value from one of
