@@ -30,17 +30,43 @@
 ;; Weighted choice
 ;; TODO - use a better algorithm... this one is linear
 ;; TODO - make a preparation phase for this algo as well... this is not good
+; https://stackoverflow.com/questions/6409652/random-weighted-selection-in-java
+; https://oroboro.com/non-uniform-random-numbers/
+
+(defn weight [[val weight]] weight)
 
 (defn weighted-pairs->aliases
   [weighted-pairs]
-  [])
+  (let [sum-weights (transduce (map weight) + weighted-pairs)
+        avg-weight (/ sum-weights (dec (count weighted-pairs)))
+        balanced (filter #(= (weight %) avg-weight) weighted-pairs)]
+    (loop [lowers (filter #(< (weight %) avg-weight) weighted-pairs)
+           higher (filter #(> (weight %) avg-weight) weighted-pairs)
+           result (map (fn [[val weight]] [val val 1]) balanced)]
+      (cond
+        (empty? lowers) result
+        (= 1 (count lowers)) nil     ; should not happen
+        (= 2 (count lowers))         ; last two elements with avg-weight as sum
+        (let [[[lo wo] [hi wi]] lowers]
+          (conj result [lo hi (/ wo avg-weight)]))
+        :else                        ; at least one higher
+        (let [[lo wo] (first lowers)
+              [hi wi] (first higher)
+              new-res (conj result [lo hi (/ wo avg-weight)])
+              new-wi (- wi wo)
+              new-hi [hi new-wi]]
+          (cond
+            (< new-wi avg-weight) (recur (conj lowers new-hi) higher new-res)
+            (< avg-weight new-wi) (recur lowers (conj higher new-hi) new-res)
+            :else (recur lowers higher (conj new-res [hi hi 1])))
+          )))))
 
 (defn alias-method-gen
   [weighted-pairs]
   (let [aliases (weighted-pairs->aliases weighted-pairs)]
-    (fn []
-      (let [[[v1 p1] [v2 p2]] (rand-nth aliases)]
-        (if (< (rand) (/ p1 p2)) v1 v2)))
+    (fn alias-gen []
+      (let [[v1 v2 p] (rand-nth aliases)]
+        (if (< (rand) p) v1 v2)))
     ))
 
 (defn weighted-keys->gen
