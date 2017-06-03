@@ -77,10 +77,10 @@
 ;; Transformation into a markov chain
 
 (defn weighted-start-elements
+  "For each input element, compute its weight as the sum of the
+   weight of each of its out-going elements"
   [transitions]
-  (letfn [(weight-key [[curr nexts]]
-            [curr (transduce (map second) + nexts)])]
-    (into {} (map weight-key) transitions)))
+  (map-values #(transduce (map second) + %) transitions))
 
 (defn transition->markov-chain
   "Transform a sequence of weighted transitions into a markovian process
