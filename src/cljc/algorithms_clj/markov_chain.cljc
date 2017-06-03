@@ -31,6 +31,18 @@
 ;; TODO - use a better algorithm... this one is linear
 ;; TODO - make a preparation phase for this algo as well... this is not good
 
+(defn weighted-pairs->aliases
+  [weighted-pairs]
+  [])
+
+(defn alias-method-gen
+  [weighted-pairs]
+  (let [aliases (weighted-pairs->aliases weighted-pairs)]
+    (fn []
+      (let [[[v1 p1] [v2 p2]] (rand-nth aliases)]
+        (if (< (rand) (/ p1 p2)) v1 v2)))
+    ))
+
 (defn weighted-keys->gen
   "Given a map of generators and weights, return a value from one of
    the generators, selecting generator based on weights."
