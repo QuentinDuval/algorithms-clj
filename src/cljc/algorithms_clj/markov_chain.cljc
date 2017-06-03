@@ -52,8 +52,7 @@
 
       (cond
         ; End of the algorithm
-        (empty? lowers)
-        result
+        (empty? lowers) result
 
         ; Compensate lower by higher
         (not (empty? higher))
