@@ -109,6 +109,8 @@
      [:e :f 1/6]] {:a 1 :b 1 :c 1 :d 1 :e 1 :f 1}
     ))
 
+; TODO - Property based testing: the output should be one less in size
+
 
 ;; To Weighted Generators
 
