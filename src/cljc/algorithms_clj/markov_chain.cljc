@@ -37,38 +37,53 @@
 
 (defn enumerated-dist->aliases
   [weighted-pairs]
-  (let [sum-weights (transduce (map weight) + weighted-pairs)
-        avg-weight (/ sum-weights (dec (count weighted-pairs)))]
+  (if (< (count weighted-pairs) 2)
+    (let [[val _] (first weighted-pairs)]
+      [[val val 1]])
 
-    (loop [lowers (filter #(< (weight %) avg-weight) weighted-pairs)
-           higher (filter #(>= (weight %) avg-weight) weighted-pairs)
-           result []]
+    (let [sum-weights (transduce (map weight) + weighted-pairs)
+          avg-weight (/ sum-weights (dec (count weighted-pairs)))]
 
-      (cond
-        ; End of the algorithm
-        (empty? lowers) result
+      (loop [lowers (filter #(< (weight %) avg-weight) weighted-pairs)
+             higher (filter #(>= (weight %) avg-weight) weighted-pairs)
+             result []]
+        (cond
+          ; End of the algorithm
+          (empty? lowers) result
 
-        ; Compensate lower by higher
-        (not (empty? higher))
-        (let [[[lo wo] & lowers] lowers
-              [[hi wi] & higher] higher
-              result (conj result [lo hi (/ wo avg-weight)])
-              new-wi (- wi (- avg-weight wo))
-              new-hi [hi new-wi]]
-          (cond
-            (< new-wi avg-weight) (recur (conj lowers new-hi) higher result)
-            (< avg-weight new-wi) (recur lowers (conj higher new-hi) result)
-            :else (recur lowers higher (conj result [hi hi 1]))))
+          ; Element with weight equal to zero
+          (zero? (weight (first lowers)))
+          (recur (rest lowers) higher result)
 
-        ; Last two elements should sum to average wieght
-        (= 2 (count lowers))
-        (let [[[lo wo] [hi wi]] lowers]
-          (conj result [lo hi (/ wo avg-weight)]))
+          ; Compensate lower by higher
+          (not (empty? higher))
+          (let [[[lo wo] & lowers] lowers
+                [[hi wi] & higher] higher
+                result (conj result [lo hi (/ wo avg-weight)])
+                new-wi (- wi (- avg-weight wo))
+                new-hi [hi new-wi]]
+            (cond
+              (< new-wi avg-weight) (recur (conj lowers new-hi) higher result)
+              (< avg-weight new-wi) (recur lowers (conj higher new-hi) result)
+              :else (recur lowers higher (conj result [hi hi 1]))))
 
-        ; should not happen (= 1 (count lowers))
-        ))))
+          ; Compensate lower by finding high enough lower
+          (<= 2 (count lowers))
+          (let [[[lo wo] & lowers] lowers
+                [[hi wi] & lowers] (take (count lowers)
+                                     (drop-while #(< (weight %) (- avg-weight wo))
+                                       (cycle lowers)))
+                result (conj result [lo hi (/ wo avg-weight)])
+                new-wi (- wi (- avg-weight wo))
+                new-hi [hi new-wi]]
+            (recur
+              (conj lowers new-hi) higher result))
 
-(defn alias-method-gen
+          ; Should not happen
+          ; (= 1 (count lowers))
+          )))))
+
+(defn enumerated-distribution-gen
   [weighted-pairs]
   (let [aliases (enumerated-dist->aliases weighted-pairs)]
     (fn alias-gen []
@@ -78,6 +93,8 @@
 
 (deftest test-enumarated-dist->aliases
   (are [expected input] (= expected (enumerated-dist->aliases input))
+    [[nil nil 1]] {}
+    [[:a :a 1]] {:a 1}
     [[:a :b 1/2]] {:a 1 :b 1}
     [[:a :b 1/3]] {:a 1 :b 2}
     [[:a :c 1/2] [:c :b 1/2]] {:a 1 :b 1 :c 2}
@@ -85,6 +102,11 @@
      [:A :F 0.9200000000000002]
      [:C :F 0.2]
      [:F :E 0.52]] {:A 0.28 :B 0.20 :C 0.05 :E 0.12 :F 0.35}
+    [[:a :b 5/6]
+     [:b :c 2/3]
+     [:c :d 1/2]
+     [:d :e 1/3]
+     [:e :f 1/6]] {:a 1 :b 1 :c 1 :d 1 :e 1 :f 1}
     ))
 
 
@@ -94,13 +116,14 @@
   "Given a map of generators and weights, return a value from one of
    the generators, selecting generator based on weights."
   [m]
-  (let [weights (reductions + (vals m))
-        total (last weights)
-        choices (map vector (keys m) weights)]
-    (fn []
-      (let [choice (rand-int total)]
-        (loop [[[val w] & more] choices]
-          (if (< choice w) val (recur more)))))))
+  (enumerated-distribution-gen m)
+  #_(let [weights (reductions + (vals m))
+          total (last weights)
+          choices (map vector (keys m) weights)]
+      (fn []
+        (let [choice (rand-int total)]
+          (loop [[[val w] & more] choices]
+            (if (< choice w) val (recur more)))))))
 
 (defn run-gen [gen] (gen))
 
