@@ -40,14 +40,9 @@
   (let [sum-weights (transduce (map weight) + weighted-pairs)
         avg-weight (/ sum-weights (dec (count weighted-pairs)))]
 
-    (println avg-weight)
     (loop [lowers (filter #(< (weight %) avg-weight) weighted-pairs)
            higher (filter #(>= (weight %) avg-weight) weighted-pairs)
            result []]
-
-      (println lowers)
-      (println higher)
-      (println result)
 
       (cond
         ; End of the algorithm
@@ -70,8 +65,8 @@
         (let [[[lo wo] [hi wi]] lowers]
           (conj result [lo hi (/ wo avg-weight)]))
 
-        ; should not happen
-        (= 1 (count lowers)) nil))))
+        ; should not happen (= 1 (count lowers))
+        ))))
 
 (defn alias-method-gen
   [weighted-pairs]
@@ -86,10 +81,10 @@
     [[:a :b 1/2]] {:a 1 :b 1}
     [[:a :b 1/3]] {:a 1 :b 2}
     [[:a :c 1/2] [:c :b 1/2]] {:a 1 :b 1 :c 2}
-    [[:B :A 0.80
-      :A :C 0.92
-      :C :F 0.12
-      :E :F 0.48]] {:A 0.28 :B 0.20 :C 0.05 :E 0.12 :F 0.35}
+    [[:B :A 0.8]
+     [:A :F 0.9200000000000002]
+     [:C :F 0.2]
+     [:F :E 0.52]] {:A 0.28 :B 0.20 :C 0.05 :E 0.12 :F 0.35}
     ))
 
 
