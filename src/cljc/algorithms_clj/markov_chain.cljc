@@ -115,18 +115,21 @@
 
 ;; To Weighted Generators
 
+(defn slow-enumerated-distribution-gen
+  [m]
+  (let [weights (reductions + (vals m))
+        total (last weights)
+        choices (map vector (keys m) weights)]
+    (fn []
+      (let [choice (rand-int total)]
+        (loop [[[val w] & more] choices]
+          (if (< choice w) val (recur more)))))))
+
 (defn weighted-keys->gen
   "Given a map of generators and weights, return a value from one of
    the generators, selecting generator based on weights."
   [m]
-  (enumerated-distribution-gen m)
-  #_(let [weights (reductions + (vals m))
-          total (last weights)
-          choices (map vector (keys m) weights)]
-      (fn []
-        (let [choice (rand-int total)]
-          (loop [[[val w] & more] choices]
-            (if (< choice w) val (recur more)))))))
+  (enumerated-distribution-gen m))
 
 (defn run-gen [gen] (gen))
 
