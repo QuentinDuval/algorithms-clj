@@ -50,15 +50,15 @@
         (let [[[lo wo] [hi wi]] lowers]
           (conj result [lo hi (/ wo avg-weight)]))
         :else                        ; at least one higher
-        (let [[lo wo] (first lowers)
-              [hi wi] (first higher)
-              new-res (conj result [lo hi (/ wo avg-weight)])
+        (let [[[lo wo] & lowers] lowers
+              [[hi wi] & higher] higher
+              result (conj result [lo hi (/ wo avg-weight)])
               new-wi (- wi wo)
               new-hi [hi new-wi]]
           (cond
-            (< new-wi avg-weight) (recur (conj lowers new-hi) higher new-res)
-            (< avg-weight new-wi) (recur lowers (conj higher new-hi) new-res)
-            :else (recur lowers higher (conj new-res [hi hi 1])))
+            (< new-wi avg-weight) (recur (conj lowers new-hi) higher result)
+            (< avg-weight new-wi) (recur lowers (conj higher new-hi) result)
+            :else (recur lowers higher (conj result [hi hi 1])))
           )))))
 
 (defn alias-method-gen
