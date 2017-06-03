@@ -109,11 +109,8 @@
     (let [start (run-gen (:initial-gen markov-chain))]
       (random-walk markov-chain start)))
   ([markov-chain start]
-    (letfn [(go [curr]
-              (cons (first curr)
-                (lazy-seq
-                  (go (random-jump markov-chain curr)))))]
-      (go start))))
+    (map first
+      (iterate #(random-jump markov-chain %) start))))
 
 
 ;; Transitions from file
