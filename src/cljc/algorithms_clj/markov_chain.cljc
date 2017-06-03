@@ -44,6 +44,7 @@
     (let [sum-weights (transduce (map weight) + weighted-pairs)
           avg-weight (/ sum-weights (dec (count weighted-pairs)))]
 
+      ; TODO - It might be easier / faster with sorted sets...
       (loop [lowers (filter #(< (weight %) avg-weight) weighted-pairs)
              higher (filter #(>= (weight %) avg-weight) weighted-pairs)
              result []]
