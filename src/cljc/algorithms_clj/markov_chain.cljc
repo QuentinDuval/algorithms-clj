@@ -55,13 +55,11 @@
   "Build the transitions from a sequence of elements, based
    on a sliding window of size `window-size`"
   [token-seq window-size]
-  (persistent!
-    (reduce
-      (fn [transitions [k v]]
-        (assoc! transitions k
-          (update (get transitions k {}) v (fnil + 0) 1)))
-      (transient {})
-      (partition 2 1 (partition window-size 1 token-seq)))))
+  (reduce
+    (fn [transitions [k v]]
+      (update-in transitions [k v] (fnil + 0) 1))
+    {}
+    (partition 2 1 (partition window-size 1 token-seq))))
 
 (deftest test-read-transitions
   (let [token-seq (split-words "a b c a b d")]
