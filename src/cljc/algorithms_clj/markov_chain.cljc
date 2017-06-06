@@ -84,6 +84,21 @@
           ; (= 1 (count lowers))
           )))))
 
+(defn alias-method
+  [weighted-pairs]
+  (let [sum-weights (transduce (map second) + weighted-pairs)
+        avg-weight (/ sum-weights (dec (count weighted-pairs)))]
+    (loop [weighted-pairs (into (sorted-set) (map (comp vec reverse)) weighted-pairs)
+           result []]
+      (if (<= 2 (count weighted-pairs))
+        (let [[w-least v-least] (first weighted-pairs)
+              [w-most v-most] (last weighted-pairs)
+              remaining-weight (- w-most (- avg-weight w-least))]
+          ; TODO
+          )
+        result))))
+
+
 (defn enumerated-distribution-gen
   [weighted-pairs]
   (let [aliases (enumerated-dist->aliases weighted-pairs)]
