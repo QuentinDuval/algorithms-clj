@@ -541,6 +541,9 @@
 ;; 2. Explicit ordering (not implicit positioning)
 ;; --------------------------------------------------------
 
+; TODO - provide the argument map as input to the functions?
+; TODO - In fact, just replace all occurence of :keyword by deref of the map (capture)
+
 (def modules
   {:rest-api {:prerequisites [:trade-db :logger :monitor]
               :init-sequence [println "rest ai init"]
