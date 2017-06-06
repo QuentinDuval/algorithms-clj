@@ -221,5 +221,5 @@
   []
   (let [markov (transition->markov-chain (file->markov-transitions test-file-path 1))]
     (str/join " "
-      (take 100 (random-map-walk markov)))
+      (take 100 (random-walk markov)))
     ))
