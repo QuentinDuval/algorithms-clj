@@ -29,6 +29,7 @@
    Resources:
    - https://stackoverflow.com/questions/6409652/random-weighted-selection-in-java
    - https://oroboro.com/non-uniform-random-numbers/"
+  ; TODO - precondition of all weights are strictly positives...
   [weighted-pairs]
   (if (< (count weighted-pairs) 2)
     (let [[val _] (first weighted-pairs)]
