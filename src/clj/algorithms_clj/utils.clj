@@ -1,9 +1,26 @@
 (ns algorithms-clj.utils)
 
 
+; -----------------------------------------------------------------------------
+; Map variants
+; -----------------------------------------------------------------------------
+
 (defn map-first
   ([f] (map (fn [[a b]] [(f a) b])))
   ([f c] (eduction (map-first f) c)))
+
+(defn map-values
+  [f m]
+  (persistent!
+    (reduce-kv
+      (fn [res k v] (assoc! res k (f v)))
+      (transient {})
+      m)))
+
+
+; -----------------------------------------------------------------------------
+; Iterate variants
+; -----------------------------------------------------------------------------
 
 (defn iterate-until-single-value
   "Apply a reducing step on a collection until its size is equal to 1, and return that element"
@@ -28,6 +45,11 @@
       xf
       (iterate #(drop 1 %) (concat inputs inputs)))
     ))
+
+
+; -----------------------------------------------------------------------------
+; Transducer helpers
+; -----------------------------------------------------------------------------
 
 (defmacro make-transducer
   "Build a transducer, based on
