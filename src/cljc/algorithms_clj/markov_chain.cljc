@@ -24,24 +24,25 @@
 
 
 ; -----------------------------------------------------------------------------
-; To Weighted Generators
+; Reading the transitions from a sequence of token
 ; -----------------------------------------------------------------------------
 
-(defn weighted-keys->gen
-  "Given a map of generators and weights, return a value from one of
-   the generators, selecting generator based on weights."
-  [m]
-  (enumerated-distribution-gen m))
+; TODO - Go for abstractions (state machine)
 
-(defn run-gen [gen] (gen))
+(defprotocol MarkovTraining
+  (-train-chain [chain tokens] "Train the markov chain")
+  (-to-generator [chain] "Transform the markov chain into a generator"))
+
+(defprotocol MarkovGeneration
+  (-generate [chain seed] "Generation of random elements from a seed")
+  (-rand-send [chain] "Generate a random seed"))
 
 
-;; Construct the markov-chain
 ;; TODO - have a specific transducer for this
 ;; TODO - Allow to feed the transitions several times (for classes, we need it)
+;; TODO - use train or better vocabulary for this
 
 (defn read-transitions
-  ;; TODO - use train or better vocabulary for this
   "Build the transitions from a sequence of elements, based
    on a sliding window of size `window-size`"
   [token-seq window-size]
@@ -53,8 +54,11 @@
 
 
 ; -----------------------------------------------------------------------------
-; Transformation into a markov chain
+; Tranform statistics into a markov chain
 ; -----------------------------------------------------------------------------
+
+(defn weighted-keys->gen [m] (enumerated-distribution-gen m))
+(defn run-gen [gen] (gen))
 
 (defn weighted-start-elements
   "For each input element, compute its weight as the sum of the
