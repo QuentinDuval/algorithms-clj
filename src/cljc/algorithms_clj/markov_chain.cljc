@@ -6,6 +6,10 @@
     [algorithms-clj.utils :refer [map-values]]
     ))
 
+; TODO (Features)
+; - Add HTML / XML parser to only extract text from a page
+; - It is independent of the markov chain for sure
+; - Idea of recursive Markov Chain, but much less generic
 
 ; -----------------------------------------------------------------------------
 ; Different ways to extract the information from text
