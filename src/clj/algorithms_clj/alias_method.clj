@@ -1,6 +1,10 @@
 (ns algorithms-clj.alias-method
   (:require
     [clojure.test :as test :refer [deftest is are testing]]
+    [clojure.test.check :as tc]
+    [clojure.test.check.generators :as tc-gen]
+    [clojure.test.check.properties :as tc-prop]
+    [clojure.test.check.clojure-test :refer [defspec]]
     ))
 
 
@@ -54,6 +58,10 @@
     ))
 
 
+; -----------------------------------------------------------------------------
+; Unit tests
+; -----------------------------------------------------------------------------
+
 (deftest test-enumarated-dist->aliases
   (are [expected input] (= expected (build-alias-array input))
     [[nil nil 1]] {}
@@ -71,6 +79,34 @@
      [:d :c 1/3]
      [:c :b 1/6]] {:a 1 :b 1 :c 1 :d 1 :e 1 :f 1}
     ))
+
+(def enumerated-distribution-input-gen
+  (tc-gen/such-that
+    #(< 1 (count %))
+    (tc-gen/map
+      tc-gen/string
+      (tc-gen/such-that pos? tc-gen/nat))))
+
+(defspec alias-array-should-have-one-less-element
+  100
+  (tc-prop/for-all [enum-dist enumerated-distribution-input-gen]
+    (=
+      (dec (count enum-dist))
+      (count (build-alias-array enum-dist)))
+    ))
+
+
+; -----------------------------------------------------------------------------
+; High level tests
+; -----------------------------------------------------------------------------
+
+(defn run-prob-test
+  []
+  (let [gen (enumerated-distribution-gen
+              {:a 1 :b 1 :c 4 :d 1 :e 1})
+        rolls (repeatedly 10000 gen)
+        freqs (frequencies rolls)]
+    (prn freqs)))
 
 ; TODO - Property based testing: the output should be one less in size
 
