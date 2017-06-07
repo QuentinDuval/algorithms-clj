@@ -126,7 +126,9 @@
   (with-open [r (clojure.java.io/reader file-path)]
     (read-transitions
       (eduction
-        (mapcat split-words)
+        (comp
+          (mapcat split-words)
+          (filter (complement empty?)))
         (line-seq r))
       window-size)))
 
@@ -137,8 +139,8 @@
   "./src/cljc/algorithms_clj/markov-chain-input.edn")
 
 (defn run-test
-  []
-  (let [markov (transition->markov-chain (file->markov-transitions test-file-path 1))]
+  [n]
+  (let [markov (transition->markov-chain (file->markov-transitions test-file-path n))]
     (str/join " "
       (take 100 (random-walk markov)))
     ))
