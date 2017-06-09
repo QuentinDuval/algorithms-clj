@@ -52,7 +52,7 @@
   [weighted-pairs]
   {:pre [(pos? (count weighted-pairs))]}
   (if (= 1 (count weighted-pairs))
-    (constantly (first weighted-pairs))
+    (constantly (-> weighted-pairs first first))
     (let [aliases (build-alias-array weighted-pairs)]
       (fn alias-gen []
         (let [[v1 v2 p] (rand-nth aliases)]
