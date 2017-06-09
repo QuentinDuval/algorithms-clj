@@ -8,7 +8,7 @@
     ))
 
 
-#_(defn slow-enumerated-distribution-gen
+#_(defn linear-enumerated-distribution-gen
     [m]
     (let [weights (reductions + (vals m))
           total (last weights)
@@ -17,7 +17,6 @@
         (let [choice (rand-int total)]
           (loop [[[val w] & more] choices]
             (if (< choice w) val (recur more)))))))
-
 
 (defn ^:private build-alias-array
   "Preprocessing phase of the Alias Algorithm
@@ -29,34 +28,36 @@
    Resources:
    - https://stackoverflow.com/questions/6409652/random-weighted-selection-in-java
    - https://oroboro.com/non-uniform-random-numbers/"
-  ; TODO - precondition of all weights are strictly positives...
   [weighted-pairs]
-  (if (< (count weighted-pairs) 2)
-    (let [[val _] (first weighted-pairs)]
-      [[val val 1]])
-    (let [sum-weights (transduce (map second) + weighted-pairs)
-          avg-weight (/ sum-weights (dec (count weighted-pairs)))]
-      (loop [weighted-pairs (into (sorted-set) (map (comp vec reverse)) weighted-pairs)
-             result []]
-        (if (<= 2 (count weighted-pairs))
-          (let [[w-least v-least :as least] (first weighted-pairs)
-                [w-most v-most :as most] (last weighted-pairs)
-                weighted-pairs (disj weighted-pairs least most)
-                remaining-weight (- w-most (- avg-weight w-least))
-                result (conj result [v-least v-most (/ w-least avg-weight)])]
-            (if (zero? remaining-weight)
-              (recur weighted-pairs result)
-              (recur (conj weighted-pairs [remaining-weight v-most]) result)
-              ))
-          result)))))
+  (let [sum-weights (transduce (map second) + weighted-pairs)
+        avg-weight (/ sum-weights (dec (count weighted-pairs)))]
+    (loop [weighted-pairs (into (sorted-set) (map (comp vec reverse)) weighted-pairs)
+           result []]
+      (if (<= 2 (count weighted-pairs))
+        (let [[w-least v-least :as least] (first weighted-pairs)
+              [w-most v-most :as most] (last weighted-pairs)
+              weighted-pairs (disj weighted-pairs least most)
+              remaining-weight (- w-most (- avg-weight w-least))
+              result (conj result [v-least v-most (/ w-least avg-weight)])]
+          (if (zero? remaining-weight)
+            (recur weighted-pairs result)
+            (recur (conj weighted-pairs [remaining-weight v-most]) result)
+            ))
+        result))))
 
 (defn enumerated-distribution-gen
+  "Create a random generator producing weighted inputs
+   - Input: a sequence of pairs [value associated-weighted]
+   - Output: a random generator"
   [weighted-pairs]
-  (let [aliases (build-alias-array weighted-pairs)]
-    (fn alias-gen []
-      (let [[v1 v2 p] (rand-nth aliases)]
-        (if (< (rand) p) v1 v2)))
-    ))
+  {:pre [(pos? (count weighted-pairs))]}
+  (if (= 1 (count weighted-pairs))
+    (constantly (first weighted-pairs))
+    (let [aliases (build-alias-array weighted-pairs)]
+      (fn alias-gen []
+        (let [[v1 v2 p] (rand-nth aliases)]
+          (if (< (rand) p) v1 v2)))
+      )))
 
 
 ; -----------------------------------------------------------------------------
@@ -65,7 +66,6 @@
 
 (deftest test-enumarated-dist->aliases
   (are [expected input] (= expected (build-alias-array input))
-    [[nil nil 1]] {}
     [[:a :a 1]] {:a 1}
     [[:a :b 1/2]] {:a 1 :b 1}
     [[:a :b 1/3]] {:a 1 :b 2}
