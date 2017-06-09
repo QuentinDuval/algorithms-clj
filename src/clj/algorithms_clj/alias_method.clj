@@ -66,7 +66,6 @@
 
 (deftest test-enumarated-dist->aliases
   (are [expected input] (= expected (build-alias-array input))
-    [[:a :a 1]] {:a 1}
     [[:a :b 1/2]] {:a 1 :b 1}
     [[:a :b 1/3]] {:a 1 :b 2}
     [[:a :c 1/2] [:b :c 1/2]] {:a 1 :b 1 :c 2}

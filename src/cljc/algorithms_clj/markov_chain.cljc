@@ -117,6 +117,14 @@
           (read-transitions token-seq 2)))
     ))
 
+(deftest test-sample-generation
+  (let [token-seq (split-words "a b c a b d")
+        transitions (read-transitions token-seq 1)
+        markov (transition->markov-chain transitions)]
+    (is
+      (every? string? (take 10 (random-walk markov)))
+      )))
+
 
 ; -----------------------------------------------------------------------------
 ; Integration tests
