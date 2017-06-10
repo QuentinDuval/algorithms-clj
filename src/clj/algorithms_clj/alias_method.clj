@@ -30,14 +30,13 @@
 
 (defn ^:private aliases->enum-dist
   [aliases]
-  (let [den (count aliases)
-        add (fnil + 0)]
+  (let [den (count aliases)]
     (reduce
       (fn [probs [lhs rhs prob-lhs]]
-        (-> probs
-          (update lhs add (/ prob-lhs den))
-          (update rhs add (/ (- 1 prob-lhs) den))
-          ))
+        (merge-with +
+          {lhs (/ prob-lhs den)
+           rhs (/ (- 1 prob-lhs) den)}
+          probs))
       {}
       aliases)))
 
