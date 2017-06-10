@@ -52,19 +52,19 @@
    - https://stackoverflow.com/questions/6409652/random-weighted-selection-in-java
    - https://oroboro.com/non-uniform-random-numbers/"
   ; TODO - normalize and avg-weight is just ratio: 1 / N - 1
-  [weighted-pairs]
-  (let [avg-weight (/ (sum-weights weighted-pairs) (dec (count weighted-pairs)))]
-    (loop [weighted-pairs (into (sorted-set) (map (comp vec reverse)) weighted-pairs)
+  [enum-dist]
+  (let [avg-weight (/ (sum-weights enum-dist) (dec (count enum-dist)))]
+    (loop [enum-dist (into (sorted-set) (map (comp vec reverse)) enum-dist)
            result []]
-      (if (<= 2 (count weighted-pairs))
-        (let [[w-least v-least :as least] (first weighted-pairs)
-              [w-most v-most :as most] (last weighted-pairs)
-              weighted-pairs (disj weighted-pairs least most)
+      (if (<= 2 (count enum-dist))
+        (let [[w-least v-least :as least] (first enum-dist)
+              [w-most v-most :as most] (last enum-dist)
+              enum-dist (disj enum-dist least most)
               remaining-weight (- w-most (- avg-weight w-least))
               result (conj result [v-least v-most (/ w-least avg-weight)])]
           (if (zero? remaining-weight)
-            (recur weighted-pairs result)
-            (recur (conj weighted-pairs [remaining-weight v-most]) result)
+            (recur enum-dist result)
+            (recur (conj enum-dist [remaining-weight v-most]) result)
             ))
         result))))
 
@@ -72,11 +72,11 @@
   "Create a random generator producing weighted inputs
    - Input: a sequence of pairs [value associated-weighted]
    - Output: a random generator"
-  [weighted-pairs]
-  {:pre [(pos? (count weighted-pairs))]}
-  (if (= 1 (count weighted-pairs))
-    (constantly (-> weighted-pairs first first))
-    (let [aliases (enum-dist->aliases weighted-pairs)]
+  [enum-dist]
+  {:pre [(pos? (count enum-dist))]}
+  (if (= 1 (count enum-dist))
+    (constantly (-> enum-dist first first))
+    (let [aliases (enum-dist->aliases enum-dist)]
       (fn alias-gen []
         (let [[v1 v2 p] (rand-nth aliases)]
           (if (< (rand) p) v1 v2)))
