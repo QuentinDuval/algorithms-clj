@@ -5,6 +5,7 @@
     [clojure.test.check.generators :as tc-gen]
     [clojure.test.check.properties :as tc-prop]
     [clojure.test.check.clojure-test :refer [defspec]]
+    [algorithms-clj.utils :refer [map-values]]
     ))
 
 
@@ -18,7 +19,29 @@
           (loop [[[val w] & more] choices]
             (if (< choice w) val (recur more)))))))
 
-(defn ^:private build-alias-array
+(defn ^:private sum-weights
+  [enum-dist]
+  (transduce (map second) + enum-dist))
+
+(defn ^:private normalize-enum-dist
+  [enum-dist]
+  (let [total-weight (sum-weights enum-dist)]
+    (map-values (fn [v] (/ v total-weight)) enum-dist)))
+
+(defn ^:private aliases->enum-dist
+  [aliases]
+  (let [den (count aliases)
+        add (fnil + 0)]
+    (reduce
+      (fn [probs [lhs rhs prob-lhs]]
+        (-> probs
+          (update lhs add (/ prob-lhs den))
+          (update rhs add (/ (- 1 prob-lhs) den))
+          ))
+      {}
+      aliases)))
+
+(defn ^:private enum-dist->aliases
   "Preprocessing phase of the Alias Algorithm
 
    Build the array of the alias method in O(N log N) complexity:
@@ -28,9 +51,9 @@
    Resources:
    - https://stackoverflow.com/questions/6409652/random-weighted-selection-in-java
    - https://oroboro.com/non-uniform-random-numbers/"
+  ; TODO - normalize and avg-weight is just ratio: 1 / N - 1
   [weighted-pairs]
-  (let [sum-weights (transduce (map second) + weighted-pairs)
-        avg-weight (/ sum-weights (dec (count weighted-pairs)))]
+  (let [avg-weight (/ (sum-weights weighted-pairs) (dec (count weighted-pairs)))]
     (loop [weighted-pairs (into (sorted-set) (map (comp vec reverse)) weighted-pairs)
            result []]
       (if (<= 2 (count weighted-pairs))
@@ -53,7 +76,7 @@
   {:pre [(pos? (count weighted-pairs))]}
   (if (= 1 (count weighted-pairs))
     (constantly (-> weighted-pairs first first))
-    (let [aliases (build-alias-array weighted-pairs)]
+    (let [aliases (enum-dist->aliases weighted-pairs)]
       (fn alias-gen []
         (let [[v1 v2 p] (rand-nth aliases)]
           (if (< (rand) p) v1 v2)))
@@ -65,7 +88,7 @@
 ; -----------------------------------------------------------------------------
 
 (deftest test-enumarated-dist->aliases
-  (are [expected input] (= expected (build-alias-array input))
+  (are [expected input] (= expected (enum-dist->aliases input))
     [[:a :b 1/2]] {:a 1 :b 1}
     [[:a :b 1/3]] {:a 1 :b 2}
     [[:a :c 1/2] [:b :c 1/2]] {:a 1 :b 1 :c 2}
@@ -80,7 +103,7 @@
      [:c :b 1/6]] {:a 1 :b 1 :c 1 :d 1 :e 1 :f 1}
     ))
 
-(def enumerated-distribution-input-gen
+(def enumerated-distribution-test-gen
   (tc-gen/such-that
     #(< 1 (count %))
     (tc-gen/map
@@ -89,10 +112,17 @@
 
 (defspec alias-array-should-have-one-less-element
   100
-  (tc-prop/for-all [enum-dist enumerated-distribution-input-gen]
+  (tc-prop/for-all [enum-dist enumerated-distribution-test-gen]
     (=
       (dec (count enum-dist))
-      (count (build-alias-array enum-dist)))
+      (count (enum-dist->aliases enum-dist)))
+    ))
+
+(defspec alias-array-should-perserve-initial-probabilities
+  (tc-prop/for-all [enum-dist enumerated-distribution-test-gen]
+    (=
+      (normalize-enum-dist enum-dist)
+      (aliases->enum-dist (enum-dist->aliases enum-dist)))
     ))
 
 
@@ -107,6 +137,3 @@
         rolls (repeatedly 10000 gen)
         freqs (frequencies rolls)]
     (prn freqs)))
-
-; TODO - Property based testing: the output should be one less in size
-
