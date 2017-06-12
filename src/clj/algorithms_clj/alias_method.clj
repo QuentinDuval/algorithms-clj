@@ -9,19 +9,20 @@
     ))
 
 
-#_(defn linear-enumerated-distribution-gen
-    [m]
-    (let [weights (reductions + (vals m))
-          total (last weights)
-          choices (map vector (keys m) weights)]
-      (fn []
-        (let [choice (rand-int total)]
-          (loop [[[val w] & more] choices]
-            (if (< choice w) val (recur more)))))))
 
 (defn ^:private sum-weights
   [enum-dist]
   (transduce (map second) + enum-dist))
+
+(defn linear-enumerated-distribution-gen
+  [enum-dist]
+  (let [total-weight (sum-weights enum-dist)]
+    (fn []
+      (loop [searched-weight (rand total-weight)
+             [[value weight] & enum-dist] (seq enum-dist)]
+        (if (<= weight searched-weight)
+          (recur (- searched-weight weight) enum-dist)
+          value)))))
 
 (defn ^:private normalize-enum-dist
   [enum-dist]
@@ -86,7 +87,7 @@
 ; Unit tests
 ; -----------------------------------------------------------------------------
 
-(deftest test-enumarated-dist->aliases
+(deftest test-enum-dist->aliases
   (are [expected input] (= expected (enum-dist->aliases input))
     [[:a :b 1/2]] {:a 1 :b 1}
     [[:a :b 1/3]] {:a 1 :b 2}
@@ -131,8 +132,8 @@
 
 (defn run-prob-test
   []
-  (let [gen (enumerated-distribution-gen
-              {:a 1 :b 1 :c 4 :d 1 :e 1})
-        rolls (repeatedly 10000 gen)
-        freqs (frequencies rolls)]
-    (prn freqs)))
+  (let [enum-dist {:a 1 :b 1 :c 4 :d 1 :e 1}
+        test-gen (fn [gen] (frequencies (repeatedly 10000 gen)))]
+    (prn (test-gen (enumerated-distribution-gen enum-dist)))
+    (prn (test-gen (linear-enumerated-distribution-gen enum-dist)))
+    ))
