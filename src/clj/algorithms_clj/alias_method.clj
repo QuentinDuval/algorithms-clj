@@ -29,7 +29,7 @@
   (let [total-weight (sum-weights enum-dist)]
     (map-values (fn [v] (/ v total-weight)) enum-dist)))
 
-(defn ^:private aliases->enum-dist
+(defn ^:private buckets->enum-dist
   [aliases]
   (let [den (count aliases)]
     (reduce
@@ -41,12 +41,12 @@
       {}
       aliases)))
 
-(defn ^:private enum-dist->aliases
+(defn ^:private enum-dist->buckets
   "Preprocessing phase of the Alias Algorithm
 
-   Build the array of the alias method in O(N log N) complexity:
+   Build a vector of bucket in O(N log N) complexity:
    - Input: a sequence of pairs [value associated-weighted]
-   - Output: an array of tuples [value-1 value-2 p1-over-p2]
+   - Output: a vector of tuples [value-1 value-2 p1-over-p2]
 
    Resources:
    - https://stackoverflow.com/questions/6409652/random-weighted-selection-in-java
@@ -77,10 +77,10 @@
   [enum-dist]
   {:pre [(pos? (count enum-dist))]}
   (if (= 1 (count enum-dist))
-    (constantly (-> enum-dist first first))
-    (let [aliases (enum-dist->aliases enum-dist)]
-      (fn alias-gen []
-        (let [[v1 v2 p] (rand-nth aliases)]
+    (constantly (ffirst enum-dist))
+    (let [buckets (enum-dist->buckets enum-dist)]
+      (fn []
+        (let [[v1 v2 p] (rand-nth buckets)]
           (if (< (rand) p) v1 v2)))
       )))
 
@@ -89,8 +89,8 @@
 ; Unit tests
 ; -----------------------------------------------------------------------------
 
-(deftest test-enum-dist->aliases
-  (are [expected input] (= expected (enum-dist->aliases input))
+(deftest test-enum-dist->buckets
+  (are [expected input] (= expected (enum-dist->buckets input))
     [[:a :b 1/2]] {:a 1 :b 1}
     [[:a :b 1/3]] {:a 1 :b 2}
     [[:a :c 1/2] [:b :c 1/2]] {:a 1 :b 1 :c 2}
@@ -112,19 +112,19 @@
       tc-gen/string
       (tc-gen/such-that pos? tc-gen/nat))))
 
-(defspec alias-array-should-have-one-less-element
+(defspec bucket-array-should-have-one-less-element
   100
   (tc-prop/for-all [enum-dist enumerated-distribution-test-gen]
     (=
       (dec (count enum-dist))
-      (count (enum-dist->aliases enum-dist)))
+      (count (enum-dist->buckets enum-dist)))
     ))
 
-(defspec alias-array-should-perserve-initial-probabilities
+(defspec bucket-array-should-perserve-probability-volume
   (tc-prop/for-all [enum-dist enumerated-distribution-test-gen]
     (=
       (normalize-enum-dist enum-dist)
-      (aliases->enum-dist (enum-dist->aliases enum-dist)))
+      (buckets->enum-dist (enum-dist->buckets enum-dist)))
     ))
 
 
