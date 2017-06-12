@@ -52,19 +52,21 @@
    - https://stackoverflow.com/questions/6409652/random-weighted-selection-in-java
    - https://oroboro.com/non-uniform-random-numbers/"
   [enum-dist]
-  (let [avg-weight (/ (sum-weights enum-dist) (dec (count enum-dist)))]
-    (loop [enum-dist (into (sorted-set) (map (comp vec reverse)) enum-dist)
+  (let [bucket-nb (dec (count enum-dist))
+        total-vol (sum-weights enum-dist)
+        bucket-vol (/ total-vol bucket-nb)]
+    (loop [to-fill (into (sorted-set) (map (comp vec reverse)) enum-dist)
            result []]
-      (if (<= 2 (count enum-dist))
-        (let [[min-weight min-value :as min-dist] (first enum-dist)
-              [max-weight max-value :as max-dist] (last enum-dist)
-              remaining-weight (- max-weight (- avg-weight min-weight))
-              enum-dist (disj enum-dist min-dist max-dist)
-              enum-dist (if (pos? remaining-weight)
-                          (conj enum-dist [remaining-weight max-value])
-                          enum-dist)]
-          (recur enum-dist
-            (conj result [min-value max-value (/ min-weight avg-weight)])
+      (if (<= 2 (count to-fill))
+        (let [[min-vol min-value :as min-dist] (first to-fill)
+              [max-vol max-value :as max-dist] (last to-fill)
+              rest-vol (- max-vol (- bucket-vol min-vol))
+              to-fill (disj to-fill min-dist max-dist)
+              to-fill (if (pos? rest-vol)
+                          (conj to-fill [rest-vol max-value])
+                          to-fill)]
+          (recur to-fill
+            (conj result [min-value max-value (/ min-vol bucket-vol)])
             ))
         result))))
 
