@@ -50,20 +50,20 @@
    Resources:
    - https://stackoverflow.com/questions/6409652/random-weighted-selection-in-java
    - https://oroboro.com/non-uniform-random-numbers/"
-  ; TODO - normalize and avg-weight is just ratio: 1 / N - 1
   [enum-dist]
   (let [avg-weight (/ (sum-weights enum-dist) (dec (count enum-dist)))]
     (loop [enum-dist (into (sorted-set) (map (comp vec reverse)) enum-dist)
            result []]
       (if (<= 2 (count enum-dist))
-        (let [[w-least v-least :as least] (first enum-dist)
-              [w-most v-most :as most] (last enum-dist)
-              enum-dist (disj enum-dist least most)
-              remaining-weight (- w-most (- avg-weight w-least))
-              result (conj result [v-least v-most (/ w-least avg-weight)])]
-          (if (zero? remaining-weight)
-            (recur enum-dist result)
-            (recur (conj enum-dist [remaining-weight v-most]) result)
+        (let [[min-weight min-value :as min-dist] (first enum-dist)
+              [max-weight max-value :as max-dist] (last enum-dist)
+              remaining-weight (- max-weight (- avg-weight min-weight))
+              enum-dist (disj enum-dist min-dist max-dist)
+              enum-dist (if (pos? remaining-weight)
+                          (conj enum-dist [remaining-weight max-value])
+                          enum-dist)]
+          (recur enum-dist
+            (conj result [min-value max-value (/ min-weight avg-weight)])
             ))
         result))))
 
