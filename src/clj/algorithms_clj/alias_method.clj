@@ -41,6 +41,20 @@
       {}
       aliases)))
 
+(defn ^:private fill-one-bucket
+  "Takes the quantity bucket-vol from a sorted-set of elements to verse
+   Returns a filled bucket and the remaining quantities"
+  [to-verse bucket-vol]
+  (let [[min-vol min-value :as min-dist] (first to-verse)
+        [max-vol max-value :as max-dist] (last to-verse)
+        fill-bucket [min-value max-value (/ min-vol bucket-vol)]
+        rest-vol (- max-vol (- bucket-vol min-vol))
+        to-verse (disj to-verse min-dist max-dist)
+        to-verse (if (pos? rest-vol)
+                   (conj to-verse [rest-vol max-value])
+                   to-verse)]
+    [fill-bucket to-verse]))
+
 (defn ^:private enum-dist->buckets
   "Preprocessing phase of the Alias Algorithm
 
@@ -52,28 +66,23 @@
    - https://stackoverflow.com/questions/6409652/random-weighted-selection-in-java
    - https://oroboro.com/non-uniform-random-numbers/"
   [enum-dist]
-  (let [bucket-nb (dec (count enum-dist))
-        total-vol (sum-weights enum-dist)
-        bucket-vol (/ total-vol bucket-nb)]
-    (loop [to-fill (into (sorted-set) (map (comp vec reverse)) enum-dist)
-           result []]
-      (if (<= 2 (count to-fill))
-        (let [[min-vol min-value :as min-dist] (first to-fill)
-              [max-vol max-value :as max-dist] (last to-fill)
-              rest-vol (- max-vol (- bucket-vol min-vol))
-              to-fill (disj to-fill min-dist max-dist)
-              to-fill (if (pos? rest-vol)
-                          (conj to-fill [rest-vol max-value])
-                          to-fill)]
-          (recur to-fill
-            (conj result [min-value max-value (/ min-vol bucket-vol)])
-            ))
-        result))))
+  (let [bucket-nb (dec (count enum-dist))   ; Number of buckets to fill
+        total-vol (sum-weights enum-dist)   ; Total volume split over the buckets
+        bucket-vol (/ total-vol bucket-nb)] ; Volumne of each bucket
+    (loop [to-verse (into (sorted-set)      ; Remaining quantity to verse in the buckets
+                     (map (comp vec reverse))
+                     enum-dist)
+           buckets []]                      ; The filled buckets to return
+      (if (<= 2 (count to-verse))
+        (let [[bucket to-verse] (fill-one-bucket to-verse bucket-vol)]
+          (recur to-verse (conj buckets bucket)))
+        buckets))))
 
 (defn enumerated-distribution-gen
   "Create a random generator producing weighted inputs
-   - Input: a sequence of pairs [value associated-weighted]
-   - Output: a random generator"
+   - Input: a sequence of pairs [value weight-of-value]
+   - Output: a random generator that picks values from the input
+     such that P(value) = Weight(value) / Sum(all weights)"
   [enum-dist]
   {:pre [(pos? (count enum-dist))]}
   (if (= 1 (count enum-dist))
