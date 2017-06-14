@@ -622,33 +622,31 @@
       (topological-sort dependencies))))
 
 (defn init-and-register
-  [dependencies [module-id module-impl]]
-  (assoc dependencies module-id (-init module-impl dependencies)))
+  [dependencies module-id]
+  (update dependencies module-id #(-init % dependencies)))
 
 (defn init-all-modules
-  [dependencies modules]
-  (reduce init-and-register dependencies modules))
+  [dependencies module-ids]
+  (reduce init-and-register dependencies module-ids))
 
 (defn shut-and-unregister
   [dependencies module-id]
-  (let [module-impl (-shut (dependencies module-id) dependencies)]
-    (dissoc dependencies module-id)))
+  (update dependencies module-id #(-shut % dependencies)))
 
 (defn shut-all-modules
   [dependencies module-ids]
-  (reduce shut-and-unregister dependencies (reverse module-ids)))
+  (reduce shut-and-unregister dependencies module-ids))
 
 (defmacro compile-init-sequence
   [modules]
   (let [modules (ordered-modules (eval modules))
-        module-ids (mapv first modules)]
-    ; TODO - Another solution: init return something to shut...
-    ; TODO - Consistency with SHUT: all modules in a map, just module-ids at start and stop
-    `(let [system# (atom {})]
+        init-order (vec (map first modules))
+        shut-order (vec (reverse init-order))]
+    `(let [system# (atom (into {} ~modules))]
        (defn init-all []
-         (swap! system# init-all-modules ~modules))
+         (swap! system# init-all-modules ~init-order))
        (defn shut-all []
-         (swap! system# shut-all-modules ~module-ids)
+         (swap! system# shut-all-modules ~shut-order)
          ))))
 
 (compile-init-sequence modules)
