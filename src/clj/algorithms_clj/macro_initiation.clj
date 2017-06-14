@@ -297,7 +297,7 @@
       (if
         (. iter33662 hasNext)
         (let*
-          [h__33313__auto__ (. iter33662 next)
+          [h__33313__auto__  (. iter33662 next)
            r2__33314__auto__ (+ r__33312__auto__ h__33313__auto__)]
           (recur r2__33314__auto__))
         r__33312__auto__))))
@@ -544,19 +544,39 @@
 ; TODO - provide the argument map as input to the functions?
 ; TODO - In fact, just replace all occurence of :keyword by deref of the map (capture)
 
+(defprotocol IModule
+  (-init [this dependencies] "Start the module")
+  (-shut [this dependencies] "Stop the module"))
+
+(defrecord RestEnpoint []
+  IModule
+  (-init [this deps] (prn "Start rest: " deps) this)
+  (-shut [this deps] (prn "Stop rest: " deps) this))
+
+(defrecord TradeDb []
+  IModule
+  (-init [this deps] (prn "Start Trade DB: " deps) this)
+  (-shut [this deps] (prn "Stop Trade DB: " deps) this))
+
+(defrecord Monitor []
+  IModule
+  (-init [this deps] (prn "Start Monitor: " deps) this)
+  (-shut [this deps] (prn "Stop Monitor: " deps) this))
+
+(defrecord Logger []
+  IModule
+  (-init [this deps] (prn "Start Logger: " deps) this)
+  (-shut [this deps] (prn "Stop Logger: " deps) this))
+
 (def modules
   {:rest-api {:prerequisites [:trade-db :logger :monitor]
-              :init-sequence [println "rest ai init"]
-              :shut-sequence [println "rest ai shut"]}
+              :implementation (RestEnpoint.)}
    :trade-db {:prerequisites [:monitor]
-              :init-sequence [println "trade db init"]
-              :shut-sequence [println "trade db shut"]}
+              :implementation (TradeDb.)}
    :monitor {:prerequisites []
-             :init-sequence [println "monitor init"]
-             :shut-sequence [println "monitor shut"]}
+             :implementation (Monitor.)}
    :logger {:prerequisites [:monitor]
-            :init-sequence [println "logger init"]
-            :shut-sequence [println "logger shut"]}})
+            :implementation (Logger.)}})
 
 (defn modules->dependency-graph
   [modules]
@@ -588,24 +608,46 @@
        :sorted []})))
 
 (defn test-topological-sort
+  ; TODO - make unit test
   []
   (println (topological-sort {:a [:b] :b [:c] :c []}))
   (println (topological-sort module-dependencies)))
 
-(defn modules->init-calls
+(defn ordered-modules
   [modules]
-  (let [dependencies (modules->dependency-graph modules)
-        ordered-seq (topological-sort dependencies)
-        ordered-init (map #(get-in modules [% :init-sequence]) ordered-seq)]
-    (map (fn [[f & args]] `(~f ~@args)) ordered-init)))
+  (let [dependencies (modules->dependency-graph modules)]
+    (mapv
+      (fn [module-id]
+        [module-id (get-in modules [module-id :implementation])])
+      (topological-sort dependencies))))
+
+(defn init-and-register
+  [dependencies [module-id module-impl]]
+  (assoc dependencies module-id (-init module-impl dependencies)))
+
+(defn init-all-modules
+  [dependencies modules]
+  (reduce init-and-register dependencies modules))
+
+(defn shut-and-unregister
+  [dependencies module-id]
+  (let [module-impl (-shut (dependencies module-id) dependencies)]
+    (dissoc dependencies module-id)))
+
+(defn shut-all-modules
+  [dependencies module-ids]
+  (reduce shut-and-unregister dependencies (reverse module-ids)))
 
 (defmacro compile-init-sequence
   [modules]
-  (let [ordered-calls (modules->init-calls (eval modules))]
-    `(do
-       (defn run-init-sequence [] (do ~@ordered-calls))
-       (defn run-shut-sequence [] (do ~@(reverse ordered-calls)))
-       )))
+  (let [modules (ordered-modules (eval modules))
+        module-ids (mapv first modules)]
+    `(let [system# (atom {})]
+       (defn init-all []
+         (swap! system# init-all-modules ~modules))
+       (defn shut-all []
+         (swap! system# shut-all-modules ~module-ids)
+         ))))
 
 (compile-init-sequence modules)
 
