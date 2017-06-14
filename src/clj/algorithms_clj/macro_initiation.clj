@@ -617,32 +617,41 @@
   [modules]
   (let [dependencies (modules->dependency-graph modules)]
     (mapv
-      (fn [module-id]
-        [module-id (get-in modules [module-id :implementation])])
+      (fn [module-id] [module-id (get modules module-id)])
       (topological-sort dependencies))))
 
 (defn init-and-register
-  [dependencies module-id]
-  (update dependencies module-id #(-init % dependencies)))
+  [dependencies [module-id module-deps]]
+  (update dependencies module-id
+    #(-init % (select-keys dependencies module-deps))))
 
 (defn init-all-modules
   [dependencies module-ids]
   (reduce init-and-register dependencies module-ids))
 
 (defn shut-and-unregister
-  [dependencies module-id]
-  (update dependencies module-id #(-shut % dependencies)))
+  [dependencies [module-id module-deps]]
+  (update dependencies module-id
+    #(-shut % (select-keys dependencies module-deps))))
 
 (defn shut-all-modules
   [dependencies module-ids]
   (reduce shut-and-unregister dependencies module-ids))
 
+(defn on-snd
+  [f]
+  (fn [v] (update v 1 f)))
+
 (defmacro compile-init-sequence
   [modules]
+  ; TODO - could be made simpler, just keep the deps in the system map
   (let [modules (ordered-modules (eval modules))
-        init-order (vec (map first modules))
-        shut-order (vec (reverse init-order))]
-    `(let [system# (atom (into {} ~modules))]
+        system-map (into {} (map (on-snd :implementation)) modules)
+        init-order (into [] (map (on-snd :prerequisites)) modules)
+        shut-order (into [] (reverse init-order))]
+    (println modules)
+    (println system-map)
+    `(let [system# (atom ~system-map)]
        (defn init-all []
          (swap! system# init-all-modules ~init-order))
        (defn shut-all []
