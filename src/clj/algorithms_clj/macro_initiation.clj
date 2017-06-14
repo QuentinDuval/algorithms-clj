@@ -649,8 +649,6 @@
         system-map (into {} (map (on-snd :implementation)) modules)
         init-order (into [] (map (on-snd :prerequisites)) modules)
         shut-order (into [] (reverse init-order))]
-    (println modules)
-    (println system-map)
     `(let [system# (atom ~system-map)]
        (defn init-all []
          (swap! system# init-all-modules ~init-order))
