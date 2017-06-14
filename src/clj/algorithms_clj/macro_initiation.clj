@@ -642,6 +642,8 @@
   [modules]
   (let [modules (ordered-modules (eval modules))
         module-ids (mapv first modules)]
+    ; TODO - Another solution: init return something to shut...
+    ; TODO - Consistency with SHUT: all modules in a map, just module-ids at start and stop
     `(let [system# (atom {})]
        (defn init-all []
          (swap! system# init-all-modules ~modules))
