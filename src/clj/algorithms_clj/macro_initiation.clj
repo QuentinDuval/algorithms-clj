@@ -644,7 +644,7 @@
 
 (defmacro compile-init-sequence
   [modules]
-  ; TODO - could be made simpler, just keep the deps in the system map
+  ; TODO - could be made simpler, just keep the modules for init and shut order
   (let [modules (ordered-modules (eval modules))
         system-map (into {} (map (on-snd :implementation)) modules)
         init-order (into [] (map (on-snd :prerequisites)) modules)
