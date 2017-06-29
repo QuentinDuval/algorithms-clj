@@ -19,7 +19,8 @@
                  [compojure "1.5.0"]
                  ; [bigml/sampling "3.0"] ; weighted random choice
                  [environ "1.0.3"]
-                 [reagent "0.6.0-rc"]]
+                 [reagent "0.6.0-rc"]
+                 [com.rpl/specter "1.0.2"]]
 
   :plugins [[lein-cljsbuild "1.1.3"]
             [lein-environ "1.0.3"]]
